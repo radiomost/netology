@@ -41,10 +41,101 @@
 
 ## Решение
 
+Созданы виртуальные машины для отработки за домашнего задания
+
 ![](img/img_1.png)
 
+Первый проббный запуск сборки
 
 ![](img/img_2.png)
 
+Артефакты сборки помещаются в Nexus
 
 ![](img/img_3.png)
+
+Успешное прохождение тестов
+
+![](img/img_4.png)
+
+## Вторая часть. На стнове новой ветки feature/add_reply
+
+Создаем ветку `feature/add_reply`
+
+```bash
+git checkout -b feature/add_reply
+```
+
+Добавляем новый метод в файл `src/main/java/plaindoll/Welcomer.java`
+
+```java
+package plaindoll;
+
+public class Welcomer{
+    .......
+    .......
+    public String sayReply(){
+        return "Good hunter, you have done well.";
+    }
+}
+```
+
+Добавляем тест для нового метода
+
+```java
+package plaindoll;
+
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.*;
+import org.junit.Test;
+
+public class WelcomerTest {
+
+    ........
+    ...
+    ........
+    
+    @Test
+    public void welcomerSaysReplyWithHunter(){
+        assertThat(welcomer.sayReply(), containsString("hunter"));
+    }
+}
+```
+
+Push изменений в новую ветку
+
+```bash
+git add src/main/java/plaindoll/Welcomer.java
+git add src/test/java/plaindoll/WelcomerTest.java
+
+git commit -m "feat: add sayReply method with hunter keyword"
+
+git push origin feature/add_reply
+```
+
+![](img/img_5.png)
+
+```bash
+# Переключение на ветку ДЗ
+git checkout SHCICD-DEV-25/teamcity
+git pull origin SHCICD-DEV-25/teamcity
+
+# Сделайте mergefeature-ветки
+git merge feature/add_reply
+
+# Запушьте результат
+git push origin SHCICD-DEV-25/teamcity
+```
+
+## Настройка публикации .jar в артефакты сборки
+
+В разделе Artifact paths:
+
+```java
+target/*.jar => jars/
+```
+
+![](img/img_6.png)
+
+Все артефакты сборки в репозитории Nexus
+
+![](img/img_7.png)
