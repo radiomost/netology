@@ -99,7 +99,6 @@ curl http://localhost:8080
 flowchart LR
     User -->|curl localhost:8080| PortForward
     PortForward --> Pod[hello-world Pod]
-    Pod --> Container[echoserver:2.2]
 ```
 
 ---
