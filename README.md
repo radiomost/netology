@@ -27,10 +27,12 @@
 
 Обоснуйте свой выбор.
 
+```mermaid
 flowchart LR
     A[Client] --> B[NGINX]
     B --> C[Backend]
     C --> D[(PostgreSQL)]
+```
 
 
 
