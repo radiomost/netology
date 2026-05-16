@@ -695,12 +695,6 @@ Prometheus + Grafana + node_exporter + cAdvisor обеспечивают:
 - построение кастомных дашбордов;
 - масштабируемую архитектуру мониторинга микросервисов.
 
-
-
-
-
-
-
 ## Задача 4: Логи * (необязательная)
 
 Продолжить работу по задаче API Gateway: сервисы, используемые в задаче, пишут логи в stdout. 
@@ -711,6 +705,192 @@ Prometheus + Grafana + node_exporter + cAdvisor обеспечивают:
 
 docker compose файл, запустив который можно перейти по адресу http://localhost:8081, по которому доступна Kibana.
 Логин в Kibana должен быть admin, пароль qwerty123456.
+
+# Решение
+
+## Задача 4: Логи (Vector + Elasticsearch + Kibana)
+
+### Требуемый результат
+Docker Compose стек:
+- Vector — сбор логов из stdout контейнеров
+- Elasticsearch — хранение и поиск логов
+- Kibana — UI для анализа логов
+
+Доступ:
+- Kibana: http://localhost:8081  
+- Логин: `admin`  
+- Пароль: `qwerty123456`
+
+---
+
+## Архитектура
+
+```mermaid
+flowchart LR
+    App1[API Service 1 stdout]
+    App2[API Service 2 stdout]
+    App3[API Service 3 stdout]
+
+    Vector[Vector Agent]
+    ES[Elasticsearch]
+    KB[Kibana]
+
+    App1 --> Vector
+    App2 --> Vector
+    App3 --> Vector
+
+    Vector --> ES
+    ES --> KB
+    User --> KB
+```
+
+---
+
+## docker-compose.yml
+
+```yaml id="c0mps3"
+version: "3.9"
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=true
+      - ELASTIC_PASSWORD=qwerty123456
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+    ports:
+      - "9200:9200"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.12.0
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=qwerty123456
+      - SERVER_PORT=5601
+    ports:
+      - "8081:5601"
+    depends_on:
+      - elasticsearch
+
+  vector:
+    image: timberio/vector:0.34.0-debian
+    container_name: vector
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./vector.toml:/etc/vector/vector.toml:ro
+    depends_on:
+      - elasticsearch
+
+volumes:
+  es_data:
+```
+
+---
+
+## Конфигурация Vector (vector.toml)
+
+```toml id="vect1"
+[sources.docker_logs]
+type = "docker_logs"
+include_containers = ["api-service-1", "api-service-2", "api-service-3"]
+
+[transforms.parse_logs]
+type = "remap"
+inputs = ["docker_logs"]
+source = '''
+. = parse_json(.message) ?? .
+'''
+
+[sinks.elasticsearch]
+type = "elasticsearch"
+inputs = ["parse_logs"]
+endpoint = "http://elasticsearch:9200"
+index = "api-logs-%Y.%m.%d"
+auth.strategy = "basic"
+auth.user = "elastic"
+auth.password = "qwerty123456"
+```
+
+---
+
+## Обоснование выбора
+
+### Vector
+Vector выбран как агент логирования, потому что:
+- низкое потребление ресурсов;
+- высокая производительность;
+- нативная поддержка Docker logs;
+- встроенные трансформации логов;
+- стабильная работа в production.
+
+---
+
+### Elasticsearch
+Используется как:
+- полнотекстовое хранилище логов;
+- система индексации;
+- быстрый поиск по большим объёмам данных.
+
+---
+
+### Kibana
+Обеспечивает:
+- UI для поиска логов;
+- фильтрацию;
+- построение визуализаций;
+- сохранённые запросы;
+- шаринг ссылок на поиски.
+
+---
+
+## Соответствие требованиям
+
+| Требование | Реализация |
+|---|---|
+| Сбор логов со всех хостов | Vector + Docker logs |
+| Минимальные требования к приложениям | stdout-only |
+| Гарантированная доставка | буферизация Vector + Elasticsearch |
+| Поиск и фильтрация | Elasticsearch |
+| UI для разработчиков | Kibana |
+| Ссылки на поиски | Kibana Saved Search URL |
+
+---
+
+## Доступ в Kibana
+
+После запуска:
+
+```
+http://localhost:8081
+```
+
+Логин:
+```
+admin
+```
+
+Пароль:
+```
+qwerty123456
+```
+
+---
+
+## Итог
+
+Решение на базе Vector + Elasticsearch + Kibana обеспечивает:
+- централизованный сбор логов из stdout;
+- минимальную нагрузку на приложения;
+- быстрый полнотекстовый поиск;
+- удобный Web UI для разработчиков;
+- возможность масштабирования лог-стека в продакшене.
+
 
 
 ## Задача 5: Мониторинг * (необязательная)
