@@ -464,6 +464,243 @@ sequenceDiagram
 
 Обоснуйте свой выбор.
 
+# Решение
+
+# Задача 3: Мониторинг
+
+Для мониторинга состояния инфраструктуры и микросервисов предлагается использовать стек на основе Prometheus и Grafana.
+
+| Компонент | Решение |
+|---|---|
+| Сбор метрик | Prometheus |
+| Экспорт метрик с хостов | node_exporter |
+| Экспорт метрик контейнеров | cAdvisor |
+| Метрики приложений | Custom exporters / client libraries |
+| Визуализация | Grafana |
+| Оркестрация | Kubernetes (опционально) |
+
+---
+
+# Обоснование выбора
+
+Prometheus — де-факто стандарт для мониторинга облачных и микросервисных систем.
+
+Он обеспечивает:
+- pull-модель сбора метрик;
+- гибкий язык запросов PromQL;
+- масштабируемость;
+- интеграцию с Kubernetes;
+- поддержку service discovery;
+- простую интеграцию с Grafana.
+
+Grafana обеспечивает:
+- гибкую визуализацию;
+- создание дашбордов;
+- алертинг;
+- совместную работу команд.
+
+---
+
+# Архитектура мониторинга
+
+```mermaid
+flowchart LR
+    subgraph Hosts
+        H1[Host 1]
+        H2[Host 2]
+        H3[Host 3]
+
+        NE1[node_exporter]
+        NE2[node_exporter]
+        NE3[node_exporter]
+
+        C1[Container A]
+        C2[Container B]
+    end
+
+    subgraph Metrics Layer
+        P[Prometheus]
+    end
+
+    subgraph Visualization
+        G[Grafana]
+    end
+
+    H1 --> NE1
+    H2 --> NE2
+    H3 --> NE3
+
+    C1 --> P
+    C2 --> P
+
+    NE1 --> P
+    NE2 --> P
+    NE3 --> P
+
+    P --> G
+```
+
+---
+
+# Сбор метрик с хостов
+
+Для сбора метрик с серверов используется:
+
+## node_exporter
+
+node_exporter собирает:
+- CPU usage;
+- RAM usage;
+- disk usage (HDD/SSD);
+- network traffic;
+- filesystem metrics.
+
+Устанавливается на каждый хост и предоставляет HTTP endpoint:
+
+```text
+http://host:9100/metrics
+```
+
+Prometheus регулярно опрашивает эти endpoints.
+
+---
+
+# Сбор метрик контейнеров
+
+Для контейнеров используется cAdvisor:
+
+Он собирает:
+- CPU usage по контейнерам;
+- RAM consumption;
+- network I/O;
+- disk I/O.
+
+---
+
+# Метрики сервисов
+
+Для микросервисов используются:
+
+## Client libraries
+
+- Go → prometheus/client_golang
+- Java → micrometer + prometheus registry
+- Python → prometheus_client
+
+---
+
+## Custom metrics
+
+Примеры:
+- количество запросов;
+- latency (p95, p99);
+- количество ошибок;
+- бизнес-метрики (заказы, транзакции).
+
+---
+
+# Prometheus
+
+Prometheus выполняет:
+- сбор метрик по pull-модели;
+- хранение временных рядов;
+- выполнение запросов PromQL;
+- триггеринг алертов.
+
+---
+
+## Пример запроса PromQL
+
+```promql id="k9p2ld"
+rate(http_requests_total[5m])
+```
+
+---
+
+## Пример загрузки CPU
+
+```promql id="cpu1"
+100 - (avg by(instance)(rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+```
+
+---
+
+# Grafana
+
+Grafana используется как UI слой.
+
+Она позволяет:
+- строить дашборды;
+- выполнять запросы PromQL;
+- строить графики, heatmap, tables;
+- создавать алерты;
+- делиться дашбордами через ссылки.
+
+---
+
+# Пример дашборда
+
+```mermaid
+flowchart TD
+    A[Grafana Dashboard]
+    A --> B[CPU Usage]
+    A --> C[Memory Usage]
+    A --> D[Network I/O]
+    A --> E[Request Rate]
+    A --> F[Error Rate]
+```
+
+---
+
+# Соответствие требованиям
+
+| Требование | Реализация |
+|---|---|
+| Сбор метрик со всех хостов | node_exporter + Prometheus |
+| CPU, RAM, HDD, Network | node_exporter |
+| Метрики сервисов | client libraries + custom metrics |
+| Ресурсы сервисов | cAdvisor + Kubernetes metrics |
+| UI для запросов | Grafana + PromQL |
+| Настраиваемые панели | Grafana Dashboards |
+
+---
+
+# Масштабирование
+
+Prometheus можно масштабировать через:
+- federation;
+- remote_write;
+- Thanos / Cortex (для больших систем).
+
+---
+
+# Алертинг (дополнительно)
+
+Для уведомлений используется:
+- Prometheus Alertmanager
+
+Он позволяет:
+- отправлять уведомления в Slack, Email, Telegram;
+- группировать алерты;
+- подавлять шум.
+
+---
+
+# Итог
+
+Prometheus + Grafana + node_exporter + cAdvisor обеспечивают:
+- полный сбор системных и сервисных метрик;
+- гибкий анализ через PromQL;
+- визуализацию в реальном времени;
+- построение кастомных дашбордов;
+- масштабируемую архитектуру мониторинга микросервисов.
+
+
+
+
+
+
+
 ## Задача 4: Логи * (необязательная)
 
 Продолжить работу по задаче API Gateway: сервисы, используемые в задаче, пишут логи в stdout. 
