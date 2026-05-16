@@ -905,6 +905,213 @@ qwerty123456
 docker compose файл, запустив который можно перейти по адресу http://localhost:8081, по которому доступна Grafana с настроенным Dashboard.
 Логин в Grafana должен быть admin, пароль qwerty123456.
 
+# Решение
+
+### Требуемый результат
+Docker Compose стек:
+- Prometheus — сбор метрик
+- Grafana — визуализация и dashboard
+
+Доступ:
+- Grafana: http://localhost:8081  
+- Логин: `admin`  
+- Пароль: `qwerty123456`
+
+---
+
+## Архитектура
+
+```mermaid
+flowchart LR
+    Security[Security Service /metrics]
+    Uploader[Uploader Service /metrics]
+    Storage[MinIO /minio/v2/metrics/cluster]
+
+    Prom[Prometheus]
+    Graf[Grafana]
+
+    Security --> Prom
+    Uploader --> Prom
+    Storage --> Prom
+
+    Prom --> Graf
+    User --> Graf
+```
+
+---
+
+## docker-compose.yml
+
+```yaml id="mon5c1"
+version: "3.9"
+
+services:
+
+  prometheus:
+    image: prom/prometheus:v2.48.0
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana:10.2.0
+    container_name: grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=qwerty123456
+    ports:
+      - "8081:3000"
+    depends_on:
+      - prometheus
+
+volumes:
+  grafana_data:
+```
+
+---
+
+## Prometheus config (prometheus.yml)
+
+```yaml id="prom1"
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+
+  - job_name: "security"
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["security:8080"]
+
+  - job_name: "uploader"
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["uploader:8080"]
+
+  - job_name: "storage"
+    metrics_path: /minio/v2/metrics/cluster
+    static_configs:
+      - targets: ["minio:9000"]
+```
+
+---
+
+## Настройка Grafana
+
+После запуска необходимо:
+
+### 1. Добавить datasource
+
+- Type: Prometheus
+- URL: http://prometheus:9090
+
+---
+
+### 2. Dashboard: распределение запросов
+
+#### PromQL запросы
+
+##### Security service
+```promql id="q1"
+sum(rate(http_requests_total{service="security"}[5m]))
+```
+
+##### Uploader service
+```promql id="q2"
+sum(rate(http_requests_total{service="uploader"}[5m]))
+```
+
+##### Storage (MinIO)
+```promql id="q3"
+sum(rate(minio_s3_requests_total[5m]))
+```
+
+---
+
+### 3. Пример dashboard (структура)
+
+```mermaid
+flowchart TD
+    D[Grafana Dashboard]
+    D --> A[Security RPS]
+    D --> B[Uploader RPS]
+    D --> C[MinIO RPS]
+    D --> E[Total System Traffic]
+```
+
+---
+
+## Обоснование выбора
+
+### Prometheus
+Используется как система:
+- сбора метрик (pull-модель);
+- хранения временных рядов;
+- выполнения запросов PromQL;
+- агрегации метрик.
+
+Преимущества:
+- стандарт индустрии;
+- поддержка Kubernetes;
+- простая интеграция с сервисами;
+- высокая производительность.
+
+---
+
+### Grafana
+Используется для:
+- визуализации метрик;
+- построения dashboard;
+- анализа нагрузки;
+- сравнения сервисов;
+- настройки алертов.
+
+---
+
+## Dashboard: распределение запросов
+
+Основная идея:
+- сравнение RPS между сервисами
+- выявление нагрузки
+- контроль API Gateway поведения
+
+---
+
+### Пример визуализации
+
+```mermaid
+flowchart LR
+    Security -->|requests/sec| Graph
+    Uploader -->|requests/sec| Graph
+    Storage -->|requests/sec| Graph
+```
+
+---
+
+## Соответствие требованиям
+
+| Требование | Реализация |
+|---|---|
+| Сбор метрик сервисов | Prometheus scrape /metrics |
+| Security metrics | /metrics |
+| Uploader metrics | /metrics |
+| MinIO metrics | /minio/v2/metrics/cluster |
+| UI | Grafana |
+| Dashboard | PromQL + Grafana panels |
+| Доступ | admin / qwerty123456 |
+
+---
+
+## Итог
+
+Решение на базе Prometheus + Grafana обеспечивает:
+- централизованный сбор метрик API системы;
+- наблюдение за нагрузкой каждого сервиса;
+- построение dashboard распределения запросов;
+- быстрый анализ состояния системы в реальном времени;
+- масштабируемость под микросервисную архитектуру.
 ---
 
 ### Как оформить ДЗ?
