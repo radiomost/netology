@@ -264,7 +264,254 @@ Kubernetes обеспечивает полноценную платформу д
 
 ### Схема:
 
-![11-04-01](https://user-images.githubusercontent.com/1122523/114282923-9b16f900-9a4f-11eb-80aa-61ed09725760.png)
+```mermaid
+flowchart TD
+    id1((Client))
+
+    subgraph S1[VM 1]
+    direction BT
+    B(Shard 1)  
+    E(replica 2)   
+    end
+
+    subgraph S2[VM 2]
+    direction BT
+    C(Shard 2)
+    F(replica 3)
+    end    
+
+    subgraph S3[VM 3]
+    direction BT
+    D(Shard 3)
+    G(replica 1)     
+    end
+
+    id1 --> B
+    id1 --> C
+    id1 --> D
+    B --> G
+    C --> E
+    D --> F
+```
+# Решение
+
+# Задача 2: Распределённый кеш (Redis Cluster)
+
+## Цель
+
+Построить Redis Cluster для хранения сессионных данных пользователей:
+
+- 3 шардированных master-ноды
+- 3 реплики (по одной на каждый shard)
+- отказоустойчивость
+- автоматическое восстановление при сбоях
+
+---
+
+# Архитектура решения
+
+```mermaid
+flowchart TD
+    Client((Client))
+
+    subgraph VM1[VM 1]
+        S1[Redis Master 1]
+        R3[Redis Replica 3]
+    end
+
+    subgraph VM2[VM 2]
+        S2[Redis Master 2]
+        R1[Redis Replica 1]
+    end
+
+    subgraph VM3[VM 3]
+        S3[Redis Master 3]
+        R2[Redis Replica 2]
+    end
+
+    Client --> S1
+    Client --> S2
+    Client --> S3
+
+    S1 --> R2
+    S2 --> R3
+    S3 --> R1
+```
+
+---
+
+# Обоснование выбора
+
+## Redis Cluster выбран потому что:
+
+- поддерживает **sharding (распределение ключей)**
+- обеспечивает **replication (реплики)**
+- имеет **автоматический failover**
+- обеспечивает **высокую скорость доступа**
+- подходит для хранения **session / cache данных**
+- минимальная задержка (in-memory storage)
+
+---
+
+# Топология кластера
+
+## Узлы:
+
+| VM | Роль |
+|---|---|
+| VM1 | Master 1 + Replica 3 |
+| VM2 | Master 2 + Replica 1 |
+| VM3 | Master 3 + Replica 2 |
+
+---
+
+## Распределение ролей
+
+| Shard | Master | Replica |
+|---|---|---|
+| Shard 1 | VM1 | VM2 |
+| Shard 2 | VM2 | VM3 |
+| Shard 3 | VM3 | VM1 |
+
+---
+
+# Принцип работы
+
+## 1. Шардирование
+
+Redis Cluster автоматически:
+- делит keyspace на hash slots (16384)
+- распределяет ключи между master-нодами
+
+---
+
+## 2. Репликация
+
+Каждый master имеет реплику на другом узле:
+
+- асинхронная репликация
+- автоматическое обновление данных
+
+---
+
+## 3. Failover
+
+При падении master:
+
+- replica становится новым master
+- cluster продолжает работу без вмешательства
+
+---
+
+# Поток запросов
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant M1 as Master 1
+    participant M2 as Master 2
+    participant M3 as Master 3
+    participant R as Replica
+
+    C->>M1: GET/SET session
+    C->>M2: GET/SET session
+    C->>M3: GET/SET session
+
+    M1->>R: replication
+    M2->>R: replication
+    M3->>R: replication
+```
+
+---
+
+# Настройка Redis Cluster (пример)
+
+## Шаг 1: запуск узлов
+
+Каждая VM содержит Redis:
+
+```bash id="r1"
+redis-server --port 7000 --cluster-enabled yes \
+--cluster-config-file nodes.conf \
+--cluster-node-timeout 5000 \
+--appendonly yes
+```
+
+---
+
+## Шаг 2: создание кластера
+
+```bash id="r2"
+redis-cli --cluster create \
+vm1:7000 vm2:7000 vm3:7000 \
+vm1:7001 vm2:7001 vm3:7001 \
+--cluster-replicas 1
+```
+
+---
+
+# Использование для сессий
+
+## Пример ключей:
+
+```text id="sess1"
+session:user:12345 -> data
+session:user:67890 -> data
+```
+
+---
+
+## TTL для кеша
+
+```bash id="ttl1"
+EXPIRE session:user:12345 3600
+```
+
+---
+
+# Отказоустойчивость
+
+## Что происходит при падении VM:
+
+- replica автоматически становится master
+- данные сохраняются
+- клиент переподключается к новому master
+
+---
+
+# Масштабирование
+
+Redis Cluster позволяет:
+- добавлять новые master-ноды
+- перераспределять hash slots
+- увеличивать пропускную способность
+
+---
+
+# Соответствие требованиям
+
+| Требование | Реализация |
+|---|---|
+| Распределённый кеш | Redis Cluster |
+| 3 шарда | 3 master-ноды |
+| 3 реплики | 3 replica-ноды |
+| Отказоустойчивость | Failover механизм |
+| Высокая скорость | In-memory storage |
+| Сессии пользователей | Key TTL + session keys |
+
+---
+
+# Итог
+
+Redis Cluster обеспечивает:
+- распределённое хранение сессий;
+- высокую скорость доступа;
+- автоматическое восстановление при сбоях;
+- горизонтальное масштабирование;
+- отказоустойчивость без внешних координаторов.
+
+Это оптимальное решение для session storage в микросервисной архитектуре.
+```
 
 ---
 
