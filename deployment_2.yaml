@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-delayed
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-delayed
+  template:
+    metadata:
+      labels:
+        app: nginx-delayed
+    spec:
+      initContainers:
+        - name: wait-for-endpoints
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for endpoints..."
+              until nslookup nginx-svc && wget -qO- http://nginx-svc; do
+                echo "not ready"
+                sleep 2
+              done
+
+      containers:
+        - name: nginx
+          image: nginx:1.25
+          ports:
+            - containerPort: 80
