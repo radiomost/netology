@@ -253,7 +253,7 @@
 
 - Практическое задание "Жизненный цикл ПО"
 - Тест к занятию «DevOps и SRE»
-- Домашнее задание "Teamcity"
+- [Домашнее задание "Teamcity"](https://github.com/radiomost/netology/blob/SHCICD-DEV-25/teamcity/README.md)
 
 <a href="img/SHCICD-DEV-25.png">
   <img src="img/SHCICD-DEV-25.png" width="10%">
@@ -269,9 +269,9 @@ _______________
 * Платформа мониторинга Sentry
 * Инцидент-менеджмент
 
-- Домашнее задание "Системы мониторинга"
-- Домашнее задание "Средство визуализации Grafana"
-- Домашнее задание "Система сбора логов Elastic Stack"
+- [Домашнее задание "Системы мониторинга"](https://github.com/radiomost/netology/blob/SHMON-DEV-25/monitoring_system/README.md)
+- [Домашнее задание "Средство визуализации Grafana"](https://github.com/radiomost/netology/blob/SHMON-DEV-25/grafana_visualization/README.md)
+- [Домашнее задание "Система сбора логов Elastic Stack"](https://github.com/radiomost/netology/blob/SHMON-DEV-25/elastic_search/README.md)
 
 <a href="img/SHMON-DEV-25.png">
   <img src="img/SHMON-DEV-25.png" width="10%">
@@ -286,8 +286,8 @@ _______________
 * Микросервисы: подходы
 * Микросервисы: масштабирование
 
-- Домашнее задание "Микросервисы: подходы"
-- Домашнее задание "Микросервисы: масштабирование"
+- [Домашнее задание "Микросервисы: подходы"](https://github.com/radiomost/netology/blob/SHMICROS-25/microservices_approaches/README.md)
+- [Домашнее задание "Микросервисы: масштабирование"](https://github.com/radiomost/netology/blob/SHMICROS-25/microservices_caling/README.md)
 
 <a href="img/SHMICROS-25.png">
   <img src="img/SHMICROS-25.png" width="10%">
@@ -308,6 +308,8 @@ _______________
 * Как работает сеть в K8S
 * Обновление приложений
 * Troubleshooting
+
+- [Домашнее задание к занятию «Базовые объекты K8S»](https://github.com/radiomost/netology/blob/SHKUBER-25/k8s_base_objects/README.md)
 
 <a href="img/SHKUBER-25.png">
   <img src="img/SHKUBER-25.png" width="10%">
