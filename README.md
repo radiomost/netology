@@ -251,7 +251,7 @@
 * Teamcity
 * Gitlab
 
-- Практическое задание "Жизненный цикл ПО"
+- [Практическое задание "Жизненный цикл ПО"](https://github.com/radiomost/netology/blob/SHCICD-DEV-25/life_programm/README.md)
 - Тест к занятию «DevOps и SRE»
 - [Домашнее задание "Teamcity"](https://github.com/radiomost/netology/blob/SHCICD-DEV-25/teamcity/README.md)
 
