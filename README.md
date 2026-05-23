@@ -235,7 +235,7 @@ InitContainer будет:
 - ждать пока оно станет доступно
 
 ```text id="flow0"
-until nslookup nginx-svc; do sleep 2; done
+until nslookup nginx-svc.default.svc.cluster.local; do
 ```
 
 ---
@@ -264,12 +264,11 @@ spec:
             - sh
             - -c
             - |
-              echo "Waiting for endpoints..."
-              until nslookup nginx-svc && wget -qO- http://nginx-svc; do
-                echo "not ready"
+              echo "Waiting for Service DNS..."
+              until nslookup nginx-svc.default.svc.cluster.local; do
                 sleep 2
               done
-
+              echo "Service DNS is available"
       containers:
         - name: nginx
           image: nginx:1.25
