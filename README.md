@@ -1,341 +1,323 @@
-# Курс "DevOps-инженер с нуля" (FOPS-36)
-18 ноября 2024 — 8 июля 2026
-
-## 1. Модуль "IT-системы и операционная система Linux" (SLINA-45)
-20 ноября — 5 декабря
-
-* Администрирование IT-систем
-* Архитектура компьютера. Операционная система
-* Настройка виртуального рабочего места
-* Типы дистрибутивов
-* Знакомство с операционной системой Linux
-* Основы работы в терминалe ОС Linux
-
-<a href="img/SLINA-45.png">
-  <img src="img/SLINA-45.png" width="10%">
-</a>
-
-
-## 2. Модуль "Операционная система Linux" (SLINB-45)
-20 ноября — 5 декабря
-
-* Процессы, управление процессами
-* Память, управление памятью
-* Шедулер
-* Дисковые системы
-* Файловые системы
-* Ядро операционной системы
-* Загрузка операционной системы
-
-<a href="img/SLINB-45.png">
-  <img src="img/SLINB-45.png" width="10%">
-</a>
-
-## 3. Модуль "Администрирование операционной системы Linux" (SLINC-45)
-16 января — 30 января
-
-* Управление пакетами
-* Инициализация системы. Systemd, init-v
-* Управление пользователями
-* Производительность системы
-* Производительность системы. Часть 2
-* Особенности работы с Astra Linux
-
-<a href="img/SLINC-45.png">
-  <img src="img/SLINC-45.png" width="10%">
-</a>
-
-## 4. Модуль "Программирование на Bash" (BASH-45)
-4 февраля — 22 февраля
-
-* Организационная информация модуля «Программирование на Bash»
-* Переменные и условные операторы
-* Циклы и функции
-* Regexp и его использование для синтаксического анализа
-* Работа с текстовыми утилитами
-* Разбор скриптов и их написание
-* Сбор вопросов к разборному вебинару
-* Разборный вебинар по всем темам «Программирование на Bash»
-
-<a href="img/BASH-45.png">
-  <img src="img/BASH-45.png" width="10%">
-</a>
-
-## 5. Модуль "Сеть, сетевые протоколы" (NET-45)
-24 февраля — 10 марта
-
-* Организационная информация
-* Теоретические основы сети
-* Сеть и сетевые протоколы: L2-сеть
-* Сеть и сетевые протоколы: L3-сеть
-* Сеть и сетевые протоколы: L4-сеть
-* NAT
-* IPv6
-
-<a href="img/NET-45.png">
-  <img src="img/NET-45.png" width="10%">
-</a>
-
-
-## 6. Модуль "Виртуализация" (SVIRT-44)
-24 марта — 14 апреля
-
-* Виртуализация и облачные решения. AWS, GCP, Яндекс.Облако, Openstack
-* Типы виртуализаций KVM, QEMU
-* Docker
-* Docker. Часть 2
-* Kubernetes
-* Kubernetes. Часть 2
-* 
-
-<a href="img/SVIRT-44.png">
-  <img src="img/SVIRT-44.png" width="10%">
-</a>
-
-
-## 7. Модуль "Автоматизация и CI/СD" (CICD-44)
-17 апреля — 15 мая
-
-* Ansible
-* Ansible. Часть 2
-* Terraform
-* Подъем инфраструктуры в облаке
-* Git
-* Что такое DevOps. CI/CD
-* GitLab
-
-<a href="img/CICD-44.png">
-  <img src="img/CICD-44.png" width="10%">
-</a>
-
-
-## 8. Модуль "Мониторинг" (SMON-44)
-19 мая — 5 июня
-
-* Обзор систем ИТ-мониторинга
-* Система мониторинга Zabbix
-* Система мониторинга Zabbix. Часть 2
-* Подготовка к практикуму по работе с Zabbix
-* Практикум по работе с Zabbix
-* Система мониторинга Prometheus
-* Система мониторинга Prometheus. Часть 2
-
-<a href="img/SMON-44.png">
-  <img src="img/SMON-44.png" width="10%">
-</a>
-
-## 9. Модуль "Отказоустойчивость" (SFLT-44)
-7 июня — 1 июля
-
-* Disaster Recovery. FHRP и Keepalived
-* Кластеризация и балансировка нагрузки
-* Резервное копирование
-* Отказоустойчивость в облаке
-
-<a href="img/SFLT-44.png">
-  <img src="img/SFLT-44.png" width="10%">
-</a>
-
-
-## 10. Модуль "Системы хранения и передачи данных" (SYSDB-44)
-10 июля — 24 июля
-
-* Базы данных, их типы
-* Кеширование Redis/memcached
-* ELK
-* Очереди RabbitMQ
-
-<a href="img/SYSDB-44.png">
-  <img src="img/SYSDB-44.png" width="10%">
-</a>
-
-## 11. Модуль "Реляционные базы данных и администрирование баз данных" (SDBSQL-44)
-28 июля — 29 августа
-
-* Базы данных
-* Введение в SQL
-* Операции с данными в SQL
-* Расширенные возможности SQL
-* Индексы
-* Репликация и масштабирование. Часть 1
-* Репликация и масштабирование. Часть 2
-* Резервное копирование.
-* Базы данных в облаке
-
-<a href="img/SDBSQL-44.png">
-  <img src="img/SDBSQL-44.png" width="10%">
-</a>
-
-## 12. Модуль "Информационная безопасность" (SYSSEC-44)
-2 сентября — 17 сентября
-
-* Уязвимости и атаки на информационные системы
-* Защита хоста
-* Защита сети
-* Лучшие практики современной информационной безопасности
-
-<a href="img/SYSSEC-44.png">
-  <img src="img/SYSSEC-44.png" width="10%">
-</a>
-
-## 13. Модуль "Системы управления версиями" (GIT-FOPS-35)
-15 октября — 29 октября
-
-* Системы контроля версий
-* Основы Git
-* Ветвления в Git
-* Инструменты Git
-
-<a href="img/GIT-FOPS-35.png">
-  <img src="img/GIT-FOPS-35.png" width="10%">
-</a>
-
-## 14. Модуль "Виртуализация и контейнеризация" (SHVIRTD-25)
-5 ноября — 16 ноября
-
-* Введение в курс
-* Введение в виртуализацию. Типы и функции гипервизоров. Обзор рынка вендоров и областей применения
-* Применение принципов IaaC в работе с виртуальными машинами
-* Введение в Docker
-* Оркестрация группой Docker контейнеров на примере Docker Compose.
-* Практическое применение Docker. Часть 1
-* Практическое применение Docker. Часть 2
-* Оркестрация кластером Docker контейнеров на примере Docker Swarm.
-
-<a href="img/SHVIRTD-25.png">
-  <img src="img/SHVIRTD-25.png" width="10%">
-</a>
-
-## 15. Модуль "Облачная инфраструктура. Terraform" (SHTER-25)
-19 ноября — 2 декабря
-
-* Введение в Terraform
-* Основы работы с Terraform
-* Управляющие конструкции в коде Terraform
-* Продвинутые методы работы с Terraform
-* Использование Terraform в команде
-* Итоговый проект модуля «Облачная инфраструктура. Terraform»
-
-- Домашнее задание "Основы работы с Terraform"
-- Домашнее задание "Продвинутые методы работы с Terraform"
-
-<a href="img/SHTER-25.png">
-  <img src="img/SHTER-25.png" width="10%">
-</a>
-
-## 16. Модуль "Система управления конфигурациями" (SHKONF-25)
-15 декабря — 12 января
-
-* Введение в Ansible
-* Работа с Playbook
-* Использование Ansible
-* Работа с roles
-* Тестирование roles
-* Создание собственных модулей
-
-- Домашнее задание "Работа с roles"
-- Домашнее задание "Тестирование roles"
-- Домашнее задание "Создание собственных модулей"
-
-<a href="img/SHKONF-25.png">
-  <img src="img/SHKONF-25.png" width="10%">
-</a>
-
-## 17. Модуль "Непрерывная разработка и интеграция" (SHCICD-DEV-25)
-13 января — 29 января
-
-* Жизненный цикл ПО
-* DevOps и SRE
-* Процессы CI/CD
-* Jenkins
-* Teamcity
-* Gitlab
-
-- [Практическое задание "Жизненный цикл ПО"](https://github.com/radiomost/netology/blob/SHCICD-DEV-25/life_programm/README.md)
-- Тест к занятию «DevOps и SRE»
-- [Домашнее задание "Teamcity"](https://github.com/radiomost/netology/blob/SHCICD-DEV-25/teamcity/README.md)
-
-<a href="img/SHCICD-DEV-25.png">
-  <img src="img/SHCICD-DEV-25.png" width="10%">
-</a>
-
-
-## 18. Модуль "Мониторинг и логи" (SHMON-DEV-25)
-_______________
-
-* Системы мониторинга
-* Средство визуализации Grafana
-* Система сбора логов Elastic Stack
-* Платформа мониторинга Sentry
-* Инцидент-менеджмент
-
-- [Домашнее задание "Системы мониторинга"](https://github.com/radiomost/netology/blob/SHMON-DEV-25/monitoring_system/README.md)
-- [Домашнее задание "Средство визуализации Grafana"](https://github.com/radiomost/netology/blob/SHMON-DEV-25/grafana_visualization/README.md)
-- [Домашнее задание "Система сбора логов Elastic Stack"](https://github.com/radiomost/netology/blob/SHMON-DEV-25/elastic_search/README.md)
-
-<a href="img/SHMON-DEV-25.png">
-  <img src="img/SHMON-DEV-25.png" width="10%">
-</a>
-
-
-## 19. Модуль "Микросервисы" (SHMICROS-25)
-24 февраля — 10 марта
-
-* Введение в микросервисы
-* Микросервисы: принципы
-* Микросервисы: подходы
-* Микросервисы: масштабирование
-
-- [Домашнее задание "Микросервисы: подходы"](https://github.com/radiomost/netology/blob/SHMICROS-25/microservices_approaches/README.md)
-- [Домашнее задание "Микросервисы: масштабирование"](https://github.com/radiomost/netology/blob/SHMICROS-25/microservices_caling/README.md)
-
-<a href="img/SHMICROS-25.png">
-  <img src="img/SHMICROS-25.png" width="10%">
-</a>
-
-## 20. Модуль "Kubernetes: основы, применение и администрирование" (SHKUBER-25)
-16 марта — 20 апреля
-
-* Kubernetes. Причины появления. Команда kubectl
-* Базовые объекты K8S
-* Запуск приложений в K8S
-* Сетевое взаимодействие в Kubernetes
-* Хранение в K8s
-* Настройка приложений
-* Helm
-* Компоненты Kubernetes
-* Установка Kubernetes с помощью kubeadm, kubespray
-* Как работает сеть в K8S
-* Обновление приложений
-* Troubleshooting
-
-- [Домашнее задание к занятию «Базовые объекты K8S»](https://github.com/radiomost/netology/blob/SHKUBER-25/k8s_base_objects/README.md)
-
-<a href="img/SHKUBER-25.png">
-  <img src="img/SHKUBER-25.png" width="10%">
-</a>
-
-
-## 21. Модуль "Организация проекта при помощи облачных провайдеров" (SHCLOPRO-25)
-4 мая — 19 мая
-
-* Организация сети
-* Вычислительные мощности. Балансировщики нагрузки
-* Безопасность в облачных провайдерах
-* Кластеры. Ресурсы под управлением облачным провайдером
-
-<a href="img/SHCLOPRO-25.png">
-  <img src="img/SHCLOPRO-25.png" width="10%">
-</a>
-
-
-## 22. Модуль "Митапы для DevOps-разработчиков и системных администраторов" (MITAP-FOPS-1)
-
-* Курс на успех: ваша образовательная стратегия
-* Митап «Основы Apache Airflow»
-* Деплоймент и архитектура распределенного приложения на Bare Metal Kubernetes
-* Обзорная экскурсия по базам данных и файловым хранилищам
-* Митап «Безопасные интеграции 1С: что должен знать аналитик»
-* Как стать амбассадором Нетологии
-* RAG-системы на практике
-* Обратная связь и постановка границ, с которыми не спорят
+# Домашнее задание к занятию «Сетевое взаимодействие в Kubernetes»
+
+### Примерное время выполнения задания
+
+120 минут
+
+### Цель задания
+
+Научиться настраивать доступ к приложениям в Kubernetes:
+- Внутри кластера через **Service** (ClusterIP, NodePort).
+- Снаружи кластера через **Ingress**.
+
+Это задание поможет вам освоить базовые принципы сетевого взаимодействия в Kubernetes — ключевого навыка для работы с кластерами.
+На практике Service и Ingress используются для доступа к приложениям, балансировки нагрузки и маршрутизации трафика. Понимание этих механизмов поможет вам упростить управление сервисами в рабочих окружениях и снизит риски ошибок при развёртывании.
+
+------
+
+## **Подготовка**
+### **Чеклист готовности**
+- Установлен Kubernetes (MicroK8S, Minikube или другой).
+- Установлен `kubectl`.
+- Редактор для YAML-файлов (VS Code, Vim и др.).
+
+------
+
+### Инструменты, которые пригодятся для выполнения задания
+
+1. [Инструкция](https://microk8s.io/docs/getting-started) по установке MicroK8S.
+2. [Инструкция](https://minikube.sigs.k8s.io/docs/start/?arch=%2Fwindows%2Fx86-64%2Fstable%2F.exe+download) по установке Minikube. 
+3. [Инструкция](https://kubernetes.io/docs/tasks/tools/install-kubectl-windows/)по установке kubectl.
+4. [Инструкция](https://marketplace.visualstudio.com/items?itemName=ms-kubernetes-tools.vscode-kubernetes-tools) по установке VS Code
+
+### Дополнительные материалы, которые пригодятся для выполнения задания
+
+1. [Описание](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/) Deployment и примеры манифестов.
+2. [Описание](https://kubernetes.io/docs/concepts/services-networking/service/) Описание Service.
+3. [Описание](https://kubernetes.io/docs/concepts/services-networking/ingress/) Ingress.
+4. [Описание](https://github.com/wbitt/Network-MultiTool) Multitool.
+
+------
+
+## **Задание 1: Настройка Service (ClusterIP и NodePort)**
+### **Задача**
+Развернуть приложение из двух контейнеров (`nginx` и `multitool`) и обеспечить доступ к ним:
+- Внутри кластера через **ClusterIP**.
+- Снаружи через **NodePort**.
+
+### **Шаги выполнения**
+1. **Создать Deployment** с двумя контейнерами:
+   - `nginx` (порт `80`).
+   - `multitool` (порт `8080`).
+   - Количество реплик: `3`.
+2. **Создать Service типа ClusterIP**, который:
+   - Открывает `nginx` на порту `9001`.
+   - Открывает `multitool` на порту `9002`.
+3. **Проверить доступность** изнутри кластера:
+```bash
+ kubectl run test-pod --image=wbitt/network-multitool --rm -it -- sh
+ curl <service-name>:9001 # Проверить nginx
+ curl <service-name>:9002 # Проверить multitool
+```
+4. **Создать Service типа NodePort** для доступа к `nginx` снаружи.
+5. **Проверить доступ** с локального компьютера:
+```bash
+ curl <node-ip>:<node-port>
+   ```
+ или через браузер.
+
+### **Что сдать на проверку**
+- Манифесты:
+  - `deployment-multi-container.yaml`
+  - `service-clusterip.yaml`
+  - `service-nodeport.yaml`
+- Скриншоты проверки доступа (`curl` или браузер).
+
+# Решение
+
+---
+
+# 1. Deployment (nginx + multitool)
+
+## Схема ClusterIP доступа
+
+```mermaid id="arch1"
+flowchart LR
+    P[Test Pod] --> S[multi-svc ClusterIP]
+    S --> N[nginx:80]
+    S --> M[multitool:8080]
+```
+## Запускаем кластер
+
+Используем манифесты [deployment-multi-container.yaml](./deployment-multi-container.yaml) и [service-clusterip.yaml](./service-clusterip.yaml)для запуска кластера
+
+![](img/img_1.png)
+
+```bash
+kubectl apply -f deployment-multi-container.yaml
+kubectl apply -f service-clusterip.yaml
+```
+
+
+## Проверка внутри кластера
+
+```bash
+kubectl run test-pod --image=wbitt/network-multitool -it --rm -- sh
+```
+
+```bash
+curl multi-svc:9001   # nginx
+```
+
+![](img/img_3.png)
+
+![](img/img_2.png)
+
+## Service NodePort (доступ снаружи)
+
+```mermaid
+flowchart LR
+    Client[Browser / curl] --> NodeIP:30080
+    NodeIP:30080 --> S[NodePort Service]
+    S --> P[nginx Pod]
+```
+
+```bash
+kubectl apply -f service-nodeport.yaml
+```
+
+Проверяем доступ снаружи
+
+```bash
+http://<NODE-IP>:30080
+```
+
+![](img/img_4.png)
+
+---
+## **Задание 2: Настройка Ingress**
+### **Задача**
+Развернуть два приложения (`frontend` и `backend`) и обеспечить доступ к ним через **Ingress** по разным путям.
+
+### **Шаги выполнения**
+1. **Развернуть два Deployment**:
+   - `frontend` (образ `nginx`).
+   - `backend` (образ `wbitt/network-multitool`).
+2. **Создать Service** для каждого приложения.
+3. **Включить Ingress-контроллер**:
+```bash
+ microk8s enable ingress
+   ```
+4. **Создать Ingress**, который:
+   - Открывает `frontend` по пути `/`.
+   - Открывает `backend` по пути `/api`.
+5. **Проверить доступность**:
+```bash
+ curl <host>/
+ curl <host>/api
+   ```
+ или через браузер.
+
+### **Что сдать на проверку**
+- Манифесты:
+  - `deployment-frontend.yaml`
+  - `deployment-backend.yaml`
+  - `service-frontend.yaml`
+  - `service-backend.yaml`
+  - `ingress.yaml`
+- Скриншоты проверки доступа (`curl` или браузер).
+
+---
+## Шаблоны манифестов с учебными комментариями
+### **1. Deployment (nginx + multitool)**
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: # ПРИМЕР: "multi-container-app"
+spec:
+  replicas: # ЗАДАНИЕ: Укажите количество реплик
+  selector:
+    matchLabels:
+      app: # ДОПОЛНИТЕ: Метка для селектора
+  template:
+    metadata:
+      labels:
+        app: # ПОВТОРИТЕ метку из selector.matchLabels
+    spec:
+      containers:
+ - name: # ЗАДАНИЕ: Название первого контейнера
+        image: nginx
+        ports:
+ - containerPort: 80
+ - name: multitool
+        image: wbitt/network-multitool
+        ports:
+ - containerPort: 8080
+        env:
+ - name: HTTP_PORT
+          value: "8080" # КЛЮЧЕВОЙ МОМЕНТ: Порт должен совпадать с containerPort
+```
+### **2. Ingress (для frontend и backend)**
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: # ЗАДАНИЕ: Придумайте имя, допустим example-ingress
+  annotations:  # ВАЖНО: Эта аннотация нужна для rewrite правил
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+ - http:
+      paths:
+ - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: # УКАЖИТЕ: Имя frontend Service
+            port:
+              number: 80
+ - path: /api # КЛЮЧЕВОЙ ПУТЬ: API endpoint
+        pathType: Prefix
+        backend:
+          service:
+            name: # УКАЖИТЕ: Имя backend Service
+            port:
+              number: 80
+```
+
+# Решение
+
+## Архитектура решения
+
+```mermaid
+flowchart TD
+    Client[Browser / curl]
+
+    Ingress[Ingress Controller]
+
+    FE[frontend Service]
+    BE[backend Service]
+
+    FP[frontend Pod nginx]
+    BP[backend Pod multitool]
+
+    Client --> Ingress
+    Ingress --> FE
+    Ingress --> BE
+
+    FE --> FP
+    BE --> BP
+```
+
+## Применяем манифесты по порядку
+
+### Frontend
+
+Файлы манифестов [deployment-frontend.yaml](./deployment-frontend.yaml), [service-frontend.yaml](./service-frontend.yaml)
+
+```bash
+kubectl apply -f deployment-frontend.yaml
+kubectl apply -f service-frontend.yaml
+```
+
+### Backend
+
+Файлы манифестов [deployment-backend.yaml](./deployment-backend.yaml), [service-backend.yam](./service-backend.yam)
+
+```bash
+kubectl apply -f deployment-backend.yaml
+kubectl apply -f service-backend.yaml
+```
+
+### Ingress
+
+Файл манифеста [ingress.yaml](./ingress.yaml)
+
+```bash
+kubectl apply -f ingress.yaml
+```
+
+### Проверяем, что всё поднялось
+
+```bash
+kubectl get pods
+kubectl get svc
+kubectl get ingress
+```
+
+![](img/img_5.png)
+
+### Узнаём Ingress IP / host
+
+```bash
+kubectl get ingress
+```
+![](img/img_6.png)
+
+```bash
+ip a
+```
+
+### Проверяем через браузер
+
+```bash
+http://<NODE_IP>/
+```
+![](img/img_7.png)
+
+---
+
+## **Правила приёма работы**
+1. Домашняя работа оформляется в своём Git-репозитории в файле README.md. Выполненное домашнее задание пришлите ссылкой на .md-файл в вашем репозитории.
+2. Файл README.md должен содержать скриншоты вывода необходимых команд `kubectl` и скриншоты результатов.
+3. Репозиторий должен содержать тексты манифестов или ссылки на них в файле README.md.
+
+## **Критерии оценивания задания**
+1. Зачёт: Все задачи выполнены, манифесты корректны, есть доказательства работы (скриншоты).
+2. Доработка (на доработку задание направляется 1 раз): основные задачи выполнены, при этом есть ошибки в манифестах или отсутствуют проверочные скриншоты.
+3. Незачёт: работа выполнена не в полном объёме, есть ошибки в манифестах, отсутствуют проверочные скриншоты. Все попытки доработки израсходованы (на доработку работа направляется 1 раз). Этот вид оценки используется крайне редко.
+
+## **Срок выполнения задания**  
+1. 5 дней на выполнение задания.
+2. 5 дней на доработку задания (в случае направления задания на доработку).
