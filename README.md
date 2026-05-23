@@ -218,7 +218,7 @@ flowchart LR
 
 ---
 
-# Цель
+## Цель
 
 Обеспечить запуск основного контейнера `nginx` **только после появления Service**.
 
@@ -228,7 +228,7 @@ flowchart LR
 
 ---
 
-# 1. Идея решения
+## 1. Идея решения
 
 InitContainer будет:
 - проверять DNS имя Service
@@ -240,7 +240,7 @@ until nslookup nginx-svc; do sleep 2; done
 
 ---
 
-# 2. Deployment с initContainer
+## 2. Deployment с initContainer
 
 ```yaml id="dep1"
 apiVersion: apps/v1
@@ -279,7 +279,7 @@ spec:
 
 ---
 
-# 3. Состояние ДО запуска Service
+## 3. Состояние ДО запуска Service
 
 После создания Deployment:
 
@@ -293,7 +293,7 @@ nginx НЕ запускается, потому что initContainer ждёт DN
 
 ---
 
-# 4. Создание Service
+## 4. Создание Service
 
 ```yaml id="svc1"
 apiVersion: v1
@@ -316,49 +316,25 @@ kubectl apply -f service_2.yaml
 
 ---
 
-# 5. Состояние ПОСЛЕ создания Service
+## 5. Состояние ПОСЛЕ создания Service
 
 ```bash id="get2"
 kubectl get pods
 ```
-
-Ожидаемо:
-
-```text id="state2"
-nginx-delayed-xxx   1/1   Running
-```
+![](img/img_5.png)
 
 ---
 
-# 6. Проверка initContainer
-
-```bash id="logs1"
-kubectl logs nginx-delayed-xxx -c wait-for-service
-```
-
-Ожидаемый вывод:
-
-```text id="log1"
-Waiting for service nginx-svc...
-Service not ready
-Service is available
-```
-
----
-
-# 7. Проверка Service
+## 6. Проверка Service
 
 ```bash id="svc2"
 kubectl get svc
 ```
-
-```text id="svc3"
-nginx-svc   ClusterIP   10.x.x.x
-```
+![](img/img_6.png)
 
 ---
 
-# 8. Схема работы
+## 7. Схема работы
 
 ```mermaid id="arch1"
 sequenceDiagram
@@ -380,7 +356,7 @@ sequenceDiagram
 
 ---
 
-# 9. Итог
+## 8. Итог
 
 - nginx не стартует до появления Service
 - initContainer блокирует запуск Pod
