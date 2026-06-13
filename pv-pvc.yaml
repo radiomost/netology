@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: netology-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+  hostPath:
+    path: /data/netology
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: netology-pvc
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500Mi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: data-exchange
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: data-exchange
+  template:
+    metadata:
+      labels:
+        app: data-exchange
+    spec:
+      volumes:
+        - name: shared
+          persistentVolumeClaim:
+            claimName: netology-pvc
+
+      containers:
+        - name: busybox
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - |
+              while true; do
+                echo "$(date) data from busybox" >> /data/output.log
+                sleep 5
+              done
+          volumeMounts:
+            - name: shared
+              mountPath: /data
+
+        - name: multitool
+          image: praqma/network-multitool
+          command:
+            - sh
+            - -c
+            - sleep infinity
+          volumeMounts:
+            - name: shared
+              mountPath: /data
