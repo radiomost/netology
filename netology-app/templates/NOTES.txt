@@ -1,0 +1,13 @@
+Netology application installed.
+
+Release:
+{{ .Release.Name }}
+
+Namespace:
+{{ .Release.Namespace }}
+
+Frontend service:
+{{ include "netology-app.fullname" . }}-frontend
+
+Backend service:
+{{ include "netology-app.fullname" . }}-backend

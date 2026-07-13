@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "netology-app.fullname" . }}-frontend
+  labels:
+    {{- include "netology-app.labels" . | nindent 4 }}
+
+spec:
+  replicas: {{ .Values.frontend.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: frontend
+      {{- include "netology-app.selectorLabels" . | nindent 6 }}
+
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: frontend
+        {{- include "netology-app.selectorLabels" . | nindent 8 }}
+
+    spec:
+      containers:
+      - name: frontend
+        image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
+        imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
+        ports:
+        - containerPort: 80
