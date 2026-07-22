@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+
+metadata:
+  name: nginx-page-v2
+
+data:
+  index.html: |
+    <html>
+    <body>
+      <h1>NGINX VERSION 2</h1>
+      <p>Canary version</p>
+    </body>
+    </html>
