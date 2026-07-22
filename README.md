@@ -375,6 +375,7 @@ kubectl get pods
 ```
 
 Результат:
+
 ![](img/img_5.png)
 
 ---
