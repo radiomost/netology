@@ -1,0 +1,6 @@
+rabbitmq_version: "3.10"
+erlang_cookie: "SUPERSECRETCOOKIE123"
+cluster_nodes:
+  - rabbit@rmq01
+  - rabbit@rmq02
+  - rabbit@rmq03

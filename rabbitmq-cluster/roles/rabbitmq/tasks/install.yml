@@ -1,0 +1,25 @@
+- name: Install dependencies
+  apt:
+    name:
+      - rabbitmq-server
+    update_cache: yes
+
+- name: Ensure Erlang cookie is synced
+  copy:
+    content: "{{ erlang_cookie }}"
+    dest: /var/lib/rabbitmq/.erlang.cookie
+    owner: rabbitmq
+    group: rabbitmq
+    mode: '0400'
+
+- name: Ensure RabbitMQ config is deployed
+  template:
+    src: rabbitmq.conf.j2
+    dest: /etc/rabbitmq/rabbitmq.conf
+  notify: restart rabbitmq
+
+- name: Enable and start RabbitMQ
+  service:
+    name: rabbitmq-server
+    state: started
+    enabled: yes
