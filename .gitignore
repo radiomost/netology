@@ -1,0 +1,11 @@
+.idea/
+__pycache__/
+
+docker_volumes/
+nginx_logs/
+
+*.pyc
+*.log
+.python-version
+
+.DS_Store

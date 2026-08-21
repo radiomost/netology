@@ -1,0 +1,76 @@
+version: '3.7'
+
+services:
+  elasticsearch:
+    image: registry.rdmost.ru/elasticsearch:8.14.3
+    volumes:
+      - ./configs/elasticsearch/config.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      # - ./docker_volumes/elasticsearch/data:/usr/share/elasticsearch/data
+    environment:
+      ES_JAVA_OPTS: "-Xmx512m -Xms512m"
+      ELASTIC_USERNAME: "kibana_system_user"
+      ELASTIC_PASSWORD: "mypassword"
+      discovery.type: single-node
+      xpack.security.enabled: false
+    networks:
+      - elk
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+
+  logstash:
+    image: registry.rdmost.ru/logstash:8.14.3
+    volumes:
+      - ./configs/logstash/config.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./configs/logstash/pipelines.yml:/usr/share/logstash/config/pipelines.yml:ro
+      - ./configs/logstash/pipelines:/usr/share/logstash/config/pipelines:ro
+    environment:
+      LS_JAVA_OPTS: "-Xmx512m -Xms512m"
+    ports:
+      - "5044:5044"
+      - "5001:5000"
+      - "9600:9600"
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+
+  kibana:
+    image: registry.rdmost.ru/kibana:8.14.3
+    depends_on:
+      - elasticsearch
+    volumes:
+      - ./configs/kibana/config.yml:/usr/share/kibana/config/kibana.yml:ro
+    networks:
+      - elk
+    ports:
+      - "5601:5601"
+
+  beats:
+    image: registry.rdmost.ru/filebeat:8.14.3
+    volumes:
+      - ./configs/filebeat/config.yml:/usr/share/filebeat/filebeat.yml:ro
+      # - ./nginx_logs:/nginx_logs:ro
+      - ./log_gen/:/log_gen/:ro
+      - ./host_metrics_app/:/host_metrics_app/:ro
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+  nginx:
+    image: registry.rdmost.ru/nginx:1.27.1
+    container_name: nginx
+    ports:
+      - "80:80"
+    networks:
+      - elk
+    volumes:
+      - ./nginx_logs:/var/log/nginx
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    restart: unless-stopped
+    depends_on:
+      - elasticsearch
+
+networks:
+  elk:
+    driver: bridge
