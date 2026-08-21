@@ -1,341 +1,460 @@
-# Курс "DevOps-инженер с нуля" (FOPS-36)
-18 ноября 2024 — 8 июля 2026
-
-## 1. Модуль "IT-системы и операционная система Linux" (SLINA-45)
-20 ноября — 5 декабря
-
-* Администрирование IT-систем
-* Архитектура компьютера. Операционная система
-* Настройка виртуального рабочего места
-* Типы дистрибутивов
-* Знакомство с операционной системой Linux
-* Основы работы в терминалe ОС Linux
-
-<a href="img/SLINA-45.png">
-  <img src="img/SLINA-45.png" width="10%">
-</a>
-
-
-## 2. Модуль "Операционная система Linux" (SLINB-45)
-20 ноября — 5 декабря
-
-* Процессы, управление процессами
-* Память, управление памятью
-* Шедулер
-* Дисковые системы
-* Файловые системы
-* Ядро операционной системы
-* Загрузка операционной системы
-
-<a href="img/SLINB-45.png">
-  <img src="img/SLINB-45.png" width="10%">
-</a>
-
-## 3. Модуль "Администрирование операционной системы Linux" (SLINC-45)
-16 января — 30 января
-
-* Управление пакетами
-* Инициализация системы. Systemd, init-v
-* Управление пользователями
-* Производительность системы
-* Производительность системы. Часть 2
-* Особенности работы с Astra Linux
-
-<a href="img/SLINC-45.png">
-  <img src="img/SLINC-45.png" width="10%">
-</a>
-
-## 4. Модуль "Программирование на Bash" (BASH-45)
-4 февраля — 22 февраля
-
-* Организационная информация модуля «Программирование на Bash»
-* Переменные и условные операторы
-* Циклы и функции
-* Regexp и его использование для синтаксического анализа
-* Работа с текстовыми утилитами
-* Разбор скриптов и их написание
-* Сбор вопросов к разборному вебинару
-* Разборный вебинар по всем темам «Программирование на Bash»
-
-<a href="img/BASH-45.png">
-  <img src="img/BASH-45.png" width="10%">
-</a>
-
-## 5. Модуль "Сеть, сетевые протоколы" (NET-45)
-24 февраля — 10 марта
-
-* Организационная информация
-* Теоретические основы сети
-* Сеть и сетевые протоколы: L2-сеть
-* Сеть и сетевые протоколы: L3-сеть
-* Сеть и сетевые протоколы: L4-сеть
-* NAT
-* IPv6
-
-<a href="img/NET-45.png">
-  <img src="img/NET-45.png" width="10%">
-</a>
-
-
-## 6. Модуль "Виртуализация" (SVIRT-44)
-24 марта — 14 апреля
-
-* Виртуализация и облачные решения. AWS, GCP, Яндекс.Облако, Openstack
-* Типы виртуализаций KVM, QEMU
-* Docker
-* Docker. Часть 2
-* Kubernetes
-* Kubernetes. Часть 2
-* 
-
-<a href="img/SVIRT-44.png">
-  <img src="img/SVIRT-44.png" width="10%">
-</a>
-
-
-## 7. Модуль "Автоматизация и CI/СD" (CICD-44)
-17 апреля — 15 мая
-
-* Ansible
-* Ansible. Часть 2
-* Terraform
-* Подъем инфраструктуры в облаке
-* Git
-* Что такое DevOps. CI/CD
-* GitLab
-
-<a href="img/CICD-44.png">
-  <img src="img/CICD-44.png" width="10%">
-</a>
-
-
-## 8. Модуль "Мониторинг" (SMON-44)
-19 мая — 5 июня
-
-* Обзор систем ИТ-мониторинга
-* Система мониторинга Zabbix
-* Система мониторинга Zabbix. Часть 2
-* Подготовка к практикуму по работе с Zabbix
-* Практикум по работе с Zabbix
-* Система мониторинга Prometheus
-* Система мониторинга Prometheus. Часть 2
-
-<a href="img/SMON-44.png">
-  <img src="img/SMON-44.png" width="10%">
-</a>
-
-## 9. Модуль "Отказоустойчивость" (SFLT-44)
-7 июня — 1 июля
-
-* Disaster Recovery. FHRP и Keepalived
-* Кластеризация и балансировка нагрузки
-* Резервное копирование
-* Отказоустойчивость в облаке
-
-<a href="img/SFLT-44.png">
-  <img src="img/SFLT-44.png" width="10%">
-</a>
-
-
-## 10. Модуль "Системы хранения и передачи данных" (SYSDB-44)
-10 июля — 24 июля
-
-* Базы данных, их типы
-* Кеширование Redis/memcached
-* ELK
-* Очереди RabbitMQ
-
-<a href="img/SYSDB-44.png">
-  <img src="img/SYSDB-44.png" width="10%">
-</a>
-
-## 11. Модуль "Реляционные базы данных и администрирование баз данных" (SDBSQL-44)
-28 июля — 29 августа
-
-* Базы данных
-* Введение в SQL
-* Операции с данными в SQL
-* Расширенные возможности SQL
-* Индексы
-* Репликация и масштабирование. Часть 1
-* Репликация и масштабирование. Часть 2
-* Резервное копирование.
-* Базы данных в облаке
-
-<a href="img/SDBSQL-44.png">
-  <img src="img/SDBSQL-44.png" width="10%">
-</a>
-
-## 12. Модуль "Информационная безопасность" (SYSSEC-44)
-2 сентября — 17 сентября
-
-* Уязвимости и атаки на информационные системы
-* Защита хоста
-* Защита сети
-* Лучшие практики современной информационной безопасности
-
-<a href="img/SYSSEC-44.png">
-  <img src="img/SYSSEC-44.png" width="10%">
-</a>
-
-## 13. Модуль "Системы управления версиями" (GIT-FOPS-35)
-15 октября — 29 октября
-
-* Системы контроля версий
-* Основы Git
-* Ветвления в Git
-* Инструменты Git
-
-<a href="img/GIT-FOPS-35.png">
-  <img src="img/GIT-FOPS-35.png" width="10%">
-</a>
-
-## 14. Модуль "Виртуализация и контейнеризация" (SHVIRTD-25)
-5 ноября — 16 ноября
-
-* Введение в курс
-* Введение в виртуализацию. Типы и функции гипервизоров. Обзор рынка вендоров и областей применения
-* Применение принципов IaaC в работе с виртуальными машинами
-* Введение в Docker
-* Оркестрация группой Docker контейнеров на примере Docker Compose.
-* Практическое применение Docker. Часть 1
-* Практическое применение Docker. Часть 2
-* Оркестрация кластером Docker контейнеров на примере Docker Swarm.
-
-<a href="img/SHVIRTD-25.png">
-  <img src="img/SHVIRTD-25.png" width="10%">
-</a>
-
-## 15. Модуль "Облачная инфраструктура. Terraform" (SHTER-25)
-19 ноября — 2 декабря
-
-* Введение в Terraform
-* Основы работы с Terraform
-* Управляющие конструкции в коде Terraform
-* Продвинутые методы работы с Terraform
-* Использование Terraform в команде
-* Итоговый проект модуля «Облачная инфраструктура. Terraform»
-
-- Домашнее задание "Основы работы с Terraform"
-- Домашнее задание "Продвинутые методы работы с Terraform"
-
-<a href="img/SHTER-25.png">
-  <img src="img/SHTER-25.png" width="10%">
-</a>
-
-## 16. Модуль "Система управления конфигурациями" (SHKONF-25)
-15 декабря — 12 января
-
-* Введение в Ansible
-* Работа с Playbook
-* Использование Ansible
-* Работа с roles
-* Тестирование roles
-* Создание собственных модулей
-
-- Домашнее задание "Работа с roles"
-- Домашнее задание "Тестирование roles"
-- Домашнее задание "Создание собственных модулей"
-
-<a href="img/SHKONF-25.png">
-  <img src="img/SHKONF-25.png" width="10%">
-</a>
-
-## 17. Модуль "Непрерывная разработка и интеграция" (SHCICD-DEV-25)
-13 января — 29 января
-
-* Жизненный цикл ПО
-* DevOps и SRE
-* Процессы CI/CD
-* Jenkins
-* Teamcity
-* Gitlab
-
-- [Практическое задание "Жизненный цикл ПО"](https://github.com/radiomost/netology/blob/SHCICD-DEV-25/life_programm/README.md)
-- Тест к занятию «DevOps и SRE»
-- [Домашнее задание "Teamcity"](https://github.com/radiomost/netology/blob/SHCICD-DEV-25/teamcity/README.md)
-
-<a href="img/SHCICD-DEV-25.png">
-  <img src="img/SHCICD-DEV-25.png" width="10%">
-</a>
-
-
-## 18. Модуль "Мониторинг и логи" (SHMON-DEV-25)
-_______________
-
-* Системы мониторинга
-* Средство визуализации Grafana
-* Система сбора логов Elastic Stack
-* Платформа мониторинга Sentry
-* Инцидент-менеджмент
-
-- [Домашнее задание "Системы мониторинга"](https://github.com/radiomost/netology/blob/SHMON-DEV-25/monitoring_system/README.md)
-- [Домашнее задание "Средство визуализации Grafana"](https://github.com/radiomost/netology/blob/SHMON-DEV-25/grafana_visualization/README.md)
-- [Домашнее задание "Система сбора логов Elastic Stack"](https://github.com/radiomost/netology/blob/SHMON-DEV-25/elastic_search/README.md)
-
-<a href="img/SHMON-DEV-25.png">
-  <img src="img/SHMON-DEV-25.png" width="10%">
-</a>
-
-
-## 19. Модуль "Микросервисы" (SHMICROS-25)
-24 февраля — 10 марта
-
-* Введение в микросервисы
-* Микросервисы: принципы
-* Микросервисы: подходы
-* Микросервисы: масштабирование
-
-- [Домашнее задание "Микросервисы: подходы"](https://github.com/radiomost/netology/blob/SHMICROS-25/microservices_approaches/README.md)
-- [Домашнее задание "Микросервисы: масштабирование"](https://github.com/radiomost/netology/blob/SHMICROS-25/microservices_caling/README.md)
-
-<a href="img/SHMICROS-25.png">
-  <img src="img/SHMICROS-25.png" width="10%">
-</a>
-
-## 20. Модуль "Kubernetes: основы, применение и администрирование" (SHKUBER-25)
-16 марта — 20 апреля
-
-* Kubernetes. Причины появления. Команда kubectl
-* Базовые объекты K8S
-* Запуск приложений в K8S
-* Сетевое взаимодействие в Kubernetes
-* Хранение в K8s
-* Настройка приложений
-* Helm
-* Компоненты Kubernetes
-* Установка Kubernetes с помощью kubeadm, kubespray
-* Как работает сеть в K8S
-* Обновление приложений
-* Troubleshooting
-
-- [Домашнее задание к занятию «Базовые объекты K8S»](https://github.com/radiomost/netology/blob/SHKUBER-25/k8s_base_objects/README.md)
-
-<a href="img/SHKUBER-25.png">
-  <img src="img/SHKUBER-25.png" width="10%">
-</a>
-
-
-## 21. Модуль "Организация проекта при помощи облачных провайдеров" (SHCLOPRO-25)
-4 мая — 19 мая
-
-* Организация сети
-* Вычислительные мощности. Балансировщики нагрузки
-* Безопасность в облачных провайдерах
-* Кластеры. Ресурсы под управлением облачным провайдером
-
-<a href="img/SHCLOPRO-25.png">
-  <img src="img/SHCLOPRO-25.png" width="10%">
-</a>
-
-
-## 22. Модуль "Митапы для DevOps-разработчиков и системных администраторов" (MITAP-FOPS-1)
-
-* Курс на успех: ваша образовательная стратегия
-* Митап «Основы Apache Airflow»
-* Деплоймент и архитектура распределенного приложения на Bare Metal Kubernetes
-* Обзорная экскурсия по базам данных и файловым хранилищам
-* Митап «Безопасные интеграции 1С: что должен знать аналитик»
-* Как стать амбассадором Нетологии
-* RAG-системы на практике
-* Обратная связь и постановка границ, с которыми не спорят
+# Домашнее задание к занятию 6 «Создание собственных модулей» - Иванов Сергей
+
+## Подготовка к выполнению
+
+1. Создайте пустой публичный репозиторий в своём любом проекте: my_own_collection.
+2. Скачайте репозиторий Ansible: `git clone https://github.com/ansible/ansible.git` по любому, удобному вам пути.
+3. Зайдите в директорию Ansible: `cd ansible`.
+4. Создайте виртуальное окружение: `python3 -m venv venv`.
+5. Активируйте виртуальное окружение: `. venv/bin/activate`. Дальнейшие действия производятся только в виртуальном окружении.
+6. Установите зависимости `pip install -r requirements.txt`.
+7. Запустите настройку окружения `. hacking/env-setup`.
+8. Если все шаги прошли успешно — выйдите из виртуального окружения `deactivate`.
+9. Ваше окружение настроено. Чтобы запустить его, нужно находиться в директории `ansible` и выполнить конструкцию `. venv/bin/activate && . hacking/env-setup`.
+
+## Основная часть
+
+Ваша цель — написать собственный module, который вы можете использовать в своей role через playbook. Всё это должно быть собрано в виде collection и отправлено в ваш репозиторий.
+
+**Шаг 1.** В виртуальном окружении создайте новый `my_own_module.py` файл.
+
+**Шаг 2.** Наполните его содержимым:
+
+```python
+#!/usr/bin/python
+
+# Copyright: (c) 2018, Terry Jones <terry.jones@example.org>
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
+
+DOCUMENTATION = r'''
+---
+module: my_test
+
+short_description: This is my test module
+
+# If this is part of a collection, you need to use semantic versioning,
+# i.e. the version is of the form "2.5.0" and not "2.4".
+version_added: "1.0.0"
+
+description: This is my longer description explaining my test module.
+
+options:
+    name:
+        description: This is the message to send to the test module.
+        required: true
+        type: str
+    new:
+        description:
+            - Control to demo if the result of this module is changed or not.
+            - Parameter description can be a list as well.
+        required: false
+        type: bool
+# Specify this value according to your collection
+# in format of namespace.collection.doc_fragment_name
+extends_documentation_fragment:
+    - my_namespace.my_collection.my_doc_fragment_name
+
+author:
+    - Your Name (@yourGitHubHandle)
+'''
+
+EXAMPLES = r'''
+# Pass in a message
+- name: Test with a message
+  my_namespace.my_collection.my_test:
+    name: hello world
+
+# pass in a message and have changed true
+- name: Test with a message and changed output
+  my_namespace.my_collection.my_test:
+    name: hello world
+    new: true
+
+# fail the module
+- name: Test failure of the module
+  my_namespace.my_collection.my_test:
+    name: fail me
+'''
+
+RETURN = r'''
+# These are examples of possible return values, and in general should use other names for return values.
+original_message:
+    description: The original name param that was passed in.
+    type: str
+    returned: always
+    sample: 'hello world'
+message:
+    description: The output message that the test module generates.
+    type: str
+    returned: always
+    sample: 'goodbye'
+'''
+
+from ansible.module_utils.basic import AnsibleModule
+
+
+def run_module():
+    # define available arguments/parameters a user can pass to the module
+    module_args = dict(
+        name=dict(type='str', required=True),
+        new=dict(type='bool', required=False, default=False)
+    )
+
+    # seed the result dict in the object
+    # we primarily care about changed and state
+    # changed is if this module effectively modified the target
+    # state will include any data that you want your module to pass back
+    # for consumption, for example, in a subsequent task
+    result = dict(
+        changed=False,
+        original_message='',
+        message=''
+    )
+
+    # the AnsibleModule object will be our abstraction working with Ansible
+    # this includes instantiation, a couple of common attr would be the
+    # args/params passed to the execution, as well as if the module
+    # supports check mode
+    module = AnsibleModule(
+        argument_spec=module_args,
+        supports_check_mode=True
+    )
+
+    # if the user is working with this module in only check mode we do not
+    # want to make any changes to the environment, just return the current
+    # state with no modifications
+    if module.check_mode:
+        module.exit_json(**result)
+
+    # manipulate or modify the state as needed (this is going to be the
+    # part where your module will do what it needs to do)
+    result['original_message'] = module.params['name']
+    result['message'] = 'goodbye'
+
+    # use whatever logic you need to determine whether or not this module
+    # made any modifications to your target
+    if module.params['new']:
+        result['changed'] = True
+
+    # during the execution of the module, if there is an exception or a
+    # conditional state that effectively causes a failure, run
+    # AnsibleModule.fail_json() to pass in the message and the result
+    if module.params['name'] == 'fail me':
+        module.fail_json(msg='You requested this to fail', **result)
+
+    # in the event of a successful module execution, you will want to
+    # simple AnsibleModule.exit_json(), passing the key/value results
+    module.exit_json(**result)
+
+
+def main():
+    run_module()
+
+
+if __name__ == '__main__':
+    main()
+```
+
+Или возьмите это наполнение из статьи.
+
+**Шаг 3.** Заполните файл в соответствии с требованиями Ansible так, чтобы он выполнял основную задачу: module должен создавать текстовый файл на удалённом хосте по пути, определённом в параметре path, с содержимым, определённым в параметре content.
+
+**Шаг 4.** Проверьте module на исполняемость локально.
+
+**Шаг 5.** Напишите single task playbook и используйте module в нём.
+
+**Шаг 6.** Проверьте через playbook на идемпотентность.
+
+**Шаг 7.** Выйдите из виртуального окружения.
+
+**Шаг 8.** Инициализируйте новую collection: ansible-galaxy collection init my_own_namespace.yandex_cloud_elk.
+
+**Шаг 9.** В эту collection перенесите свой module в соответствующую директорию.
+
+**Шаг 10.** Single task playbook преобразуйте в single task role и перенесите в collection. У role должны быть default всех параметров module.
+
+**Шаг 11.** Создайте playbook для использования этой role.
+
+**Шаг 12.** Заполните всю документацию по collection, выложите в свой репозиторий, поставьте тег 1.0.0 на этот коммит.
+
+**Шаг 13.** Создайте .tar.gz этой collection: ansible-galaxy collection build в корневой директории collection.
+
+**Шаг 14.** Создайте ещё одну директорию любого наименования, перенесите туда single task playbook и архив c collection.
+
+**Шаг 15.** Установите collection из локального архива: ansible-galaxy collection install <archivename>.tar.gz.
+
+**Шаг 16.** Запустите playbook, убедитесь, что он работает.
+
+**Шаг 17.** В ответ необходимо прислать ссылки на collection и tar.gz архив, а также скриншоты выполнения пунктов 4, 6, 15 и 16.
+
+## Необязательная часть
+
+1. Реализуйте свой модуль для создания хостов в Yandex Cloud.
+2. Модуль может и должен иметь зависимость от yc, основной функционал: создание ВМ с нужным сайзингом на основе нужной ОС. Дополнительные модули по созданию кластеров ClickHouse, MySQL и прочего реализовывать не надо, достаточно простейшего создания ВМ.
+3. Модуль может формировать динамическое inventory, но эта часть не является обязательной, достаточно, чтобы он делал хосты с указанной спецификацией в YAML.
+4. Протестируйте модуль на идемпотентность, исполнимость. При успехе добавьте этот модуль в свою коллекцию.
+5. Измените playbook так, чтобы он умел создавать инфраструктуру под inventory, а после устанавливал весь ваш стек Observability на нужные хосты и настраивал его.
+6. В итоге ваша коллекция обязательно должна содержать: clickhouse-role (если есть своя), lighthouse-role, vector-role, два модуля: my_own_module и модуль управления Yandex Cloud хостами и playbook, который демонстрирует создание Observability стека.
+
+## Как оформить решение задания
+Выполненное домашнее задание пришлите в виде ссылки на .md-файл в вашем репозитории.
+
+## Решение
+
+### Шаг 1. Создание окружения сборки модуля
+
+1. Создано виртуальное окружение как описано в разделе **Подготовка к выполнению** с одной лишь оговоркой, что окружение настроено с использованием PYENV.
+Это детали и не влияют на результтат выполнения работ.
+
+2. Загружен проект Ansible c удаленного репозитория: `git clone https://github.com/ansible/ansible.git`
+
+## Шаг 2. Создание файла модуля
+
+2.1 Создан файл по пути:  `ansible/lib/ansible/modules/my_own_module.py` и изменено содержимое функции `run_module()`:
+
+```python
+def run_module():
+    import os
+    module_args = dict(
+        path=dict(type='str', required=True),
+        content=dict(type='str', required=True)
+    )
+
+    result = dict(
+        changed=False,
+        path='',
+        content=''
+    )
+
+    module = AnsibleModule(
+        argument_spec=module_args,
+        supports_check_mode=True
+    )
+
+    path = module.params['path']
+    content = module.params['content']
+    result['path'] = path
+    result['content'] = content
+
+    if module.check_mode:
+        module.exit_json(**result)
+
+    try:
+        if not os.path.exists(path) or open(path).read() != content:
+            with open(path, 'w') as f:
+                f.write(content)
+            result['changed'] = True
+    except Exception as e:
+        module.fail_json(msg=str(e), **result)
+
+    module.exit_json(**result)
+```
+
+Где:
+**path** - принимает путь к создаваемуму файлу;
+**content** - Текстовое содержание которое должнро быть в файле
+
+Создаем в корне проекта домашнего задания файл с параметрами запуска `payload.json`:
+
+```yaml
+{
+    "ANSIBLE_MODULE_ARGS": {
+        "path": "/tmp/example.txt",
+        "content": "Пример создания файла в директории"
+    }
+}
+```
+
+## Шаг 3. Проверка module на исполняемость локально.
+
+И запускаем созданный модуль командой из папки ansible:
+
+```bash
+python3 -m ansible.modules.my_own_module ../payload.json
+```
+![](img/img1.png)
+
+Результат выполнения:
+
+![](img/img2.png)
+
+
+## Шаг 4. Создаем single task playbook и используем module в нём.
+Создаем файл в корне проекта домашнего задания `single_playbooks.yaml`
+
+```yaml
+---
+- name: Test module
+  hosts: localhost
+  tasks:
+    - name: Call my_own_module
+      my_own_module:
+        path: /tmp/example.txt
+        content: Example create new file in directory tmp and add text.
+```
+
+Запускаем плейбук `ansible-playbook ../single_playbooks.yaml `
+
+
+Результат выполнения команды:
+
+![](img/img3.png)
+
+## Шаг 5. Проверка через playbook на идемпотентность.
+
+Изменяем созданный файл
+
+И удаляем часть слов, напрмер, исходный текст `Example create new file in directory tmp and add text.` изменяем в текст `file in directory tmp and add text.`
+
+![](img/img4.png)
+ 
+и запускаем заново плейбук как описано на шаге 4.
+
+Резултьтат:
+
+![](img/img5.png)
+
+Наблюдаем, что состояние файла приведено к состоянию описанному в плейбуке
+
+![](img/img6.png)
+
+## Шаг 6. Инициализируем новую collection: ansible-galaxy collection init my_own_namespace.yandex_cloud_elk
+
+Структура коллекции:
+
+```
+my_own_namespace/
+└── yandex_cloud_elk/
+    ├── galaxy.yml
+    ├── plugins/
+    └── roles/
+        └── create_file/
+            ├── tasks/
+            ├── defaults/
+            └── ...
+```
+
+
+```bash
+ansible-galaxy collection init my_own_namespace.yandex_cloud_elk
+
+mkdir my_own_namespace/yandex_cloud_elk/plugins/modules
+
+mv lib/ansible/modules/my_own_module.py my_own_namespace/yandex_cloud_elk/plugins/modules/
+```
+
+## Шаг 6. Преобразование single task playbook в role
+
+```bash
+ansible-galaxy role init my_own_namespace/yandex_cloud_elk/roles/create_file
+```
+
+Переносим задачу из playbook в `my_own_namespace/yandex_cloud_elk/roles/create_file/tasks/main.yml`:
+```yaml
+- name: Create file with my module
+  my_own_module:
+    path: "{{ path }}"
+    content: "{{ content }}"
+```
+
+В roles/create_file/defaults/main.yml указываем значения по умолчанию:
+
+```yaml
+path: "/tmp/example.txt"
+content: "Example create new file in directory tmp and add text."
+```
+Теперь роль можно вызывать с параметрами или использовать defaults.
+
+## Шаг 7. Playbook для использования роли
+
+Создаtv `playbook_use_role.yml`:
+
+```yaml
+- hosts: localhost
+  gather_facts: no
+
+  collections:
+    - my_own_namespace.yandex_cloud_elk
+
+  roles:
+    - role: create_file
+      vars:
+        path: "/tmp/test_role_file.txt"
+        content: "File create for role"
+```
+
+## Шаг 8. Документация и коммит
+
+Описание создано в файле `my_own_namespace/yandex_cloud_elk/README.md`
+
+Создаем коммит:
+
+```bash
+git add .
+git commit -m "Add my_own_module, role and documentation"
+git tag 1.3.2
+git push origin main --tags
+```
+
+## Шаг 9. Создание .tar.gz collection
+
+Находясь в корне collection `shkonf-25/create-new-module/ansible/my_own_namespace/yandex_cloud_elk`
+
+```bash
+ansible-galaxy collection build
+```
+Получаем файл `my_own_namespace-yandex_cloud_elk-1.0.0.tar.gz`
+
+Копирую архив в корень проекта домашнего задания:
+
+## Шаг 10. Подготовка директории для playbook и архива
+
+
+```bash
+#Переходим в директорию домашнего задания
+cd ~/netology/shkonf-25/create-new-module/
+
+#Создаем папку новую папку
+mkdir collection_test
+cd collection_test
+
+# Скопируем туда:
+cp ../ansible/my_own_namespace/yandex_cloud_elk/my_own_namespace-yandex_cloud_elk-1.0.0.tar.gz ./
+```
+
+## Шаг 11. Установка collection из локального архива
+
+```bash
+ansible-galaxy collection install my_own_namespace-yandex_cloud_elk-1.0.0.tar.gz -p ~/.ansible/collections --force
+```
+![](img/img7.png)
+
+Проверить установку можно:
+
+```bash
+ansible-galaxy collection list | grep my_own_namespace
+```
+
+![](img/img8.png)
+
+## Шаг 12. Запуск playbook
+
+```bash
+cd ..
+ansible-playbook -i localhost, playbook_use_role.yml
+```
+
+![](img/img9.png)
+
+## Шаг 13. Финальный коммит
+
+Создаем коммит:
+
+```bash
+git add .
+git commit -m "Add my_own_module, role and documentation"
+git tag 1.3.3
+git push origin main --tags
+```

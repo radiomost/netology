@@ -1,0 +1,8 @@
+---
+- name: Test module
+  hosts: localhost
+  tasks:
+    - name: Call my_own_module
+      my_own_module:
+        path: /tmp/example.txt
+        content: Example create new file in directory tmp and add text.

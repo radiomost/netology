@@ -1,0 +1,12 @@
+- hosts: localhost
+  connection: local
+  gather_facts: no
+
+  collections:
+    - my_own_namespace.yandex_cloud_elk
+
+  roles:
+    - role: create_file
+      vars:
+        path: "/tmp/test_role_file.txt"
+        content: "File create for role"

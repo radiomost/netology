@@ -1,0 +1,19 @@
+# Local .terraform directories and files
+**/.terraform/*
+.terraform*
+*.tfvars
+init.sql
+vault.yml
+
+!.terraformrc
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+terraform.tfvars
+hosts.ini
+secrets.auto.tfvars
+cloud-init.yml
+
+**/.tox/*
