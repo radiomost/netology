@@ -29,6 +29,32 @@ Resource Terraform для Yandex Cloud:
 - [Route table](https://registry.terraform.io/providers/yandex-cloud/yandex/latest/docs/resources/vpc_route_table).
 - [Compute Instance](https://registry.terraform.io/providers/yandex-cloud/yandex/latest/docs/resources/compute_instance).
 
+### Решение
+Так как какя то часть ip адресов, выдаваемых автоматически Yandex Cloud находится в черных списках/блокируются магистральных провайдеров (не Яндекс). Я подобрал для выполнения ДЗ методом перебора подобрал белый и незалоченный IP. Перевел в статус статических для использования в ДЗ. При автоматическом создании IP я "ручками" заменил на подготовленный чистый белый статический IP. 
+
+!['img_3.png'](img/img_3.png)
+
+1. На рисунке изображена VPC с именем "netology-vpc" и две подсети "private" и "public"
+Создана таблица маршрутизации "nat-route-table"
+
+!['img_1.png'](img/img_1.png)
+
+На следующем рисунке изображены созданные группы безопасности
+
+!['img_2.png'](img/img_2.png)
+
+Создал 3 виртуальные машины NAT-шлюз и ВМ в публичном и приватном сегменте сети с внешним доступом через интернет по ssh
+
+!['img_4.png'](img/img_4.png)
+
+Подключение к публичному хосту
+
+!['img_5.png'](img/img_5.png)
+
+Подключение к приватному хосту
+
+!['img_6.png'](img/img_6.png)
+
 ---
 ### Задание 2. AWS* (задание со звёздочкой)
 
