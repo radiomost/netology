@@ -1,4 +1,13 @@
-.terraform
-.terraform.lock.hcl
-terraform.tfstate
-terraform.tfstate.backup
+# Local .terraform directories and files
+**/.terraform/*
+.terraform*
+*.tfvars
+
+!.terraformrc
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+terraform.tfvars
+hosts.ini
