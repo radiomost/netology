@@ -41,6 +41,8 @@
 
 ### 1. Создаем бакет Object Storage и размещаем в нём файл с картинкой
 
+Проект `terraform`
+
 #### IAM-ключ service account
 
 У нас уже есть файл с кредами к аккаунту:
@@ -181,6 +183,8 @@ terraform apply
 
 ### 2. Создаем группу ВМ в public подсети фиксированного размера с шаблоном LAMP и веб-страницей, содержащей ссылку на картинку из бакета
 
+Проект `terraform2`
+
 ### Схема
 
 ```mermaid
@@ -271,6 +275,8 @@ graph TD
 
 ## 3-4 Подключить группу к сетевому балансировщику и создать Application Load Balancer с использованием Instance group и проверкой состояния.
 
+Проект `terraform3`
+
 ### Схема
 ```mermaid
 graph TD
@@ -312,6 +318,18 @@ graph TD
         style cl color:#FFFFFF, fill:#FFAE42, stroke:#F9F8BB
         style gr color:#000000, fill:#EDFF21, stroke:#AA00FF
 ```
+
+### Результат
+
+!['img_19.png'](img/img_19.png)
+!['img_18.png'](img/img_18.png)
+
+
+Я останавливал виртуальные машины и получал балансировку (IP адрес изменил на гарантированно чиcтый IP)
+
+['img_20_1.png'](img/img_20_1.png)
+['img_20_2.png'](img/img_20_2.png)
+['img_20_3.png'](img/img_20_3.png)
 
 ---
 ## Задание 2*. AWS (задание со звёздочкой)
