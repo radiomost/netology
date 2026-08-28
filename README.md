@@ -1,341 +1,271 @@
-# Курс "DevOps-инженер с нуля" (FOPS-36)
-18 ноября 2024 — 8 июля 2026
-
-## 1. Модуль "IT-системы и операционная система Linux" (SLINA-45)
-20 ноября — 5 декабря
-
-* Администрирование IT-систем
-* Архитектура компьютера. Операционная система
-* Настройка виртуального рабочего места
-* Типы дистрибутивов
-* Знакомство с операционной системой Linux
-* Основы работы в терминалe ОС Linux
-
-<a href="img/SLINA-45.png">
-  <img src="img/SLINA-45.png" width="10%">
-</a>
-
-
-## 2. Модуль "Операционная система Linux" (SLINB-45)
-20 ноября — 5 декабря
-
-* Процессы, управление процессами
-* Память, управление памятью
-* Шедулер
-* Дисковые системы
-* Файловые системы
-* Ядро операционной системы
-* Загрузка операционной системы
-
-<a href="img/SLINB-45.png">
-  <img src="img/SLINB-45.png" width="10%">
-</a>
-
-## 3. Модуль "Администрирование операционной системы Linux" (SLINC-45)
-16 января — 30 января
-
-* Управление пакетами
-* Инициализация системы. Systemd, init-v
-* Управление пользователями
-* Производительность системы
-* Производительность системы. Часть 2
-* Особенности работы с Astra Linux
-
-<a href="img/SLINC-45.png">
-  <img src="img/SLINC-45.png" width="10%">
-</a>
-
-## 4. Модуль "Программирование на Bash" (BASH-45)
-4 февраля — 22 февраля
-
-* Организационная информация модуля «Программирование на Bash»
-* Переменные и условные операторы
-* Циклы и функции
-* Regexp и его использование для синтаксического анализа
-* Работа с текстовыми утилитами
-* Разбор скриптов и их написание
-* Сбор вопросов к разборному вебинару
-* Разборный вебинар по всем темам «Программирование на Bash»
-
-<a href="img/BASH-45.png">
-  <img src="img/BASH-45.png" width="10%">
-</a>
-
-## 5. Модуль "Сеть, сетевые протоколы" (NET-45)
-24 февраля — 10 марта
-
-* Организационная информация
-* Теоретические основы сети
-* Сеть и сетевые протоколы: L2-сеть
-* Сеть и сетевые протоколы: L3-сеть
-* Сеть и сетевые протоколы: L4-сеть
-* NAT
-* IPv6
-
-<a href="img/NET-45.png">
-  <img src="img/NET-45.png" width="10%">
-</a>
-
-
-## 6. Модуль "Виртуализация" (SVIRT-44)
-24 марта — 14 апреля
-
-* Виртуализация и облачные решения. AWS, GCP, Яндекс.Облако, Openstack
-* Типы виртуализаций KVM, QEMU
-* Docker
-* Docker. Часть 2
-* Kubernetes
-* Kubernetes. Часть 2
-* 
-
-<a href="img/SVIRT-44.png">
-  <img src="img/SVIRT-44.png" width="10%">
-</a>
-
-
-## 7. Модуль "Автоматизация и CI/СD" (CICD-44)
-17 апреля — 15 мая
-
-* Ansible
-* Ansible. Часть 2
-* Terraform
-* Подъем инфраструктуры в облаке
-* Git
-* Что такое DevOps. CI/CD
-* GitLab
-
-<a href="img/CICD-44.png">
-  <img src="img/CICD-44.png" width="10%">
-</a>
-
-
-## 8. Модуль "Мониторинг" (SMON-44)
-19 мая — 5 июня
-
-* Обзор систем ИТ-мониторинга
-* Система мониторинга Zabbix
-* Система мониторинга Zabbix. Часть 2
-* Подготовка к практикуму по работе с Zabbix
-* Практикум по работе с Zabbix
-* Система мониторинга Prometheus
-* Система мониторинга Prometheus. Часть 2
-
-<a href="img/SMON-44.png">
-  <img src="img/SMON-44.png" width="10%">
-</a>
-
-## 9. Модуль "Отказоустойчивость" (SFLT-44)
-7 июня — 1 июля
-
-* Disaster Recovery. FHRP и Keepalived
-* Кластеризация и балансировка нагрузки
-* Резервное копирование
-* Отказоустойчивость в облаке
-
-<a href="img/SFLT-44.png">
-  <img src="img/SFLT-44.png" width="10%">
-</a>
-
-
-## 10. Модуль "Системы хранения и передачи данных" (SYSDB-44)
-10 июля — 24 июля
-
-* Базы данных, их типы
-* Кеширование Redis/memcached
-* ELK
-* Очереди RabbitMQ
-
-<a href="img/SYSDB-44.png">
-  <img src="img/SYSDB-44.png" width="10%">
-</a>
-
-## 11. Модуль "Реляционные базы данных и администрирование баз данных" (SDBSQL-44)
-28 июля — 29 августа
-
-* Базы данных
-* Введение в SQL
-* Операции с данными в SQL
-* Расширенные возможности SQL
-* Индексы
-* Репликация и масштабирование. Часть 1
-* Репликация и масштабирование. Часть 2
-* Резервное копирование.
-* Базы данных в облаке
-
-<a href="img/SDBSQL-44.png">
-  <img src="img/SDBSQL-44.png" width="10%">
-</a>
-
-## 12. Модуль "Информационная безопасность" (SYSSEC-44)
-2 сентября — 17 сентября
-
-* Уязвимости и атаки на информационные системы
-* Защита хоста
-* Защита сети
-* Лучшие практики современной информационной безопасности
-
-<a href="img/SYSSEC-44.png">
-  <img src="img/SYSSEC-44.png" width="10%">
-</a>
-
-## 13. Модуль "Системы управления версиями" (GIT-FOPS-35)
-15 октября — 29 октября
-
-* Системы контроля версий
-* Основы Git
-* Ветвления в Git
-* Инструменты Git
-
-<a href="img/GIT-FOPS-35.png">
-  <img src="img/GIT-FOPS-35.png" width="10%">
-</a>
-
-## 14. Модуль "Виртуализация и контейнеризация" (SHVIRTD-25)
-5 ноября — 16 ноября
-
-* Введение в курс
-* Введение в виртуализацию. Типы и функции гипервизоров. Обзор рынка вендоров и областей применения
-* Применение принципов IaaC в работе с виртуальными машинами
-* Введение в Docker
-* Оркестрация группой Docker контейнеров на примере Docker Compose.
-* Практическое применение Docker. Часть 1
-* Практическое применение Docker. Часть 2
-* Оркестрация кластером Docker контейнеров на примере Docker Swarm.
-
-<a href="img/SHVIRTD-25.png">
-  <img src="img/SHVIRTD-25.png" width="10%">
-</a>
-
-## 15. Модуль "Облачная инфраструктура. Terraform" (SHTER-25)
-19 ноября — 2 декабря
-
-* Введение в Terraform
-* Основы работы с Terraform
-* Управляющие конструкции в коде Terraform
-* Продвинутые методы работы с Terraform
-* Использование Terraform в команде
-* Итоговый проект модуля «Облачная инфраструктура. Terraform»
-
-- Домашнее задание "Основы работы с Terraform"
-- Домашнее задание "Продвинутые методы работы с Terraform"
-
-<a href="img/SHTER-25.png">
-  <img src="img/SHTER-25.png" width="10%">
-</a>
-
-## 16. Модуль "Система управления конфигурациями" (SHKONF-25)
-15 декабря — 12 января
-
-* Введение в Ansible
-* Работа с Playbook
-* Использование Ansible
-* Работа с roles
-* Тестирование roles
-* Создание собственных модулей
-
-- Домашнее задание "Работа с roles"
-- Домашнее задание "Тестирование roles"
-- Домашнее задание "Создание собственных модулей"
-
-<a href="img/SHKONF-25.png">
-  <img src="img/SHKONF-25.png" width="10%">
-</a>
-
-## 17. Модуль "Непрерывная разработка и интеграция" (SHCICD-DEV-25)
-13 января — 29 января
-
-* Жизненный цикл ПО
-* DevOps и SRE
-* Процессы CI/CD
-* Jenkins
-* Teamcity
-* Gitlab
-
-- [Практическое задание "Жизненный цикл ПО"](https://github.com/radiomost/netology/blob/SHCICD-DEV-25/life_programm/README.md)
-- Тест к занятию «DevOps и SRE»
-- [Домашнее задание "Teamcity"](https://github.com/radiomost/netology/blob/SHCICD-DEV-25/teamcity/README.md)
-
-<a href="img/SHCICD-DEV-25.png">
-  <img src="img/SHCICD-DEV-25.png" width="10%">
-</a>
-
-
-## 18. Модуль "Мониторинг и логи" (SHMON-DEV-25)
-_______________
-
-* Системы мониторинга
-* Средство визуализации Grafana
-* Система сбора логов Elastic Stack
-* Платформа мониторинга Sentry
-* Инцидент-менеджмент
-
-- [Домашнее задание "Системы мониторинга"](https://github.com/radiomost/netology/blob/SHMON-DEV-25/monitoring_system/README.md)
-- [Домашнее задание "Средство визуализации Grafana"](https://github.com/radiomost/netology/blob/SHMON-DEV-25/grafana_visualization/README.md)
-- [Домашнее задание "Система сбора логов Elastic Stack"](https://github.com/radiomost/netology/blob/SHMON-DEV-25/elastic_search/README.md)
-
-<a href="img/SHMON-DEV-25.png">
-  <img src="img/SHMON-DEV-25.png" width="10%">
-</a>
-
-
-## 19. Модуль "Микросервисы" (SHMICROS-25)
-24 февраля — 10 марта
-
-* Введение в микросервисы
-* Микросервисы: принципы
-* Микросервисы: подходы
-* Микросервисы: масштабирование
-
-- [Домашнее задание "Микросервисы: подходы"](https://github.com/radiomost/netology/blob/SHMICROS-25/microservices_approaches/README.md)
-- [Домашнее задание "Микросервисы: масштабирование"](https://github.com/radiomost/netology/blob/SHMICROS-25/microservices_caling/README.md)
-
-<a href="img/SHMICROS-25.png">
-  <img src="img/SHMICROS-25.png" width="10%">
-</a>
-
-## 20. Модуль "Kubernetes: основы, применение и администрирование" (SHKUBER-25)
-16 марта — 20 апреля
-
-* Kubernetes. Причины появления. Команда kubectl
-* Базовые объекты K8S
-* Запуск приложений в K8S
-* Сетевое взаимодействие в Kubernetes
-* Хранение в K8s
-* Настройка приложений
-* Helm
-* Компоненты Kubernetes
-* Установка Kubernetes с помощью kubeadm, kubespray
-* Как работает сеть в K8S
-* Обновление приложений
-* Troubleshooting
-
-- [Домашнее задание к занятию «Базовые объекты K8S»](https://github.com/radiomost/netology/blob/SHKUBER-25/k8s_base_objects/README.md)
-
-<a href="img/SHKUBER-25.png">
-  <img src="img/SHKUBER-25.png" width="10%">
-</a>
-
-
-## 21. Модуль "Организация проекта при помощи облачных провайдеров" (SHCLOPRO-25)
-4 мая — 19 мая
-
-* Организация сети
-* Вычислительные мощности. Балансировщики нагрузки
-* Безопасность в облачных провайдерах
-* Кластеры. Ресурсы под управлением облачным провайдером
-
-<a href="img/SHCLOPRO-25.png">
-  <img src="img/SHCLOPRO-25.png" width="10%">
-</a>
-
-
-## 22. Модуль "Митапы для DevOps-разработчиков и системных администраторов" (MITAP-FOPS-1)
-
-* Курс на успех: ваша образовательная стратегия
-* Митап «Основы Apache Airflow»
-* Деплоймент и архитектура распределенного приложения на Bare Metal Kubernetes
-* Обзорная экскурсия по базам данных и файловым хранилищам
-* Митап «Безопасные интеграции 1С: что должен знать аналитик»
-* Как стать амбассадором Нетологии
-* RAG-системы на практике
-* Обратная связь и постановка границ, с которыми не спорят
+# Домашнее задание к занятию «Вычислительные мощности. Балансировщики нагрузки»  
+
+### Подготовка к выполнению задания
+
+1. Домашнее задание состоит из обязательной части, которую нужно выполнить на провайдере Yandex Cloud, и дополнительной части в AWS (выполняется по желанию). 
+2. Все домашние задания в блоке 15 связаны друг с другом и в конце представляют пример законченной инфраструктуры.  
+3. Все задания нужно выполнить с помощью Terraform. Результатом выполненного домашнего задания будет код в репозитории. 
+4. Перед началом работы настройте доступ к облачным ресурсам из Terraform, используя материалы прошлых лекций и домашних заданий.
+
+---
+## Задание 1. Yandex Cloud 
+
+**Что нужно сделать**
+
+1. Создать бакет Object Storage и разместить в нём файл с картинкой:
+
+ - Создать бакет в Object Storage с произвольным именем (например, _имя_студента_дата_).
+ - Положить в бакет файл с картинкой.
+ - Сделать файл доступным из интернета.
+ 
+2. Создать группу ВМ в public подсети фиксированного размера с шаблоном LAMP и веб-страницей, содержащей ссылку на картинку из бакета:
+
+ - Создать Instance Group с тремя ВМ и шаблоном LAMP. Для LAMP рекомендуется использовать `image_id = fd827b91d99psvq5fjit`.
+ - Для создания стартовой веб-страницы рекомендуется использовать раздел `user_data` в [meta_data](https://cloud.yandex.ru/docs/compute/concepts/vm-metadata).
+ - Разместить в стартовой веб-странице шаблонной ВМ ссылку на картинку из бакета.
+ - Настроить проверку состояния ВМ.
+ 
+3. Подключить группу к сетевому балансировщику:
+
+ - Создать сетевой балансировщик.
+ - Проверить работоспособность, удалив одну или несколько ВМ.
+4. (дополнительно)* Создать Application Load Balancer с использованием Instance group и проверкой состояния.
+
+Полезные документы:
+
+- [Compute instance group](https://registry.terraform.io/providers/yandex-cloud/yandex/latest/docs/resources/compute_instance_group).
+- [Network Load Balancer](https://registry.terraform.io/providers/yandex-cloud/yandex/latest/docs/resources/lb_network_load_balancer).
+- [Группа ВМ с сетевым балансировщиком](https://cloud.yandex.ru/docs/compute/operations/instance-groups/create-with-balancer).
+
+## Решение
+
+### 1. Создаем бакет Object Storage и размещаем в нём файл с картинкой
+
+#### IAM-ключ service account
+
+У нас уже есть файл с кредами к аккаунту:
+
+```bash
+~/.authorized_key.json
+```
+Нас интересует:
+
+`service_account_id`
+
+Получить его можно:
+
+```bash
+grep service_account_id ~/.authorized_key.json
+```
+
+!['img_1.png'](img/img_1.png)
+
+
+#### Получаем Static Access Key
+
+Теперь используем тот же service account:
+
+```bash
+yc iam access-key list \
+  --service-account-id aje......vh
+  ```
+
+!['img_2.png'](img/img_2.png)
+
+Здесь очень важно различать три значения.
+
+##### ID
+
+Например:
+
+`aje........k8`
+
+Это ID объекта access key в IAM.
+
+##### SERVICE ACCOUNT ID
+
+Например:
+
+aje........vh
+
+Это ID service account.
+
+##### KEY ID
+
+Например:
+
+YCAJxxxxxxxxxxxxZi
+
+Вот это является Access Key ID для S3.
+
+Именно его мы используем в:
+
+`YC_STORAGE_ACCESS_KEY`
+
+#### Где взять Secret Access Key
+
+Команда:
+
+`yc iam access-key list`
+
+*Secret* не показывает.
+
+Если secret для существующего ключа не сохранён, создаём новый:
+
+yc iam access-key create \
+  --service-account-id aje........vh
+
+Результат будет такой:
+
+!['img_3.png'](img/img_3.png)
+
+Получаем пару:
+
+Access Key ID:
+YCAJxxxxxxxxxxxxZi
+
+Secret Access Key:
+YCMxxxxxxxxxxxxxxxxxxxxxxkv
+
+`Secret` показывается только при создании.
+
+#### Экспортируем ключи
+
+Для Yandex Terraform provider используем:
+
+export YC_STORAGE_ACCESS_KEY="YCAJxxxxxxxxxxxZi"
+export YC_STORAGE_SECRET_KEY="YCMxxxxxxxxxxxxxxxxxxxxxxkv"
+
+Проверить можно безопасно:
+
+```bash
+printf 'ACCESS: %s...%s\n' \
+  "${YC_STORAGE_ACCESS_KEY:0:4}" \
+  "${YC_STORAGE_ACCESS_KEY: -2}"
+  ```
+
+!['img_4.png'](img/img_4.png)
+
+
+```bash
+printf 'ACCESS: %s...%s\n' \
+  "${YC_STORAGE_SECRET_KEY:0:4}" \
+  "${YC_STORAGE_SECRET_KEY: -2}"
+  ```
+
+!['img_5.png'](img/img_5.png)
+
+#### Выдать права
+
+```bash
+yc resource-manager folder add-access-binding \
+  <FOLDER_ID> \
+  --role storage.editor \
+  --subject serviceAccount:<SERVICE_ACCOUNT_ID>
+```
+
+!['img_6.png'](img/img_6.png)
+
+Выполняем проект терраформ
+
+```bash
+terraform init
+terraform plan
+terraform apply
+```
+!['img_7.png'](img/img_7.png)
+!['img_8.png'](img/img_8.png)
+
+Ссылка на скачивание файла
+`https://storage.yandexcloud.net/netology-ivanov-sergey-20260828/image.jpg`
+
+### 2. Создаем группу ВМ в public подсети фиксированного размера с шаблоном LAMP и веб-страницей, содержащей ссылку на картинку из бакета
+
+### Схема
+
+```mermaid
+graph TD
+    YC[Yandex Cloud]
+
+    subgraph Yandex Cloud
+        OS[Object Storage]
+        CC[Compute Cloud]
+
+        IMG[image.jpg]
+        IG[Instance Group<br/>size = 3]
+
+        VM1[VM1<br/>LAMP + Apache]
+        VM2[VM2<br/>LAMP + Apache]
+        VM3[VM3<br/>LAMP + Apache]
+
+        WEB[web page<br/>с ссылкой на image.jpg]
+    end
+
+    YC --> OS
+    YC --> CC
+
+    OS --> IMG
+    CC --> IG
+
+    IG --> VM1
+    IG --> VM2
+    IG --> VM3
+
+    IMG -.-> WEB
+    VM1 --> WEB
+    VM2 --> WEB
+    VM3 --> WEB
+```
+
+#### Нам потребуется:
+
+1. сеть и public subnet — если они уже есть, используем существующие;
+2. Instance Group;
+3. Instance Template;
+4.образ LAMP:
+    `fd827b91d99psvq5fjit`
+5. user_data для создания стартовой страницы;
+6. Load Balancer для Instance Group — желательно сразу сделать правильно, поскольку нам требуется проверка состояния ВМ;
+7. health check;
+8. три экземпляра ВМ.
+
+ 
+---
+## Задание 2*. AWS (задание со звёздочкой)
+
+Это необязательное задание. Его выполнение не влияет на получение зачёта по домашней работе.
+
+**Что нужно сделать**
+
+Используя конфигурации, выполненные в домашнем задании из предыдущего занятия, добавить к Production like сети Autoscaling group из трёх EC2-инстансов с  автоматической установкой веб-сервера в private домен.
+
+1. Создать бакет S3 и разместить в нём файл с картинкой:
+
+ - Создать бакет в S3 с произвольным именем (например, _имя_студента_дата_).
+ - Положить в бакет файл с картинкой.
+ - Сделать доступным из интернета.
+2. Сделать Launch configurations с использованием bootstrap-скрипта с созданием веб-страницы, на которой будет ссылка на картинку в S3. 
+3. Загрузить три ЕС2-инстанса и настроить LB с помощью Autoscaling Group.
+
+Resource Terraform:
+
+- [S3 bucket](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket)
+- [Launch Template](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/launch_template).
+- [Autoscaling group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/autoscaling_group).
+- [Launch configuration](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/launch_configuration).
+
+Пример bootstrap-скрипта:
+
+```
+#!/bin/bash
+yum install httpd -y
+service httpd start
+chkconfig httpd on
+cd /var/www/html
+echo "<html><h1>My cool web-server</h1></html>" > index.html
+```
+### Правила приёма работы
+
+Домашняя работа оформляется в своём Git репозитории в файле README.md. Выполненное домашнее задание пришлите ссылкой на .md-файл в вашем репозитории.
+Файл README.md должен содержать скриншоты вывода необходимых команд, а также скриншоты результатов.
+Репозиторий должен содержать тексты манифестов или ссылки на них в файле README.md.
