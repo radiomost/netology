@@ -185,7 +185,7 @@ terraform apply
 
 ```mermaid
 graph TD
-    YC[Yandex Cloud]
+    YC[h-devops]
 
     subgraph Yandex Cloud
         OS[Object Storage]
@@ -229,7 +229,90 @@ graph TD
 7. health check;
 8. три экземпляра ВМ.
 
+#### Добавляем права для netology-instance-group-sa
+
+Проверяем, что у `netology-instance-group-sa` нет прав
+
+!['img_9.png'](img/img_9.png)
+
+!['img_10.png'](img/img_10.png)
+
+Добавляем права `compute.editor` для `netology-instance-group-sa`
+
+!['img_11.png'](img/img_11.png)
+
+Добавляем права `vpc.user` для `netology-instance-group-sa`
+
+!['img_12.png'](img/img_12.png)
  
+Добавляем права `resource-manager.viewer` для `netology-instance-group-sa`
+
+!['img_14.png'](img/img_14.png)
+
+Проверяем:
+!['img_13.png'](img/img_13.png)
+
+!['img_15.png'](img/img_15.png)
+
+!['img_16.png'](img/img_16.png)
+
+### LAMP 1
+
+!['img_17_1.png'](img/img_17_1.png)
+
+### LAMP 2
+
+!['img_17_2.png'](img/img_17_2.png)
+
+### LAMP 3
+
+!['img_17_3.png'](img/img_17_3.png)
+
+
+## 3-4 Подключить группу к сетевому балансировщику и создать Application Load Balancer с использованием Instance group и проверкой состояния.
+
+### Схема
+```mermaid
+graph TD
+    A("Интернет")
+
+    subgraph cl[Yandex Cloud]
+        direction TB
+
+        B1("Network Load Balancer")
+        B2("Application Load Balancer")
+
+        %% Точки распределения - маленькие кружки
+        D1(( )):::junction
+        D2(( )):::junction
+
+        subgraph gr[Instance Group]
+            direction LR
+            E1[VM1]
+            E2[VM2]
+            E3[VM3]
+        end
+    end
+        A --> B1
+        A --> B2
+        B1 --> D1
+        B2 --> D2
+        D1 --> E1
+        D1 --> E2
+        D1 --> E3
+        D2 --> E1
+        D2 --> E2
+        D2 --> E3
+
+        classDef junction fill:#333333,stroke:#333333,color:#333333
+        class D1,D2 junction
+
+        classDef purpleStyle color:#FFFFFF, fill:#AA00FF, stroke:#AA00FF
+        class E1,E2,E3 purpleStyle
+        style cl color:#FFFFFF, fill:#FFAE42, stroke:#F9F8BB
+        style gr color:#000000, fill:#EDFF21, stroke:#AA00FF
+```
+
 ---
 ## Задание 2*. AWS (задание со звёздочкой)
 
