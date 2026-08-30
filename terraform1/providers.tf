@@ -8,7 +8,7 @@ terraform {
 
   backend "s3" {
     bucket = "netology"
-    key    = "instance-group.tfstate"
+    key    = "security_cloud.tfstate"
     region = "us-east-1"
 
     endpoints = {
