@@ -84,7 +84,16 @@
 ### Диаграмма проекта
 
 ```mermaid
-%%{include: ./mermaid/treeView-01.mmd}%%
+treeView-beta
+netology/
+  stage0-bootstrap/   
+    main.tf
+    variables.tf
+    outputs.tf
+  stage1-infra/ 
+    main.tf
+    variables.tf
+    ...
 ```
 
 
