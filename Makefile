@@ -113,10 +113,12 @@ kubespray-reset:
 
 # Get kubeconfig from master node (Fixed for TLS certificate validation)
 k8s-kubeconfig:
+	@echo "=== DEBUG: Проверяем, видит ли shell директорию ==="
+	@ls -ld ./stage2-compute
 	@echo "=== Fetching kubeconfig from master node ==="
-	@cd stage2-compute && terraform init -input=false > /dev/null
-	@MASTER_IP=$$(cd stage2-compute && terraform output -raw master_external_ip) && \
-	MASTER_INT_IP=$$(cd stage2-compute && terraform output -raw master_internal_ip) && \
+	@cd ./stage2-compute && terraform init -input=false > /dev/null
+	@MASTER_IP=$$(cd ./stage2-compute && terraform output -raw master_external_ip) && \
+	MASTER_INT_IP=$$(cd ./stage2-compute && terraform output -raw master_internal_ip) && \
 	echo "Master External IP: $$MASTER_IP" && \
 	echo "Master Internal IP: $$MASTER_INT_IP" && \
 	mkdir -p ~/.kube && \
@@ -210,9 +212,27 @@ clean-app:
 # Динамически получаем Registry ID из Terraform state
 REGISTRY_ID := $(shell cd stage3-registry && terraform output -raw registry_id 2>/dev/null || echo "REPLACE_ME_VIA_TERRAFORM")
 
-# =============================================================================
-# Kubernetes Deployment (Monitoring & App)
-# =============================================================================
+# Get kubeconfig from master node
+k8s-kubeconfig:
+	@echo "=== DEBUG: Проверяем, видит ли shell директорию ==="
+	@ls -ld ./stage2-compute
+	@echo "=== Fetching kubeconfig from master node ==="
+	@cd ./stage2-compute && terraform init -input=false > /dev/null
+	@MASTER_IP=$$(cd ./stage2-compute && terraform output -raw master_external_ip) && \
+	MASTER_INT_IP=$$(cd ./stage2-compute && terraform output -raw master_internal_ip) && \
+	echo "Master External IP: $$MASTER_IP" && \
+	echo "Master Internal IP: $$MASTER_INT_IP" && \
+	mkdir -p ~/.kube && \
+	ssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 -i ~/.ssh/id_rsa ubuntu@$$MASTER_IP \
+		"sudo cp /root/.kube/config /tmp/kubeconfig && sudo chown ubuntu:ubuntu /tmp/kubeconfig" && \
+	scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$$MASTER_IP:/tmp/kubeconfig ~/.kube/config && \
+	ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$$MASTER_IP "rm -f /tmp/kubeconfig" && \
+	sed -i "s|https://$$MASTER_INT_IP:6443|https://127.0.0.1:6443|g" ~/.kube/config && \
+	sed -i "s|https://$$MASTER_IP:6443|https://127.0.0.1:6443|g" ~/.kube/config && \
+	chmod 600 ~/.kube/config && \
+	echo "Kubeconfig saved to ~/.kube/config and configured for localhost tunnel." && \
+	echo "To connect, run: ssh -i ~/.ssh/id_rsa -f -N -L 6443:$$MASTER_INT_IP:6443 ubuntu@$$MASTER_IP" && \
+	echo "Then test with: kubectl get nodes"
 
 # =============================================================================
 # Kubernetes Deployment (Monitoring & App)
@@ -220,8 +240,10 @@ REGISTRY_ID := $(shell cd stage3-registry && terraform output -raw registry_id 2
 
 k8s-deploy:
 	@echo "=== Deploying Monitoring Stack and Application ==="
-	@cd stage3-registry && terraform init -input=false > /dev/null
-	@REGISTRY_ID=$$(cd stage3-registry && terraform output -raw registry_id) && \
+	@echo "=== DEBUG: Проверяем, видит ли shell директорию stage3 ==="
+	@ls -ld ./stage3-registry
+	@cd ./stage3-registry && terraform init -input=false > /dev/null
+	@REGISTRY_ID=$$(cd ./stage3-registry && terraform output -raw registry_id) && \
 	echo "Detected Registry ID: $$REGISTRY_ID" && \
 	echo "[1/5] Adding Helm repositories..." && \
 	helm repo add prometheus-community https://prometheus-community.github.io/helm-charts && \
@@ -256,7 +278,6 @@ k8s-deploy:
 	echo "" && \
 	echo "=== Deployment Complete! ===" && \
 	echo "Get Ingress IP: kubectl get svc -n ingress-nginx ingress-nginx-controller"
-
 
 
 # Uninstall everything from the cluster
