@@ -90,6 +90,13 @@ deploy_k8s:
     - chmod 600 ~/.ssh/id_rsa
     - echo -e "Host *\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile=/dev/null\n" > ~/.ssh/config
   script:
+    # === ДОБАВЛЕНА ОТЛАДКА ===
+    - echo "=== DEBUG: ПРОВЕРКА СОДЕРЖИМОГО ПАПКИ ==="
+    - pwd
+    - ls -la
+    - ls -la stage* || echo "ПАПОК stage НЕ НАЙДЕНО!"
+    - echo "=== КОНЕЦ DEBUG ==="
+    # =========================
     - echo "Fetching kubeconfig from master node..."
     - make k8s-kubeconfig
     - echo "Deploying monitoring stack and application..."
