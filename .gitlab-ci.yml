@@ -84,19 +84,11 @@ deploy_k8s:
   stage: deploy_k8s
   before_script:
     - !reference [.base, before_script]
-    # Настраиваем SSH-ключ для подключения к master-ноде (нужен для make k8s-kubeconfig)
     - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - cp "$SSH_PRIVATE_KEY" ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
     - echo -e "Host *\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile=/dev/null\n" > ~/.ssh/config
   script:
-    # === ДОБАВЛЕНА ОТЛАДКА ===
-    - echo "ПРОВЕРКА СОДЕРЖИМОГО ПАПКИ ==="
-    - pwd
-    - ls -la
-    - ls -la stage* || echo "ПАПОК stage НЕ НАЙДЕНО!"
-    - echo "=== КОНЕЦ DEBUG ==="
-    # =========================
     - echo "Fetching kubeconfig from master node..."
     - make k8s-kubeconfig
     - echo "Deploying monitoring stack and application..."
