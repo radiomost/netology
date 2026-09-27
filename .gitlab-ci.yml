@@ -8,7 +8,9 @@ variables:
 
 # Базовый шаблон для всех джоб
 .base:
-  image: hashicorp/terraform:${TF_VERSION}
+  image:
+    name: hashicorp/terraform:${TF_VERSION}
+    entrypoint: [""] # ⚠️ КРИТИЧЕСКИ ВАЖНО: отключаем дефолтный entrypoint "terraform"
   before_script:
     # 1. Устанавливаем базовые утилиты + make + ssh-client
     - apk add --no-cache curl jq bash python3 git make openssh-client sed
@@ -61,6 +63,8 @@ deploy_k8s:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
+    # Отключаем строгую проверку хостов для первого подключения
+    - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
   script:
     - echo "Fetching kubeconfig from master node..."
     - make k8s-kubeconfig
