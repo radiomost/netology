@@ -10,10 +10,10 @@ variables:
 .base:
   image:
     name: hashicorp/terraform:${TF_VERSION}
-    entrypoint: [""] # ⚠️ КРИТИЧЕСКИ ВАЖНО: отключаем дефолтный entrypoint "terraform"
+    entrypoint: [""] # Отключаем дефолтный entrypoint "terraform"
   before_script:
-    # 1. Устанавливаем базовые утилиты + make + ssh-client
-    - apk add --no-cache curl jq bash python3 git make openssh-client sed
+    # 1. Устанавливаем утилиты. Добавили 'openssl' и 'helm' в этот список!
+    - apk add --no-cache curl jq bash python3 git make openssh-client sed openssl helm
     
     # 2. Устанавливаем Yandex Cloud CLI
     - curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
@@ -26,11 +26,10 @@ variables:
     - yc config set service-account-key ~/.authorized_key.json
     - yc config set folder-id "$TF_VAR_folder_id"
     
-    # 4. Устанавливаем kubectl и helm (необходимы для make k8s-deploy)
+    # 4. Устанавливаем kubectl (Helm уже установлен выше через apk)
     - curl -LO "https://dl.k8s.io/release/v1.28.0/bin/linux/amd64/kubectl"
     - install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-    - curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
-    - chmod 700 get_helm.sh && ./get_helm.sh
+    - rm -f kubectl # Очищаем временный файл
 
 # Стадия 1: Планирование (запускается автоматически при любом пуше)
 plan:
