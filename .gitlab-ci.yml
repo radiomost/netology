@@ -17,7 +17,7 @@ variables:
     
     # 2. Скачиваем и устанавливаем ВАШУ версию Terraform
     - echo "Installing custom Terraform 1.14.0..."
-    - curl -sSL "$TF_BINARY_URL" -o /tmp/terraform.zip
+    - curl -k -sSL "$TF_BINARY_URL" -o /tmp/terraform.zip
     - unzip -o /tmp/terraform.zip -d /usr/local/bin/
     - rm -f /tmp/terraform.zip
     - terraform version # Проверка
@@ -25,7 +25,7 @@ variables:
     # 3. Скачиваем и устанавливаем ВАШУ версию провайдера Yandex Cloud
     - echo "Installing custom Yandex Provider 0.129.0..."
     - mkdir -p ~/.terraform.d/plugins/registry.terraform.io/yandex-cloud/yandex/0.129.0/linux_amd64
-    - curl -sSL "$YC_PROVIDER_URL" -o /tmp/yandex-provider.zip
+    - curl -k -sSL "$YC_PROVIDER_URL" -o /tmp/yandex-provider.zip
     - unzip -o /tmp/yandex-provider.zip -d ~/.terraform.d/plugins/registry.terraform.io/yandex-cloud/yandex/0.129.0/linux_amd64/
     - rm -f /tmp/yandex-provider.zip
     
