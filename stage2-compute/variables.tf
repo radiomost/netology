@@ -33,3 +33,9 @@ variable "worker2_ip_id" {
   type        = string
   default = "e2ldlodvbl7f8ltgm35n"
 }
+
+variable "ssh_public_key" {
+  description = "SSH public key for VM access"
+  type        = string
+  default     = file("~/.ssh/id_rsa.pub") 
+}

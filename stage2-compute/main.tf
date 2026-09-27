@@ -4,8 +4,8 @@ data "yandex_compute_image" "ubuntu" {
 }
 
 locals {
-  # SSH public key for accessing VMs (ensure this exists on your host)
-  ssh_public_key = file("~/.ssh/id_rsa.pub")
+  # Мы будем передавать это значение через переменную окружения TF_VAR_ssh_public_key
+  ssh_public_key = var.ssh_public_key
 
   subnet_a_id = data.terraform_remote_state.network.outputs.subnet_a_id
   subnet_b_id = data.terraform_remote_state.network.outputs.subnet_b_id
