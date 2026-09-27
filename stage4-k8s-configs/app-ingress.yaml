@@ -1,0 +1,18 @@
+# stage4-k8s-configs/app-ingress.yaml (исправленный)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: diploma-app-ingress
+  namespace: default
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: netology-diploma-app-service
+                port:
+                  number: 80
