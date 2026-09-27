@@ -5,22 +5,29 @@ stages:
 
 variables:
   TF_VERSION: "1.5.0"
-  YC_CLI_VERSION: "0.129.0"
 
-# Базовый образ с Terraform и Yandex Cloud CLI
+# Базовый образ с Terraform
 .base:
   image: hashicorp/terraform:${TF_VERSION}
   before_script:
-    - apk add --no-cache curl jq bash python3
+    - apk add --no-cache curl jq bash python3 git
+    
+    # Установка Yandex Cloud CLI
     - curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
     - export PATH="$PATH:$HOME/yandex-cloud/bin"
+    
+    # Создание ключа сервисного аккаунта из переменной GitLab
+    - echo "Creating YC Service Account key from GitLab variable..."
+    - echo "$YC_SA_KEY" > ~/.authorized_key.json
+    - chmod 600 ~/.authorized_key.json
+    
+    # Настройка профиля YC CLI
     - yc config profile create ci-profile || true
-    - echo "Authenticating to Vault..."
-    - export VAULT_TOKEN=$(curl -s --request POST --data "{\"role_id\":\"$VAULT_ROLE_ID\",\"secret_id\":\"$VAULT_SECRET_ID\"}" $VAULT_ADDR/v1/auth/approle/login | jq -r '.auth.client_token')
-    - export SA_KEY=$(curl -s --header "X-Vault-Token: $VAULT_TOKEN" $VAULT_ADDR/v1/secret/data/yc/diploma-sa | jq -r '.data.data.sa_key')
-    - echo "$SA_KEY" > ~/.authorized_key.json
     - yc config set service-account-key ~/.authorized_key.json
     - yc config set folder-id "$TF_VAR_folder_id"
+    
+    # Проверка аутентификации
+    - yc config list
 
 validate:
   extends: .base
