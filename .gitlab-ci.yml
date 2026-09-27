@@ -6,18 +6,16 @@ stages:
 variables:
   TF_VERSION: "1.5.0"
 
-# Базовый образ с Terraform
 .base:
   image: hashicorp/terraform:${TF_VERSION}
   before_script:
+    # Установка зависимостей и Yandex Cloud CLI
     - apk add --no-cache curl jq bash python3 git
-    
-    # Установка Yandex Cloud CLI
     - curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
     - export PATH="$PATH:$HOME/yandex-cloud/bin"
     
-    # Создание ключа сервисного аккаунта из переменной GitLab
-    - echo "Creating YC Service Account key from GitLab variable..."
+    # Сохранение ключа SA из переменной GitLab в ожидаемый файл
+    - echo "Setting up YC Service Account key..."
     - echo "$YC_SA_KEY" > ~/.authorized_key.json
     - chmod 600 ~/.authorized_key.json
     
@@ -25,8 +23,6 @@ variables:
     - yc config profile create ci-profile || true
     - yc config set service-account-key ~/.authorized_key.json
     - yc config set folder-id "$TF_VAR_folder_id"
-    
-    # Проверка аутентификации
     - yc config list
 
 validate:
@@ -89,4 +85,4 @@ apply:
     - plan
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
-      when: manual  # Ручное подтверждение apply
+      when: manual  # Ручной запуск apply для безопасности (можно убрать 'when: manual' для полной автоматизации)
