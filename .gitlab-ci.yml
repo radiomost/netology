@@ -91,7 +91,7 @@ deploy_k8s:
     - echo -e "Host *\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile=/dev/null\n" > ~/.ssh/config
   script:
     # === ДОБАВЛЕНА ОТЛАДКА ===
-    - echo "=== DEBUG: ПРОВЕРКА СОДЕРЖИМОГО ПАПКИ ==="
+    - echo "ПРОВЕРКА СОДЕРЖИМОГО ПАПКИ ==="
     - pwd
     - ls -la
     - ls -la stage* || echo "ПАПОК stage НЕ НАЙДЕНО!"
