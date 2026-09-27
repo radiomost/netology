@@ -112,10 +112,8 @@ kubespray-reset:
 	@echo "Kubespray removed. Run 'make kubespray-init' to start fresh."
 
 # Get kubeconfig from master node (Fixed for TLS certificate validation)
-# Get kubeconfig from master node
 k8s-kubeconfig:
 	@echo "=== Fetching kubeconfig from master node ==="
-	@cd stage2-compute && terraform init -input=false > /dev/null
 	@MASTER_IP=$$(cd stage2-compute && terraform output -raw master_external_ip) && \
 	MASTER_INT_IP=$$(cd stage2-compute && terraform output -raw master_internal_ip) && \
 	echo "Master External IP: $$MASTER_IP" && \
@@ -146,7 +144,9 @@ APP_DIR         := app-source
 build:
 	@echo "=== Building and pushing Docker image to Yandex Container Registry ==="
 	@echo "App: $(APP_NAME), Version: $(APP_VERSION)"
-	
+
+	@ls -la
+
 	# Step 1: Get registry_id from Terraform output
 	echo "[1/6] Fetching registry ID from Terraform..."
 	REGISTRY_ID=$$(cd stage3-registry && terraform output -raw registry_id 2>/dev/null)
@@ -215,42 +215,47 @@ REGISTRY_ID := $(shell cd stage3-registry && terraform output -raw registry_id 2
 
 k8s-deploy:
 	@echo "=== Deploying Monitoring Stack and Application ==="
-	@cd stage3-registry && terraform init -input=false > /dev/null
-	@REGISTRY_ID=$$(cd stage3-registry && terraform output -raw registry_id) && \
-	echo "Detected Registry ID: $$REGISTRY_ID" && \
-	echo "[1/5] Adding Helm repositories..." && \
-	helm repo add prometheus-community https://prometheus-community.github.io/helm-charts && \
-	helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && \
-	helm repo update && \
-	echo "[2/5] Installing NGINX Ingress Controller..." && \
-	helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
+	@echo "Detected Registry ID: $(REGISTRY_ID)"
+	
+	@echo "[1/5] Adding Helm repositories..."
+	@helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+	@helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+	@helm repo update
+	
+	@echo "[2/5] Installing NGINX Ingress Controller..."
+	@helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
 		--namespace ingress-nginx --create-namespace \
 		--set controller.replicaCount=1 \
-		--set controller.hostNetwork=true \
-		--set controller.dnsPolicy=ClusterFirstWithHostNet \
-		--set controller.service.type=ClusterIP \
-		--set controller.nodeSelector."kubernetes\.io/os"=linux && \
-	echo "[3/5] Installing kube-prometheus-stack..." && \
-	helm upgrade --install monitoring prometheus-community/kube-prometheus-stack \
+		--set controller.nodeSelector."kubernetes\.io/os"=linux
+	
+	@echo "[3/5] Installing kube-prometheus-stack..."
+	@helm upgrade --install monitoring prometheus-community/kube-prometheus-stack \
 		--namespace monitoring --create-namespace \
-		-f stage4-k8s-configs/monitoring-values.yaml && \
-	echo "[4/5] Creating YCR pull secret..." && \
-	ycr_token=$$(yc iam create-token | tr -d '\n\r') && \
+		-f stage4-k8s-configs/monitoring-values.yaml
+	
+	@echo "[4/5] Creating YCR pull secret..."
+	@ycr_token=$$(yc iam create-token | tr -d '\n\r') && \
 	kubectl create secret docker-registry ycr-secret \
 		--docker-server=cr.yandex \
 		--docker-username=iam \
 		--docker-password="$$ycr_token" \
-		-n default --dry-run=client -o yaml | kubectl apply -f - && \
-	echo "[5/5] Deploying test application..." && \
-	sed "s|__REGISTRY_ID__|$$REGISTRY_ID|g" stage4-k8s-configs/app-deployment.yaml | kubectl apply -f - && \
-	kubectl apply -f stage4-k8s-configs/app-service.yaml && \
-	kubectl apply -f stage4-k8s-configs/app-ingress.yaml && \
-	echo "" && \
-	echo "=== Waiting for pods to be ready ===" && \
-	kubectl wait --for=condition=ready pod -l app=netology-diploma-app --timeout=120s -n default || true && \
-	echo "" && \
-	echo "=== Deployment Complete! ===" && \
-	echo "Get Ingress IP: kubectl get svc -n ingress-nginx ingress-nginx-controller"
+		-n default --dry-run=client -o yaml | kubectl apply -f -
+	
+	@echo "[5/5] Deploying test application (injecting Registry ID dynamically)..."
+	@sed "s|__REGISTRY_ID__|$(REGISTRY_ID)|g" stage4-k8s-configs/app-deployment.yaml | kubectl apply -f -
+	@kubectl apply -f stage4-k8s-configs/app-service.yaml
+	@kubectl apply -f stage4-k8s-configs/app-ingress.yaml
+	
+	@echo ""
+	@echo "=== Waiting for pods to be ready ==="
+	@kubectl wait --for=condition=ready pod -l app=netology-diploma-app --timeout=120s -n default || true
+	
+	@echo ""
+	@echo "=== Deployment Complete! ==="
+	@echo "Get Ingress IP: kubectl get svc -n ingress-nginx ingress-nginx-controller"
+	@echo "Grafana: http://<INGRESS_IP> (admin / prom-operator)"
+	@echo "App: http://<INGRESS_IP>"
+
 
 
 # Uninstall everything from the cluster
