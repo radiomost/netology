@@ -205,7 +205,6 @@ clean-app:
 # Variables
 # =============================================================================
 # Динамически получаем Registry ID из Terraform state
-# Если Terraform еще не применен, подставится заглушка, которая вызовет понятную ошибку
 REGISTRY_ID := $(shell cd stage3-registry && terraform output -raw registry_id 2>/dev/null || echo "REPLACE_ME_VIA_TERRAFORM")
 
 # =============================================================================
@@ -233,15 +232,14 @@ k8s-deploy:
 		-f stage4-k8s-configs/monitoring-values.yaml
 	
 	@echo "[4/5] Creating YCR pull secret..."
-	@ycr_token=$$(yc iam create-token) && \
+	@ycr_token=$$(yc iam create-token | tr -d '\n\r') && \
 	kubectl create secret docker-registry ycr-secret \
 		--docker-server=cr.yandex \
-		--docker-username=json \
-		--docker-password=$$ycr_token \
+		--docker-username=iam \
+		--docker-password="$$ycr_token" \
 		-n default --dry-run=client -o yaml | kubectl apply -f -
 	
 	@echo "[5/5] Deploying test application (injecting Registry ID dynamically)..."
-	# Магия здесь: sed заменяет __REGISTRY_ID__ на реальное значение и передает результат в kubectl
 	@sed "s|__REGISTRY_ID__|$(REGISTRY_ID)|g" stage4-k8s-configs/app-deployment.yaml | kubectl apply -f -
 	@kubectl apply -f stage4-k8s-configs/app-service.yaml
 	@kubectl apply -f stage4-k8s-configs/app-ingress.yaml

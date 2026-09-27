@@ -478,9 +478,48 @@ make build APP_VERSION=v2.0.0
 ```bash
 make k8s-deploy
 ```
+#### Нюансы аутентификации в Yandex Container Registry (YCR)
+При автоматическом создании секрета `imagePullSecrets` для Kubernetes через Makefile критически важны два момента:
+1. **Имя пользователя:** При аутентификации через IAM-токен параметр `--docker-username` должен быть строго равен `iam` (а не `json` или `oauth`).
+2. **Очистка токена:** Команда `yc iam create-token` часто добавляет скрытый символ переноса строки (`\n`) в конец вывода. Если передать его в Kubernetes "как есть", base64-кодирование секрета будет некорректным, что приведет к ошибке `401 Unauthorized` при попытке скачать образ. 
+
+Для решения этой проблемы в Makefile используется конвейер `tr -d '\n\r'`, который гарантирует передачу "чистого" токена:
+
+```makefile
+ycr_token=$$(yc iam create-token | tr -d '\n\r') && \
+kubectl create secret docker-registry ycr-secret \
+    --docker-server=cr.yandex \
+    --docker-username=iam \
+    --docker-password="$$ycr_token" \
+    -n default --dry-run=client -o yaml | kubectl apply -f -
+```
+
+
 
 #### Шаг 4.1.4: Проверка результата
+Тестовое приложение (Nginx со статической страницей) развернуто с использованием Deployment (2 реплики для высокой доступности) и Service (ClusterIP). Образ загружается из Yandex Container Registry с использованием imagePullSecrets.
 
+**Файлы конфигурации:**
+[stage4-k8s-configs/app-deployment.yaml](stage4-k8s-configs/app-deployment.yaml)
+[stage4-k8s-configs/app-service.yaml](stage4-k8s-configs/app-service.yaml)
+[stage4-k8s-configs/app-ingress.yaml](stage4-k8s-configs/app-ingress.yaml)
+
+Поскольку кластер *self-hosted*, для доступа по 80 порту без использования платного Cloud Load Balancer, Ingress-контроллер настроен в режиме `hostNetwork=true`.
+
+**Проверка доступа:**
+В файл `hosts` локальной машины добавлена запись, сопоставляющая внешний IP ноды с доменами `grafana.diploma.local` и `app.diploma.local`.
+**Grafana:** `http://grafana.diploma.local` (Логин: `admin`, Пароль получен через `kubectl get secret...`)
+**Приложение:** `http://app.diploma.local`
+
+Вывод команды `kubectl get pods -n monitoring` и `kubectl get pods -l app=netology-diploma-app`, подтверждающий статус `Running`.
+
+!['img_8.png'](img/img_8.png)
+
+!['img_9.png'](img/img_9.png)
+
+Веб-страница тестового приложения, доступная по HTTP на 80 порту.
+
+!['img_10.png'](img/img_10.png)
 
 ### 4.2 Деплой тестового приложения в кластер
 #### Шаг 4.2.1: 
