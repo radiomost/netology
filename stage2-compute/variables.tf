@@ -19,14 +19,17 @@ variable "project_name" {
 variable "master_ip_id" {
   description = "ID of reserved static IP for master node"
   type        = string
+  default = "e9br6jvlqb47b8vl7ice"
 }
 
 variable "worker1_ip_id" {
   description = "ID of reserved static IP for worker-1"
   type        = string
+  default = "e9birrg5mhsc2k302vck"
 }
 
 variable "worker2_ip_id" {
   description = "ID of reserved static IP for worker-2"
   type        = string
+  default = "e2ldlodvbl7f8ltgm35n"
 }
