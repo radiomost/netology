@@ -111,27 +111,6 @@ kubespray-reset:
 	@rm -rf kubespray
 	@echo "Kubespray removed. Run 'make kubespray-init' to start fresh."
 
-# Get kubeconfig from master node (Fixed for TLS certificate validation)
-k8s-kubeconfig:
-	@echo "=== DEBUG: Проверяем, видит ли shell директорию ==="
-	@ls -ld ./stage2-compute
-	@echo "=== Fetching kubeconfig from master node ==="
-	@cd ./stage2-compute && terraform init -input=false > /dev/null
-	@MASTER_IP=$$(cd ./stage2-compute && terraform output -raw master_external_ip) && \
-	MASTER_INT_IP=$$(cd ./stage2-compute && terraform output -raw master_internal_ip) && \
-	echo "Master External IP: $$MASTER_IP" && \
-	echo "Master Internal IP: $$MASTER_INT_IP" && \
-	mkdir -p ~/.kube && \
-	ssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 -i ~/.ssh/id_rsa ubuntu@$$MASTER_IP \
-		"sudo cp /root/.kube/config /tmp/kubeconfig && sudo chown ubuntu:ubuntu /tmp/kubeconfig" && \
-	scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$$MASTER_IP:/tmp/kubeconfig ~/.kube/config && \
-	ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$$MASTER_IP "rm -f /tmp/kubeconfig" && \
-	sed -i "s|https://$$MASTER_INT_IP:6443|https://127.0.0.1:6443|g" ~/.kube/config && \
-	sed -i "s|https://$$MASTER_IP:6443|https://127.0.0.1:6443|g" ~/.kube/config && \
-	chmod 600 ~/.kube/config && \
-	echo "Kubeconfig saved to ~/.kube/config and configured for localhost tunnel." && \
-	echo "To connect, run: ssh -i ~/.ssh/id_rsa -f -N -L 6443:$$MASTER_INT_IP:6443 ubuntu@$$MASTER_IP" && \
-	echo "Then test with: kubectl get nodes"
 
 # ============================================================
 # Docker Image Build & Push to Yandex Container Registry
