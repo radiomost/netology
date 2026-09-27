@@ -18,9 +18,12 @@ build_and_push:
     # Устанавливаем Yandex Cloud CLI
     - curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
     - export PATH="$PATH:$HOME/yandex-cloud/bin"
-    
+
     # Аутентификация через Service Account Key
+    - echo "DEBUG: Длина переменной YC_SA_KEY составляет ${#YC_SA_KEY} символов"    
     - echo "$YC_SA_KEY" > /tmp/sa_key.json
+    - echo "DEBUG: Первые 60 символов файла:"
+    - head -c 60 /tmp/sa_key.json && echo ""    
     - yc config profile create ci-profile || true
     - yc config set service-account-key /tmp/sa_key.json
     
