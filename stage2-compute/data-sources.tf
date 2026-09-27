@@ -11,8 +11,7 @@ data "terraform_remote_state" "network" {
     endpoints = {
       s3 = "https://s3-api.rdmost.ru"
     }
-    
-    profile                     = "minio-truenas"
+
     skip_credentials_validation = true
     skip_metadata_api_check     = true
     use_path_style              = true
