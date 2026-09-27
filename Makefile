@@ -136,7 +136,7 @@ k8s-kubeconfig:
 # ============================================================
 # Docker Image Build & Push to Yandex Container Registry
 # ============================================================
-.ONESHELL:
+# .ONESHELL:
 # Variables (can be overridden via command line: make build APP_VERSION=v2.0.0)
 APP_NAME        ?= netology-diploma-app
 APP_VERSION     ?= v1.0.0
@@ -213,13 +213,19 @@ clean-app:
 REGISTRY_ID := $(shell cd stage3-registry && terraform output -raw registry_id 2>/dev/null || echo "REPLACE_ME_VIA_TERRAFORM")
 
 # Get kubeconfig from master node
+# =============================================================================
+# Kubernetes Deployment (Monitoring & App) - CLEAN VERSION
+# =============================================================================
+
+KUBECONFIG_DIR := $(PWD)/stage2-compute
+REGISTRY_DIR := $(PWD)/stage3-registry
+
 k8s-kubeconfig:
-	@echo "=== DEBUG: Проверяем, видит ли shell директорию ==="
-	@ls -ld ./stage2-compute
 	@echo "=== Fetching kubeconfig from master node ==="
-	@cd ./stage2-compute && terraform init -input=false > /dev/null
-	@MASTER_IP=$$(cd ./stage2-compute && terraform output -raw master_external_ip) && \
-	MASTER_INT_IP=$$(cd ./stage2-compute && terraform output -raw master_internal_ip) && \
+	@ls -la $(KUBECONFIG_DIR)
+	@cd $(KUBECONFIG_DIR) && terraform init -input=false > /dev/null
+	@MASTER_IP=$$(cd $(KUBECONFIG_DIR) && terraform output -raw master_external_ip) && \
+	MASTER_INT_IP=$$(cd $(KUBECONFIG_DIR) && terraform output -raw master_internal_ip) && \
 	echo "Master External IP: $$MASTER_IP" && \
 	echo "Master Internal IP: $$MASTER_INT_IP" && \
 	mkdir -p ~/.kube && \
@@ -230,20 +236,13 @@ k8s-kubeconfig:
 	sed -i "s|https://$$MASTER_INT_IP:6443|https://127.0.0.1:6443|g" ~/.kube/config && \
 	sed -i "s|https://$$MASTER_IP:6443|https://127.0.0.1:6443|g" ~/.kube/config && \
 	chmod 600 ~/.kube/config && \
-	echo "Kubeconfig saved to ~/.kube/config and configured for localhost tunnel." && \
-	echo "To connect, run: ssh -i ~/.ssh/id_rsa -f -N -L 6443:$$MASTER_INT_IP:6443 ubuntu@$$MASTER_IP" && \
-	echo "Then test with: kubectl get nodes"
-
-# =============================================================================
-# Kubernetes Deployment (Monitoring & App)
-# =============================================================================
+	echo "Kubeconfig saved to ~/.kube/config and configured for localhost tunnel."
 
 k8s-deploy:
 	@echo "=== Deploying Monitoring Stack and Application ==="
-	@echo "=== DEBUG: Проверяем, видит ли shell директорию stage3 ==="
-	@ls -ld ./stage3-registry
-	@cd ./stage3-registry && terraform init -input=false > /dev/null
-	@REGISTRY_ID=$$(cd ./stage3-registry && terraform output -raw registry_id) && \
+	@ls -la $(REGISTRY_DIR)
+	@cd $(REGISTRY_DIR) && terraform init -input=false > /dev/null
+	@REGISTRY_ID=$$(cd $(REGISTRY_DIR) && terraform output -raw registry_id) && \
 	echo "Detected Registry ID: $$REGISTRY_ID" && \
 	echo "[1/5] Adding Helm repositories..." && \
 	helm repo add prometheus-community https://prometheus-community.github.io/helm-charts && \
@@ -276,8 +275,7 @@ k8s-deploy:
 	echo "=== Waiting for pods to be ready ===" && \
 	kubectl wait --for=condition=ready pod -l app=netology-diploma-app --timeout=120s -n default || true && \
 	echo "" && \
-	echo "=== Deployment Complete! ===" && \
-	echo "Get Ingress IP: kubectl get svc -n ingress-nginx ingress-nginx-controller"
+	echo "=== Deployment Complete! ==="
 
 
 # Uninstall everything from the cluster
