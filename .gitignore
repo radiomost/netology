@@ -11,3 +11,7 @@
 
 terraform.tfvars
 hosts.ini
+
+netology-diploma-app/
+kubespray/
+app-source/
