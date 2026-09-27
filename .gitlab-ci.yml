@@ -4,32 +4,58 @@ stages:
   - deploy_k8s
 
 variables:
-  TF_VERSION: "1.5.0"
+  # Ссылки на ваши внутренние артефакты
+  TF_BINARY_URL: "https://repository.rdmost.ru/repository/registry_terraform/terraform/terraform_1.14.0_linux_amd64.zip"
+  YC_PROVIDER_URL: "https://repository.rdmost.ru/repository/registry_terraform/provider/yandex/terraform-provider-yandex_0.129.0_linux_amd64.zip"
 
 # Базовый шаблон для всех джоб
 .base:
-  image:
-    name: hashicorp/terraform:${TF_VERSION}
-    entrypoint: [""] # Отключаем дефолтный entrypoint "terraform"
+  image: alpine:3.18
   before_script:
-    # 1. Устанавливаем утилиты. Добавили 'openssl' и 'helm' в этот список!
-    - apk add --no-cache curl jq bash python3 git make openssh-client sed openssl helm
+    # 1. Устанавливаем базовые утилиты (включая unzip для распаковки наших zip)
+    - apk add --no-cache curl unzip jq bash python3 git make openssh-client sed openssl helm
     
-    # 2. Устанавливаем Yandex Cloud CLI
+    # 2. Скачиваем и устанавливаем ВАШУ версию Terraform
+    - echo "Installing custom Terraform 1.14.0..."
+    - curl -sSL "$TF_BINARY_URL" -o /tmp/terraform.zip
+    - unzip -o /tmp/terraform.zip -d /usr/local/bin/
+    - rm -f /tmp/terraform.zip
+    - terraform version # Проверка
+    
+    # 3. Скачиваем и устанавливаем ВАШУ версию провайдера Yandex Cloud
+    - echo "Installing custom Yandex Provider 0.129.0..."
+    - mkdir -p ~/.terraform.d/plugins/registry.terraform.io/yandex-cloud/yandex/0.129.0/linux_amd64
+    - curl -sSL "$YC_PROVIDER_URL" -o /tmp/yandex-provider.zip
+    - unzip -o /tmp/yandex-provider.zip -d ~/.terraform.d/plugins/registry.terraform.io/yandex-cloud/yandex/0.129.0/linux_amd64/
+    - rm -f /tmp/yandex-provider.zip
+    
+    # 4. Настраиваем Terraform на использование локального зеркала для этого провайдера
+    - |
+      cat <<EOF > ~/.terraformrc
+      provider_installation {
+        filesystem_mirror {
+          path    = "/root/.terraform.d/plugins"
+          include = ["registry.terraform.io/yandex-cloud/yandex"]
+        }
+        direct {
+          exclude = ["registry.terraform.io/yandex-cloud/yandex"]
+        }
+      }
+      EOF
+
+    # 5. Устанавливаем и настраиваем Yandex Cloud CLI
     - curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
     - export PATH="$PATH:$HOME/yandex-cloud/bin"
-    
-    # 3. Настраиваем аутентификацию YC из переменной GitLab
     - echo "$YC_SA_KEY" > ~/.authorized_key.json
     - chmod 600 ~/.authorized_key.json
     - yc config profile create ci-profile || true
     - yc config set service-account-key ~/.authorized_key.json
     - yc config set folder-id "$TF_VAR_folder_id"
     
-    # 4. Устанавливаем kubectl (Helm уже установлен выше через apk)
-    - curl -LO "https://dl.k8s.io/release/v1.28.0/bin/linux/amd64/kubectl"
+    # 6. Устанавливаем kubectl (Helm уже установлен через apk на шаге 1)
+    - curl -sLO "https://dl.k8s.io/release/v1.28.0/bin/linux/amd64/kubectl"
     - install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-    - rm -f kubectl # Очищаем временный файл
+    - rm -f kubectl
 
 # Стадия 1: Планирование (запускается автоматически при любом пуше)
 plan:
@@ -62,8 +88,7 @@ deploy_k8s:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
-    # Отключаем строгую проверку хостов для первого подключения
-    - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+    - echo -e "Host *\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile=/dev/null\n" > ~/.ssh/config
   script:
     - echo "Fetching kubeconfig from master node..."
     - make k8s-kubeconfig
