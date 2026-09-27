@@ -15,3 +15,4 @@ hosts.ini
 netology-diploma-app/
 kubespray/
 app-source/
+.continue/
