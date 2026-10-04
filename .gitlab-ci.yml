@@ -15,6 +15,15 @@ variables:
 .base:
   image: alpine:3.18
   before_script:
+    # 0. Создаем конфигурационные файлы
+    - echo "Configuring AWS credentials for Terraform backend..."
+    - mkdir -p ~/.aws
+    - cat <<EOF > ~/.aws/credentials
+      [s3-minio]
+      aws_access_key_id = ${AWS_ACCESS_KEY_ID}
+      aws_secret_access_key = ${AWS_SECRET_ACCESS_KEY}
+      EOF
+
     # 1. Устанавливаем базовые утилиты
     - apk add --no-cache curl unzip jq bash python3 git make openssh-client sed openssl helm
     
@@ -59,6 +68,9 @@ variables:
     - curl -sLO "https://dl.k8s.io/release/v1.28.0/bin/linux/amd64/kubectl"
     - install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
     - rm -f kubectl
+
+
+
 
 # Стадия 1: Планирование (запускается автоматически при создании Merge Request)
 plan:
