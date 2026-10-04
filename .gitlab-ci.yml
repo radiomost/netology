@@ -145,11 +145,23 @@ deploy_k8s:
   script:
     - echo "Fetching kubeconfig from master node..."
     - make k8s-kubeconfig
+    
+    - echo "========================================="
+    - echo "Starting SSH tunnel to Kubernetes API in background..."
+    - echo "========================================="
+    
+    - ssh -f -N -L 6443:127.0.0.1:6443 root@130.193.49.92
+    
+    - echo "Waiting 3 seconds for tunnel to establish..."
+    - sleep 3
+    
+    - echo "Verifying Kubernetes connection..."
+    - kubectl cluster-info
+    
     - echo "Deploying monitoring stack and application..."
     - make k8s-deploy
   rules:
     # Запускаем только в главной ветке, вручную, после apply
     - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
       when: manual
-  
   
