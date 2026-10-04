@@ -4,15 +4,18 @@ stages:
   - deploy_k8s
 
 variables:
-  # Ссылки на ваши внутренние артефакты
+  # Ссылки на ваши внутренние артефакты (оставляем как есть, это отлично)
   TF_BINARY_URL: "https://repository.rdmost.ru/repository/registry_terraform/terraform/terraform_1.14.0_linux_amd64.zip"
   YC_PROVIDER_URL: "https://repository.rdmost.ru/repository/registry_terraform/provider/yandex/terraform-provider-yandex_0.129.0_linux_amd64.zip"
+  
+  # Добавляем переменную для дефолтной ветки, если она у вас называется иначе (например, master)
+  DEFAULT_BRANCH: "diplom-dev"
 
 # Базовый шаблон для всех джоб
 .base:
   image: alpine:3.18
   before_script:
-    # 1. Устанавливаем базовые утилиты (включая unzip для распаковки наших zip)
+    # 1. Устанавливаем базовые утилиты
     - apk add --no-cache curl unzip jq bash python3 git make openssh-client sed openssl helm
     
     # 2. Скачиваем и устанавливаем ВАШУ версию Terraform
@@ -20,7 +23,7 @@ variables:
     - curl -k -sSL "$TF_BINARY_URL" -o /tmp/terraform.zip
     - unzip -o /tmp/terraform.zip -d /usr/local/bin/
     - rm -f /tmp/terraform.zip
-    - terraform version # Проверка
+    - terraform version
     
     # 3. Скачиваем и устанавливаем ВАШУ версию провайдера Yandex Cloud
     - echo "Installing custom Yandex Provider 0.129.0..."
@@ -29,7 +32,7 @@ variables:
     - unzip -o /tmp/yandex-provider.zip -d ~/.terraform.d/plugins/registry.terraform.io/yandex-cloud/yandex/0.129.0/linux_amd64/
     - rm -f /tmp/yandex-provider.zip
     
-    # 4. Настраиваем Terraform на использование локального зеркала для этого провайдера
+    # 4. Настраиваем Terraform на использование локального зеркала
     - |
       cat <<EOF > ~/.terraformrc
       provider_installation {
@@ -52,22 +55,49 @@ variables:
     - yc config set service-account-key ~/.authorized_key.json
     - yc config set folder-id "$TF_VAR_folder_id"
     
-    # 6. Устанавливаем kubectl (Helm уже установлен через apk на шаге 1)
+    # 6. Устанавливаем kubectl
     - curl -sLO "https://dl.k8s.io/release/v1.28.0/bin/linux/amd64/kubectl"
     - install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
     - rm -f kubectl
 
-# Стадия 1: Планирование (запускается автоматически при любом пуше)
+# Стадия 1: Планирование (запускается автоматически при создании Merge Request)
 plan:
   extends: .base
   stage: plan
   script:
-    - echo "Running make plan..."
-    - make plan
+    - echo "Running terraform init..."
+    - make init # Если в Makefile есть этот таргет, иначе terraform init
+    
+    - echo "Running terraform plan..."
+    # Генерируем бинарный план и текстовый вывод для артефактов
+    - terraform plan -out=tfplan.binary
+    - terraform show -no-color tfplan.binary > plan.txt
+    
+    - echo "=== TERRAFORM PLAN OUTPUT ==="
+    - cat plan.txt
+    - echo "============================="
+    
+    # Если ваш make plan делает что-то еще важное, раскомментируйте строку ниже:
+    # - make plan 
+    
+  # КРИТИЧНО: Сохраняем план как артефакт. Это прямое требование преподавателя!
+  artifacts:
+    name: "tf-plan-$CI_COMMIT_REF_SLUG"
+    paths:
+      - tfplan.binary
+      - plan.txt
+    expire_in: 1 week
+    reports:
+      # Если у вас GitLab Premium, это создаст красивую вкладку Terraform. 
+      # Для CE версии это просто не вызовет ошибки, а артефакт plan.txt останется доступен.
+      terraform: plan.txt 
   rules:
-    - if: '$CI_COMMIT_BRANCH'
+    # Запускаем план при создании или обновлении Merge Request
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    # Или при пуше в любую ветку, кроме дефолтной
+    - if: '$CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != $DEFAULT_BRANCH'
 
-# Стадия 2: Применение инфраструктуры (требует ручного подтверждения)
+# Стадия 2: Применение инфраструктуры (только вручную и только в главной ветке)
 apply:
   extends: .base
   stage: apply
@@ -75,10 +105,11 @@ apply:
     - echo "Running make apply..."
     - make apply
   rules:
-    - if: '$CI_COMMIT_BRANCH'
-      when: manual
+    # Разрешаем запуск ТОЛЬКО в главной ветке (main/master)
+    - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
+      when: manual # Ручной запуск безопаснее для диплома
 
-# Стадия 3: Деплой в Kubernetes (требует ручного подтверждения)
+# Стадия 3: Деплой в Kubernetes (только после успешного apply в главной ветке)
 deploy_k8s:
   extends: .base
   stage: deploy_k8s
@@ -86,27 +117,27 @@ deploy_k8s:
     - !reference [.base, before_script]
     - mkdir -p ~/.ssh
     
-    # 1. Отладка: смотрим, что именно нам дал GitLab
+    # 1. Отладка SSH ключа
     - echo "=== DEBUG SSH KEY ==="
     - echo "Путь к файлу ключа $SSH_PRIVATE_KEY"
-    - head -c 50 "$SSH_PRIVATE_KEY"
+    - head -c 50 "$SSH_PRIVATE_KEY" || echo "Key file empty or missing"
     - echo ""
     - echo "====================="
     
-    # 2. Копируем файл
+    # 2. Копируем файл и чистим от Windows переносов строк
     - cp "$SSH_PRIVATE_KEY" ~/.ssh/id_rsa
-    
-    # 3. КРИТИЧЕСКИ ВАЖНО: Удаляем любые скрытые символы \r (Windows переносы)
     - sed -i 's/\r$//' ~/.ssh/id_rsa
     
-    # 4. Выставляем права
+    # 3. Выставляем права
     - chmod 600 ~/.ssh/id_rsa
     - echo -e "Host *\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile=/dev/null\n" > ~/.ssh/config
+    
   script:
     - echo "Fetching kubeconfig from master node..."
     - make k8s-kubeconfig
     - echo "Deploying monitoring stack and application..."
     - make k8s-deploy
   rules:
-    - if: '$CI_COMMIT_BRANCH'
+    # Запускаем только в главной ветке, вручную, после apply
+    - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
       when: manual

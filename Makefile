@@ -127,60 +127,45 @@ APP_DIR         := app-source
 
 # Build, tag and push Docker image to YCR
 build:
-	@echo "=== Building and pushing Docker image to Yandex Container Registry ==="
-	@echo "App: $(APP_NAME), Version: $(APP_VERSION)"
-
-	@ls -la
-
-	# Step 1: Get registry_id from Terraform output
-	echo "[1/6] Fetching registry ID from Terraform..."
-	REGISTRY_ID=$$(cd stage3-registry && terraform output -raw registry_id 2>/dev/null)
-	if [ -z "$$REGISTRY_ID" ]; then
-		echo "Error: registry_id not found. Run 'terraform apply' in stage3-registry first."
-		exit 1
-	fi
-	echo "Registry ID: $$REGISTRY_ID"
-	
-	# Step 2: Clone or update application repository
-	echo "[2/6] Preparing application source code..."
-	if [ ! -d "$(APP_DIR)" ]; then
-		echo "Cloning repository from $(APP_REPO_URL)..."
-		git clone $(APP_REPO_URL) $(APP_DIR)
-	else
-		echo "Repository already exists. Pulling latest changes..."
-		cd $(APP_DIR) && git pull origin main && cd ..
-	fi
-	
-	# Step 3: Authenticate Docker with Yandex Container Registry
-	echo "[3/6] Authenticating Docker with YCR..."
-	YCR_TOKEN=$$(yc iam create-token 2>/dev/null)
-	if [ -z "$$YCR_TOKEN" ]; then
-		echo "Error: Failed to get IAM token. Is 'yc' CLI installed and authorized?"
-		exit 1
-	fi
-	echo "$$YCR_TOKEN" | docker login --username iam --password-stdin cr.yandex
-	
-	# Step 4: Build Docker image
-	echo "[4/6] Building Docker image..."
-	cd $(APP_DIR)
-	docker build -t cr.yandex/$$REGISTRY_ID/$(APP_NAME):$(APP_VERSION) .
-	docker build -t cr.yandex/$$REGISTRY_ID/$(APP_NAME):latest .
-	cd ..
-	
-	# Step 5: Push image to YCR
-	echo "[5/6] Pushing image to Yandex Container Registry..."
-	docker push cr.yandex/$$REGISTRY_ID/$(APP_NAME):$(APP_VERSION)
-	docker push cr.yandex/$$REGISTRY_ID/$(APP_NAME):latest
-	
-	# Step 6: Cleanup
-	echo "[6/6] Cleaning up local images..."
-	docker rmi cr.yandex/$$REGISTRY_ID/$(APP_NAME):$(APP_VERSION) 2>/dev/null || true
-	docker rmi cr.yandex/$$REGISTRY_ID/$(APP_NAME):latest 2>/dev/null || true
-	
-	echo ""
-	echo "=== Build complete! ==="
+	@echo "=== Building and pushing Docker image to Yandex Container Registry ===" && \
+	echo "App: $(APP_NAME), Version: $(APP_VERSION)" && \
+	echo "[1/6] Fetching registry ID from Terraform..." && \
+	REGISTRY_ID=$$(cd stage3-registry && terraform output -raw registry_id 2>/dev/null) && \
+	if [ -z "$$REGISTRY_ID" ]; then \
+		echo "Error: registry_id not found. Run 'terraform apply' in stage3-registry first."; \
+		exit 1; \
+	fi && \
+	echo "Registry ID: $$REGISTRY_ID" && \
+	echo "[2/6] Preparing application source code..." && \
+	if [ ! -d "$(APP_DIR)" ]; then \
+		echo "Cloning repository from $(APP_REPO_URL)..."; \
+		git clone $(APP_REPO_URL) $(APP_DIR); \
+	else \
+		echo "Repository already exists. Pulling latest changes..."; \
+		cd $(APP_DIR) && git pull origin main && cd ..; \
+	fi && \
+	echo "[3/6] Authenticating Docker with YCR..." && \
+	grep -v '"yc"' ~/.docker/config.json > ~/.docker/config.json.tmp 2>/dev/null && mv ~/.docker/config.json.tmp ~/.docker/config.json || true && \
+	YCR_TOKEN=$$(yc iam create-token 2>/dev/null) && \
+	if [ -z "$$YCR_TOKEN" ]; then \
+		echo "Error: Failed to get IAM token. Is 'yc' CLI installed and authorized?"; \
+		exit 1; \
+	fi && \
+	echo "$$YCR_TOKEN" | docker login --username iam --password-stdin cr.yandex && \
+	echo "[4/6] Building Docker image..." && \
+	cd $(APP_DIR) && \
+	docker build -t cr.yandex/$$REGISTRY_ID/$(APP_NAME):$(APP_VERSION) . && \
+	docker build -t cr.yandex/$$REGISTRY_ID/$(APP_NAME):latest . && \
+	cd .. && \
+	echo "[5/6] Pushing image to Yandex Container Registry..." && \
+	docker push cr.yandex/$$REGISTRY_ID/$(APP_NAME):$(APP_VERSION) && \
+	docker push cr.yandex/$$REGISTRY_ID/$(APP_NAME):latest && \
+	echo "[6/6] Cleaning up local images..." && \
+	docker rmi cr.yandex/$$REGISTRY_ID/$(APP_NAME):$(APP_VERSION) 2>/dev/null || true && \
+	docker rmi cr.yandex/$$REGISTRY_ID/$(APP_NAME):latest 2>/dev/null || true && \
+	echo "" && \
+	echo "=== Build complete! ===" && \
 	echo "Image: cr.yandex/$$REGISTRY_ID/$(APP_NAME):$(APP_VERSION)"
-	echo "To deploy in K8s, use this image in your Deployment manifest."
 
 # Clean up cloned application source
 clean-app:
@@ -188,20 +173,22 @@ clean-app:
 	@rm -rf $(APP_DIR)
 	@echo "Done."
 
+
 # =============================================================================
 # Variables
 # =============================================================================
 # Динамически получаем Registry ID из Terraform state
 REGISTRY_ID := $(shell cd stage3-registry && terraform output -raw registry_id 2>/dev/null || echo "REPLACE_ME_VIA_TERRAFORM")
 
-# Get kubeconfig from master node
-# =============================================================================
-# Kubernetes Deployment (Monitoring & App) - CLEAN VERSION
-# =============================================================================
-
 KUBECONFIG_DIR := $(PWD)/stage2-compute
 REGISTRY_DIR := $(PWD)/stage3-registry
+K8S_TUNNEL_PORT := 6443
 
+# =============================================================================
+# Kubernetes Configuration & Tunnel
+# =============================================================================
+
+# Копирование kubeconfig с мастер-ноды
 k8s-kubeconfig:
 	@echo "=== Fetching kubeconfig from master node ==="
 	@ls -la $(KUBECONFIG_DIR)
@@ -211,24 +198,82 @@ k8s-kubeconfig:
 	echo "Master External IP: $$MASTER_IP" && \
 	echo "Master Internal IP: $$MASTER_INT_IP" && \
 	mkdir -p ~/.kube && \
+	echo "Copying kubeconfig via SSH..." && \
 	ssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 -i ~/.ssh/id_rsa ubuntu@$$MASTER_IP \
-		"sudo cp /root/.kube/config /tmp/kubeconfig && sudo chown ubuntu:ubuntu /tmp/kubeconfig" && \
-	scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$$MASTER_IP:/tmp/kubeconfig ~/.kube/config && \
-	ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$$MASTER_IP "rm -f /tmp/kubeconfig" && \
-	sed -i "s|https://$$MASTER_INT_IP:6443|https://127.0.0.1:6443|g" ~/.kube/config && \
-	sed -i "s|https://$$MASTER_IP:6443|https://127.0.0.1:6443|g" ~/.kube/config && \
+		"sudo cat /etc/kubernetes/admin.conf" > ~/.kube/config && \
 	chmod 600 ~/.kube/config && \
-	echo "Kubeconfig saved to ~/.kube/config and configured for localhost tunnel."
+	echo "Updating server address to use SSH tunnel (127.0.0.1:$(K8S_TUNNEL_PORT))..." && \
+	sed -i "s|https://$$MASTER_INT_IP:6443|https://127.0.0.1:$(K8S_TUNNEL_PORT)|g" ~/.kube/config && \
+	sed -i "s|https://$$MASTER_IP:6443|https://127.0.0.1:$(K8S_TUNNEL_PORT)|g" ~/.kube/config && \
+	sed -i "s|https://localhost:6443|https://127.0.0.1:$(K8S_TUNNEL_PORT)|g" ~/.kube/config && \
+	echo "✓ Kubeconfig saved to ~/.kube/config and configured for localhost tunnel." && \
+	echo "" && \
+	echo "Next step: Run 'make k8s-tunnel' to create SSH tunnel"
+
+# Создание SSH-туннеля к мастер-ноде
+k8s-tunnel:
+	@echo "=== Creating SSH tunnel to K8s master ==="
+	@cd $(KUBECONFIG_DIR) && terraform init -input=false > /dev/null
+	@MASTER_IP=$$(cd $(KUBECONFIG_DIR) && terraform output -raw master_external_ip) && \
+	echo "Master External IP: $$MASTER_IP" && \
+	echo "Checking if port $(K8S_TUNNEL_PORT) is already in use..." && \
+	if ss -tulnp 2>/dev/null | grep -q ":$(K8S_TUNNEL_PORT) "; then \
+		echo "Warning: Port $(K8S_TUNNEL_PORT) is already in use."; \
+		echo "Stopping existing tunnels..."; \
+		pkill -f "ssh.*$(K8S_TUNNEL_PORT)" 2>/dev/null || true; \
+		sleep 2; \
+	fi && \
+	echo "Creating SSH tunnel: localhost:$(K8S_TUNNEL_PORT) -> master:6443" && \
+	ssh -i ~/.ssh/id_rsa -f -N -L $(K8S_TUNNEL_PORT):127.0.0.1:6443 ubuntu@$$MASTER_IP && \
+	echo "✓ SSH tunnel created successfully in background" && \
+	echo "" && \
+	echo "Verify connection with: make k8s-check"
+
+# Остановка SSH-туннеля
+k8s-stop-tunnel:
+	@echo "=== Stopping SSH tunnel ==="
+	@pkill -f "ssh.*$(K8S_TUNNEL_PORT)" 2>/dev/null && echo "✓ SSH tunnel stopped" || echo "No active tunnel found"
+
+# Проверка подключения к Kubernetes кластеру
+k8s-check:
+	@echo "=== Checking Kubernetes cluster connection ==="
+	@echo "Testing kubectl connectivity..."
+	@kubectl cluster-info
+	@echo ""
+	@echo "Listing cluster nodes:"
+	@kubectl get nodes -o wide
+	@echo ""
+	@echo "Listing all pods:"
+	@kubectl get pods --all-namespaces
+	@echo ""
+	@echo "✓ Kubernetes cluster is accessible"
+
+# Полный цикл: конфиг + туннель + проверка
+k8s-setup: k8s-kubeconfig k8s-tunnel k8s-check
+	@echo ""
+	@echo "=== K8s setup complete ==="
+	@echo "You can now run: make k8s-deploy"
+
+# =============================================================================
+# Kubernetes Deployment (Monitoring & App) - IMPROVED VERSION
+# =============================================================================
 
 k8s-deploy:
 	@echo "=== Deploying Monitoring Stack and Application ==="
+	@echo "[0/5] Checking Kubernetes cluster connection..."
+	@if ! kubectl cluster-info > /dev/null 2>&1; then \
+		echo "Error: Cannot connect to Kubernetes cluster."; \
+		echo "Please run: make k8s-setup"; \
+		exit 1; \
+	fi
+	@echo "Cluster is reachable. Proceeding..."
 	@ls -la $(REGISTRY_DIR)
 	@cd $(REGISTRY_DIR) && terraform init -input=false > /dev/null
 	@REGISTRY_ID=$$(cd $(REGISTRY_DIR) && terraform output -raw registry_id) && \
 	echo "Detected Registry ID: $$REGISTRY_ID" && \
 	echo "[1/5] Adding Helm repositories..." && \
-	helm repo add prometheus-community https://prometheus-community.github.io/helm-charts && \
-	helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && \
+	helm repo add prometheus-community https://prometheus-community.github.io/helm-charts || true && \
+	helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx || true && \
 	helm repo update && \
 	echo "[2/5] Installing NGINX Ingress Controller..." && \
 	helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
@@ -237,11 +282,13 @@ k8s-deploy:
 		--set controller.hostNetwork=true \
 		--set controller.dnsPolicy=ClusterFirstWithHostNet \
 		--set controller.service.type=ClusterIP \
-		--set controller.nodeSelector."kubernetes\.io/os"=linux && \
+		--set controller.nodeSelector."kubernetes\.io/os"=linux \
+		--wait && \
 	echo "[3/5] Installing kube-prometheus-stack..." && \
 	helm upgrade --install monitoring prometheus-community/kube-prometheus-stack \
 		--namespace monitoring --create-namespace \
-		-f stage4-k8s-configs/monitoring-values.yaml && \
+		-f stage4-k8s-configs/monitoring-values.yaml \
+		--wait && \
 	echo "[4/5] Creating YCR pull secret..." && \
 	ycr_token=$$(yc iam create-token | tr -d '\n\r') && \
 	kubectl create secret docker-registry ycr-secret \
@@ -258,13 +305,27 @@ k8s-deploy:
 	kubectl wait --for=condition=ready pod -l app=netology-diploma-app --timeout=120s -n default || true && \
 	echo "" && \
 	echo "=== Deployment Complete! ==="
+	@echo ""
+	@echo "Access points:"
+	@echo "  Grafana: http://<worker-node-ip>:80 (admin/prom-operator)"
+	@echo "  App:     http://<worker-node-ip>:80"
+	@kubectl get svc -n ingress-nginx | grep -E 'ingress-nginx-controller' || true
 
+# =============================================================================
+# Cleanup
+# =============================================================================
 
 # Uninstall everything from the cluster
 k8s-destroy:
 	@echo "=== Destroying Kubernetes resources ==="
-	@kubectl delete -f stage4-k8s-configs/app-ingress.yaml || true
-	@kubectl delete -f stage4-k8s-configs/app-service.yaml || true
-	@kubectl delete -f stage4-k8s-configs/app-deployment.yaml || true
-	@helm uninstall monitoring --namespace monitoring || true
-	@echo "Done."
+	@kubectl delete -f stage4-k8s-configs/app-ingress.yaml 2>/dev/null || true
+	@kubectl delete -f stage4-k8s-configs/app-service.yaml 2>/dev/null || true
+	@kubectl delete -f stage4-k8s-configs/app-deployment.yaml 2>/dev/null || true
+	@helm uninstall monitoring --namespace monitoring 2>/dev/null || true
+	@helm uninstall ingress-nginx --namespace ingress-nginx 2>/dev/null || true
+	@kubectl delete namespace monitoring 2>/dev/null || true
+	@kubectl delete namespace ingress-nginx 2>/dev/null || true
+	@echo "✓ All Kubernetes resources removed"
+
+
+
