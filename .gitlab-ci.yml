@@ -17,22 +17,9 @@ variables:
   before_script:
     # 0. Создаем конфигурационные файлы
     - echo "Configuring AWS credentials for Terraform backend..."
-    - mkdir -p ~/.aws
-    - printf "[s3-minio]\naws_access_key_id = %s\naws_secret_access_key = %s\n" "$AWS_ACCESS_KEY_ID" "$AWS_SECRET_ACCESS_KEY" > /root/.aws/credentials
-
-    - chmod 600 ~/.aws/credentials
-
-    - export AWS_SHARED_CREDENTIALS_FILE="/root/.aws/credentials"
-    - export AWS_PROFILE="s3-minio"
-
-    # --- ОТЛАДКА (чтобы вы лично убедились, что всё создалось верно) ---
-    - echo "--- DEBUG Проверка переменных окружения ---"
-    - echo "AWS_SHARED_CREDENTIALS_FILE = $AWS_SHARED_CREDENTIALS_FILE"
-    - echo "AWS_PROFILE = $AWS_PROFILE"
-    - echo "Содержимое файла:"
-    - cat "$AWS_SHARED_CREDENTIALS_FILE" | sed 's/=.*/= ***/'
-    - echo "--------------------------------------------"
-    # ---------------------------------------------------
+    - export AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}"
+    - export AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}"
+    - export AWS_DEFAULT_REGION="us-east-1"
 
 
     # 1. Устанавливаем базовые утилиты
