@@ -18,19 +18,20 @@ variables:
     # 0. Создаем конфигурационные файлы
     - echo "Configuring AWS credentials for Terraform backend..."
     - mkdir -p ~/.aws
-    - |
-      cat <<EOF > ~/.aws/credentials
-      [s3-minio]
-      aws_access_key_id = ${AWS_ACCESS_KEY_ID}
-      aws_secret_access_key = ${AWS_SECRET_ACCESS_KEY}
-      EOF
+    - printf "[s3-minio]\naws_access_key_id = %s\naws_secret_access_key = %s\n" "$AWS_ACCESS_KEY_ID" "$AWS_SECRET_ACCESS_KEY" > /root/.aws/credentials
 
     - chmod 600 ~/.aws/credentials
 
+    - export AWS_SHARED_CREDENTIALS_FILE="/root/.aws/credentials"
+    - export AWS_PROFILE="s3-minio"
+
     # --- ОТЛАДКА (чтобы вы лично убедились, что всё создалось верно) ---
-    - echo "--- Проверка содержимого ~/.aws/credentials (ключи скрыты) ---"
-    - cat ~/.aws/credentials | sed 's/aws_access_key_id = .*/aws_access_key_id = ***/' | sed 's/aws_secret_access_key = .*/aws_secret_access_key = ***/'
-    - echo "--------------------------------------------------------------"
+    - echo "--- DEBUG: Проверка переменных окружения ---"
+    - echo "AWS_SHARED_CREDENTIALS_FILE = $AWS_SHARED_CREDENTIALS_FILE"
+    - echo "AWS_PROFILE = $AWS_PROFILE"
+    - echo "Содержимое файла:"
+    - cat "$AWS_SHARED_CREDENTIALS_FILE" | sed 's/=.*/= ***/'
+    - echo "--------------------------------------------"
     # ---------------------------------------------------
 
 
