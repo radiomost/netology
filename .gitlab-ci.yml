@@ -26,6 +26,14 @@ variables:
       EOF
 
     - chmod 600 ~/.aws/credentials
+
+    # --- ОТЛАДКА (чтобы вы лично убедились, что всё создалось верно) ---
+    - echo "--- Проверка содержимого ~/.aws/credentials (ключи скрыты) ---"
+    - cat ~/.aws/credentials | sed 's/aws_access_key_id = .*/aws_access_key_id = ***/' | sed 's/aws_secret_access_key = .*/aws_secret_access_key = ***/'
+    - echo "--------------------------------------------------------------"
+    # ---------------------------------------------------
+
+
     # 1. Устанавливаем базовые утилиты
     - apk add --no-cache curl unzip jq bash python3 git make openssh-client sed openssl helm
     
