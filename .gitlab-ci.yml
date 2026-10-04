@@ -26,7 +26,7 @@ variables:
     - export AWS_PROFILE="s3-minio"
 
     # --- ОТЛАДКА (чтобы вы лично убедились, что всё создалось верно) ---
-    - echo "--- DEBUG: Проверка переменных окружения ---"
+    - echo "--- DEBUG Проверка переменных окружения ---"
     - echo "AWS_SHARED_CREDENTIALS_FILE = $AWS_SHARED_CREDENTIALS_FILE"
     - echo "AWS_PROFILE = $AWS_PROFILE"
     - echo "Содержимое файла:"
