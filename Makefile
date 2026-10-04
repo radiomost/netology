@@ -74,6 +74,9 @@ clean:
 	done
 	@echo "Done."
 
+# Перед установкой kuberspray необходимо в ручную через  WebUI консоль YandexCloud
+# Удалить автоматически назначенные IP адреса и заменить их на подготовленные "белые" IP
+
 # Initialize Kubespray
 kubespray-init:
 	@echo "=== Initializing Kubespray ==="

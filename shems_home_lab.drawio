@@ -1,0 +1,222 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.0.3 Chrome/140.0.7339.249 Electron/38.7.0 Safari/537.36" version="29.0.3">
+  <diagram name="Страница-1" id="rKdIiTPmtqRSycQ26Iq0">
+    <mxGraphModel dx="1426" dy="841" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-2" value="GW" style="sketch=0;aspect=fixed;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;labelPosition=right;verticalLabelPosition=middle;verticalAlign=middle;align=left;fillColor=#00188D;shape=mxgraph.mscae.enterprise.gateway" vertex="1" parent="1">
+          <mxGeometry x="623.9" y="471" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-71" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="Q8OMi7SeDDis-C1gScSc-4" target="Q8OMi7SeDDis-C1gScSc-70">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-4" value="Internet" style="sketch=0;aspect=fixed;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;labelPosition=left;verticalLabelPosition=middle;verticalAlign=middle;align=right;fillColor=#00188D;shape=mxgraph.azure.cloud" vertex="1" parent="1">
+          <mxGeometry x="620" y="141" width="50" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-5" value="FW (pfSense)" style="sketch=0;aspect=fixed;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;labelPosition=right;verticalLabelPosition=middle;verticalAlign=middle;align=left;fillColor=#00188D;shape=mxgraph.mscae.enterprise.firewall" vertex="1" parent="1">
+          <mxGeometry x="620" y="331" width="50" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-6" value="Router (Kinetic)" style="sketch=0;aspect=fixed;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;labelPosition=right;verticalLabelPosition=middle;verticalAlign=middle;align=left;fillColor=#00188D;shape=mxgraph.mscae.enterprise.device" vertex="1" parent="1">
+          <mxGeometry x="620" y="251" width="50" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-7" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="Q8OMi7SeDDis-C1gScSc-6" target="Q8OMi7SeDDis-C1gScSc-4">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="770" y="681" as="sourcePoint" />
+            <mxPoint x="820" y="631" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-12" value="External IP" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="Q8OMi7SeDDis-C1gScSc-7">
+          <mxGeometry x="0.2083" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-13" value="1Gb" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="Q8OMi7SeDDis-C1gScSc-7">
+          <mxGeometry x="-0.282" y="4" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-8" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="Q8OMi7SeDDis-C1gScSc-5" target="Q8OMi7SeDDis-C1gScSc-6">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="770" y="681" as="sourcePoint" />
+            <mxPoint x="820" y="631" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-14" value="1Gb" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="Q8OMi7SeDDis-C1gScSc-8">
+          <mxGeometry x="0.0741" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-15" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="Q8OMi7SeDDis-C1gScSc-2" target="Q8OMi7SeDDis-C1gScSc-5">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="770" y="481" as="sourcePoint" />
+            <mxPoint x="640" y="381" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-18" value="Net Service" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="Q8OMi7SeDDis-C1gScSc-15">
+          <mxGeometry x="-0.0003" y="-2" relative="1" as="geometry">
+            <mxPoint x="-3" y="-2" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-16" value="Сервер&lt;br&gt;Proxmox" style="sketch=0;aspect=fixed;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;fillColor=#00188D;shape=mxgraph.mscae.enterprise.application_server2" vertex="1" parent="1">
+          <mxGeometry x="337.09999999999997" y="355" width="108.8" height="126.51" as="geometry" />
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-17" value="Рабочая станция" style="sketch=0;aspect=fixed;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;fillColor=#00188D;shape=mxgraph.mscae.enterprise.workstation_client" vertex="1" parent="1">
+          <mxGeometry x="910" y="351" width="50" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-19" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;exitX=0.57;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="Q8OMi7SeDDis-C1gScSc-16" target="Q8OMi7SeDDis-C1gScSc-5">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="770" y="481" as="sourcePoint" />
+            <mxPoint x="820" y="431" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-23" value="Tagged" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="Q8OMi7SeDDis-C1gScSc-19">
+          <mxGeometry x="-0.1218" y="3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-21" value="&lt;h3 style=&quot;margin-top: 0px;&quot;&gt;X10X99-16D Huananzhi&lt;/h3&gt;&lt;p&gt;- CPU: x56&lt;/p&gt;&lt;p&gt;- RAM: 256GB&lt;/p&gt;&lt;p style=&quot;margin-top: 12px;&quot;&gt;- HHD: NVME 2x2TB&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;fontSize=12;spacing=2;" vertex="1" parent="1">
+          <mxGeometry x="170" y="351" width="167.1" height="130.51" as="geometry" />
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-29" value="HashiCorp&lt;div&gt;Vault&lt;/div&gt;" style="sketch=0;aspect=fixed;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;fillColor=#00188D;shape=mxgraph.mscae.enterprise.application" vertex="1" parent="1">
+          <mxGeometry x="485" y="631" width="50" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-30" value="MinIO S3" style="sketch=0;aspect=fixed;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;fillColor=#00188D;shape=mxgraph.mscae.enterprise.application" vertex="1" parent="1">
+          <mxGeometry x="555" y="631" width="50" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-33" value="PowerDNS" style="sketch=0;aspect=fixed;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;fillColor=#00188D;shape=mxgraph.mscae.enterprise.application" vertex="1" parent="1">
+          <mxGeometry x="618.9" y="631" width="50" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-34" value="GitLab" style="sketch=0;aspect=fixed;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;fillColor=#00188D;shape=mxgraph.mscae.enterprise.application" vertex="1" parent="1">
+          <mxGeometry x="685" y="631" width="50" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-35" value="Synatype&lt;br&gt;Nexus 3" style="sketch=0;aspect=fixed;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;fillColor=#00188D;shape=mxgraph.mscae.enterprise.application" vertex="1" parent="1">
+          <mxGeometry x="753.9" y="631" width="50" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-36" value="Jenkins" style="sketch=0;aspect=fixed;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;fillColor=#00188D;shape=mxgraph.mscae.enterprise.application" vertex="1" parent="1">
+          <mxGeometry x="825" y="631" width="50" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-41" value="Netbox" style="sketch=0;aspect=fixed;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;fillColor=#00188D;shape=mxgraph.mscae.enterprise.application" vertex="1" parent="1">
+          <mxGeometry x="415" y="631" width="50" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-43" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;exitX=1;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="Q8OMi7SeDDis-C1gScSc-5" target="Q8OMi7SeDDis-C1gScSc-17">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="640" y="541" as="sourcePoint" />
+            <mxPoint x="690" y="491" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-58" value="Net Home" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="Q8OMi7SeDDis-C1gScSc-43">
+          <mxGeometry x="-0.0551" y="-3" relative="1" as="geometry">
+            <mxPoint x="7" y="-3" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-44" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;curved=0;" edge="1" parent="1" source="Q8OMi7SeDDis-C1gScSc-41" target="Q8OMi7SeDDis-C1gScSc-2">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="945" y="501" as="sourcePoint" />
+            <mxPoint x="995" y="451" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="440" y="571" />
+              <mxPoint x="645" y="571" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-45" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;curved=0;" edge="1" parent="1" source="Q8OMi7SeDDis-C1gScSc-36" target="Q8OMi7SeDDis-C1gScSc-2">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="595" y="681" as="sourcePoint" />
+            <mxPoint x="804" y="571" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="850" y="571" />
+              <mxPoint x="645" y="571" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-47" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;curved=0;" edge="1" parent="1" source="Q8OMi7SeDDis-C1gScSc-29" target="Q8OMi7SeDDis-C1gScSc-2">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="615" y="681" as="sourcePoint" />
+            <mxPoint x="840" y="561" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="510" y="571" />
+              <mxPoint x="645" y="571" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-48" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;curved=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="Q8OMi7SeDDis-C1gScSc-30" target="Q8OMi7SeDDis-C1gScSc-2">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="505" y="711" as="sourcePoint" />
+            <mxPoint x="655" y="511" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="580" y="571" />
+              <mxPoint x="645" y="571" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-50" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;curved=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="Q8OMi7SeDDis-C1gScSc-34" target="Q8OMi7SeDDis-C1gScSc-2">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="675" y="721" as="sourcePoint" />
+            <mxPoint x="691" y="601" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="710" y="571" />
+              <mxPoint x="645" y="571" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-51" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;curved=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="Q8OMi7SeDDis-C1gScSc-35" target="Q8OMi7SeDDis-C1gScSc-2">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="780" y="701" as="sourcePoint" />
+            <mxPoint x="715" y="581" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="779" y="571" />
+              <mxPoint x="645" y="571" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-52" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="Q8OMi7SeDDis-C1gScSc-33" target="Q8OMi7SeDDis-C1gScSc-2">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="625" y="621" as="sourcePoint" />
+            <mxPoint x="675" y="571" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-57" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;FW&lt;/h1&gt;&lt;p&gt;Все что явно не разрешено,&lt;/p&gt;&lt;p&gt;то запрещено.&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="301.5" y="211" width="180" height="99" as="geometry" />
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-64" value="Synology&lt;div&gt;NAS D420+&lt;/div&gt;" style="sketch=0;aspect=fixed;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;fillColor=#00188D;shape=mxgraph.mscae.enterprise.storage" vertex="1" parent="1">
+          <mxGeometry x="900" y="631" width="42.68" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-66" value="VM: h-devops" style="sketch=0;aspect=fixed;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;fillColor=#00188D;shape=mxgraph.azure.virtual_machine_feature" vertex="1" parent="1">
+          <mxGeometry x="210" y="581" width="50" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-67" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;entryX=0;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="Q8OMi7SeDDis-C1gScSc-66" target="Q8OMi7SeDDis-C1gScSc-16">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="590" y="631" as="sourcePoint" />
+            <mxPoint x="640" y="581" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-68" value="SSH&lt;br&gt;Auth: USB Token (RuToken)&lt;div&gt;RSA 2048&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="Q8OMi7SeDDis-C1gScSc-67">
+          <mxGeometry x="-0.1327" relative="1" as="geometry">
+            <mxPoint x="-9" y="3" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-73" value="Net Home" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="Q8OMi7SeDDis-C1gScSc-67">
+          <mxGeometry x="0.4591" y="-4" relative="1" as="geometry">
+            <mxPoint x="-12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-70" value="GitHub.com" style="sketch=0;aspect=fixed;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;fillColor=#00188D;shape=mxgraph.mscae.enterprise.application" vertex="1" parent="1">
+          <mxGeometry x="790" y="140" width="50" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-74" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;curved=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="Q8OMi7SeDDis-C1gScSc-64" target="Q8OMi7SeDDis-C1gScSc-2">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1046" y="711" as="sourcePoint" />
+            <mxPoint x="640" y="521" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="921" y="571" />
+              <mxPoint x="644" y="571" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Q8OMi7SeDDis-C1gScSc-75" value="Схема домашней лаборатории для выполнения дипломного проекта" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=20;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="170" y="50" width="790" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
