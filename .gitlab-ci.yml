@@ -153,3 +153,4 @@ deploy_k8s:
     # Запускаем только в главной ветке, вручную, после apply
     - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
       when: manual
+  
