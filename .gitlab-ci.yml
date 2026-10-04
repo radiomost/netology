@@ -19,11 +19,11 @@ variables:
     - echo "Configuring AWS credentials for Terraform backend..."
     - mkdir -p ~/.aws
     - cat <<EOF > ~/.aws/credentials
-      [s3-minio]
-      aws_access_key_id = ${AWS_ACCESS_KEY_ID}
-      aws_secret_access_key = ${AWS_SECRET_ACCESS_KEY}
-      EOF
-
+[s3-minio]
+aws_access_key_id = ${AWS_ACCESS_KEY_ID}
+aws_secret_access_key = ${AWS_SECRET_ACCESS_KEY}
+EOF
+    - chmod 600 ~/.aws/credentials
     # 1. Устанавливаем базовые утилиты
     - apk add --no-cache curl unzip jq bash python3 git make openssh-client sed openssl helm
     
