@@ -150,7 +150,7 @@ deploy_k8s:
     - echo "Starting SSH tunnel to Kubernetes API in background..."
     - echo "========================================="
     
-    - ssh -f -N -L 6443:127.0.0.1:6443 root@130.193.49.92
+    - ssh -f -N -L 6443:10.10.0.16:6443 root@130.193.49.92
     
     - echo "Waiting 3 seconds for tunnel to establish..."
     - sleep 3
