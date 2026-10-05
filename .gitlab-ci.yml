@@ -126,7 +126,19 @@ kubespray:
   stage: kubespray
   before_script:
     - !reference [.base, before_script]
-
+    # --- ДОБАВЛЕНО: Установка pyenv и зависимостей для сборки Python в Alpine ---
+    - echo "Installing pyenv and build dependencies for Python..."
+    - apk add --no-cache pyenv gcc musl-dev linux-headers libffi-dev openssl-dev bzip2-dev zlib-dev readline-dev sqlite-dev
+    
+    # Инициализируем pyenv в текущей сессии bash
+    - eval "$(pyenv init -)"
+    
+    # Устанавливаем версию Python, совместимую с Kubespray (обычно 3.10 или 3.11)
+    # Это займет 1-2 минуты на компиляцию
+    - pyenv install 3.11.12
+    - pyenv global 3.11.12
+    - echo "Python version ready $(python --version)"
+    # ---------------------------------------------------------------------------
   script:
     - echo "=== KUBERSPRY INIT ==="
     - make kubespray-init
