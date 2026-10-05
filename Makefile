@@ -351,3 +351,21 @@ k8s-ci-connect:
 	@kubectl cluster-info
 	
 	@echo "✓ Подключение к K8s успешно установлено!"
+
+
+.PHONY: k8s-kubeconfig-deploy
+k8s-kubeconfig-deploy:
+	@echo "=== Fetching kubeconfig from master node ==="
+	@echo "DEBUG 1: Проверяем содержимое /etc/kubernetes/ на мастер-ноде..."
+	@ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$(MASTER_EXTERNAL_IP) "ls -la /etc/kubernetes/ || echo 'ПАПКА /etc/kubernetes/ ОТСУТСТВУЕТ!'"
+	
+	@echo "DEBUG 2: Ищем файл admin.conf в системе..."
+	@ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$(MASTER_EXTERNAL_IP) "find / -name 'admin.conf' -type f 2>/dev/null | head -n 5 || echo 'ФАЙЛ admin.conf НЕ НАЙДЕН НИГДЕ!'"
+
+	@echo "Copying kubeconfig via SSH..."
+	@# Пытаемся скопировать. Если файла нет, команда завершится с ошибкой, и мы это увидим.
+	@ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$(MASTER_EXTERNAL_IP) "cat /etc/kubernetes/admin.conf" > ~/.kube/config
+	
+	@echo "Updating server address to use SSH tunnel (127.0.0.1:6443)..."
+	@sed -i.bak 's|server: https://.*|server: https://127.0.0.1:6443|g' ~/.kube/config
+	@echo "✓ Kubeconfig saved to ~/.kube/config and configured for localhost tunnel."

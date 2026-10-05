@@ -119,6 +119,46 @@ apply:
     - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
       when: manual # Ручной запуск безопаснее для диплома
 
+kubespray:
+  extends: .base
+  stage: kubespray
+  before_script:
+    - !reference [.base, before_script]
+
+  script:
+    - echo "=== KUBERSPRY INIT ==="
+    - make kubespray-init
+    - echo "=== KUBERSPRY INVENTORY ==="
+    - make kubespray-inventory
+    - echo "=== KUBERSPRY INVENTORY ==="
+    - make kubespray-deploy
+    - echo "=== KUBERSPRY DEPLOY ==="
+
+  rules:
+    # Запускаем только в главной ветке, вручную, после apply
+    - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
+      when: on_success
+      needs:
+      - job: apply
+
+app:
+  extends: .base
+  stage: app_deploy
+  before_script:
+    - !reference [.base, before_script]
+
+  script:
+    - echo "=== APP BUILD ==="
+    - make build
+
+  rules:
+    # Запускаем только в главной ветке, вручную, после apply
+    - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
+      when: on_success
+      needs:
+      - job: kubespray
+
+
 # Стадия 3: Деплой в Kubernetes (только после успешного apply в главной ветке)
 deploy_k8s:
   extends: .base
@@ -150,4 +190,7 @@ deploy_k8s:
   rules:
     # Запускаем только в главной ветке, вручную, после apply
     - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
-      when: manual
+      when: on_success
+      needs:
+      - job: app
+
