@@ -327,5 +327,27 @@ k8s-destroy:
 	@kubectl delete namespace ingress-nginx 2>/dev/null || true
 	@echo "✓ All Kubernetes resources removed"
 
+# ==============================================================================
+# CI/CD SPECIFIC TARGETS
+# ==============================================================================
 
-
+.PHONY: k8s-ci-connect
+k8s-ci-connect:
+	@echo "=== CI/CD: Настройка безопасного подключения к K8s API ==="
+	@# 1. Получаем и модифицируем kubeconfig (он уже меняет сервер на 127.0.0.1:6443)
+	@$(MAKE) k8s-kubeconfig
+	
+	@echo "Запуск SSH туннеля в фоновом режиме..."
+	@# 2. Пытаемся пробросить порт на 127.0.0.1 (так как kubeconfig настроен именно на него).
+	@# Если API-сервер слушает localhost, это сработает.
+	@ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -f -N -L 6443:127.0.0.1:6443 root@$(MASTER_EXTERNAL_IP) || \
+	 (echo "Туннель на 127.0.0.1 не прошел. Пробуем внутренний IP $(MASTER_INTERNAL_IP)..." && \
+	  ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -f -N -L 6443:$(MASTER_INTERNAL_IP):6443 root@$(MASTER_EXTERNAL_IP))
+	
+	@echo "Ожидание 3 секунды для стабилизации туннеля..."
+	@sleep 3
+	
+	@echo "Проверка подключения к кластеру..."
+	@kubectl cluster-info
+	
+	@echo "✓ Подключение к K8s успешно установлено!"
