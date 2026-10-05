@@ -1,6 +1,8 @@
 stages:
   - plan
   - apply
+  - kubespray
+  - app
   - deploy_k8s
 
 variables:
