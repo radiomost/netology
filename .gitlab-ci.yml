@@ -6,93 +6,73 @@ stages:
   - deploy_k8s
 
 variables:
-  # Ссылки на ваши внутренние артефакты (оставляем как есть, это отлично)
   TF_BINARY_URL: "https://repository.rdmost.ru/repository/registry_terraform/terraform/terraform_1.14.0_linux_amd64.zip"
   YC_PROVIDER_URL: "https://repository.rdmost.ru/repository/registry_terraform/provider/yandex/terraform-provider-yandex_0.129.0_linux_amd64.zip"
-  
-  # Добавляем переменную для дефолтной ветки, если она у вас называется иначе (например, master)
   DEFAULT_BRANCH: "diplom-dev"
 
-# Базовый шаблон для всех джоб
+# ==============================================================================
+# 1. YAML-ЯКОРЬ (ANCHOR) для базовых шагов установки
+# ==============================================================================
+.base_before_script: &base_before_script
+  - echo "Configuring AWS credentials for Terraform backend..."
+  - export AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}"
+  - export AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}"
+  - export AWS_DEFAULT_REGION="us-east-1"
+  - apk add --no-cache curl unzip jq bash python3 git make openssh-client sed openssl helm
+  - echo "Installing custom Terraform 1.14.0..."
+  - curl -k -sSL "$TF_BINARY_URL" -o /tmp/terraform.zip
+  - unzip -o /tmp/terraform.zip -d /usr/local/bin/
+  - rm -f /tmp/terraform.zip
+  - terraform version
+  - echo "Installing custom Yandex Provider 0.129.0..."
+  - mkdir -p ~/.terraform.d/plugins/registry.terraform.io/yandex-cloud/yandex/0.129.0/linux_amd64
+  - curl -k -sSL "$YC_PROVIDER_URL" -o /tmp/yandex-provider.zip
+  - unzip -o /tmp/yandex-provider.zip -d ~/.terraform.d/plugins/registry.terraform.io/yandex-cloud/yandex/0.129.0/linux_amd64/
+  - rm -f /tmp/yandex-provider.zip
+  - |
+    cat <<EOF > ~/.terraformrc
+    provider_installation {
+      filesystem_mirror {
+        path    = "/root/.terraform.d/plugins"
+        include = ["registry.terraform.io/yandex-cloud/yandex"]
+      }
+      direct {
+        exclude = ["registry.terraform.io/yandex-cloud/yandex"]
+      }
+    }
+    EOF
+  - curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
+  - export PATH="$PATH:$HOME/yandex-cloud/bin"
+  - echo "$YC_SA_KEY" > ~/.authorized_key.json
+  - chmod 600 ~/.authorized_key.json
+  - yc config profile create ci-profile || true
+  - yc config set service-account-key ~/.authorized_key.json
+  - yc config set folder-id "$TF_VAR_folder_id"
+  - curl -sLO "https://dl.k8s.io/release/v1.28.0/bin/linux/amd64/kubectl"
+  - install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+  - rm -f kubectl
+
+# Базовый шаблон, использующий якорь
 .base:
   image: alpine:3.18
-  before_script:
-    # 0. Создаем конфигурационные файлы
-    - echo "Configuring AWS credentials for Terraform backend..."
-    - export AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}"
-    - export AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}"
-    - export AWS_DEFAULT_REGION="us-east-1"
+  before_script: *base_before_script
 
+# ==============================================================================
+# 2. ЗАДАЧИ (JOBS)
+# ==============================================================================
 
-    # 1. Устанавливаем базовые утилиты
-    - apk add --no-cache curl unzip jq bash python3 git make openssh-client sed openssl helm
-    
-    # 2. Скачиваем и устанавливаем ВАШУ версию Terraform
-    - echo "Installing custom Terraform 1.14.0..."
-    - curl -k -sSL "$TF_BINARY_URL" -o /tmp/terraform.zip
-    - unzip -o /tmp/terraform.zip -d /usr/local/bin/
-    - rm -f /tmp/terraform.zip
-    - terraform version
-    
-    # 3. Скачиваем и устанавливаем ВАШУ версию провайдера Yandex Cloud
-    - echo "Installing custom Yandex Provider 0.129.0..."
-    - mkdir -p ~/.terraform.d/plugins/registry.terraform.io/yandex-cloud/yandex/0.129.0/linux_amd64
-    - curl -k -sSL "$YC_PROVIDER_URL" -o /tmp/yandex-provider.zip
-    - unzip -o /tmp/yandex-provider.zip -d ~/.terraform.d/plugins/registry.terraform.io/yandex-cloud/yandex/0.129.0/linux_amd64/
-    - rm -f /tmp/yandex-provider.zip
-    
-    # 4. Настраиваем Terraform на использование локального зеркала
-    - |
-      cat <<EOF > ~/.terraformrc
-      provider_installation {
-        filesystem_mirror {
-          path    = "/root/.terraform.d/plugins"
-          include = ["registry.terraform.io/yandex-cloud/yandex"]
-        }
-        direct {
-          exclude = ["registry.terraform.io/yandex-cloud/yandex"]
-        }
-      }
-      EOF
-
-    # 5. Устанавливаем и настраиваем Yandex Cloud CLI
-    - curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
-    - export PATH="$PATH:$HOME/yandex-cloud/bin"
-    - echo "$YC_SA_KEY" > ~/.authorized_key.json
-    - chmod 600 ~/.authorized_key.json
-    - yc config profile create ci-profile || true
-    - yc config set service-account-key ~/.authorized_key.json
-    - yc config set folder-id "$TF_VAR_folder_id"
-    
-    # 6. Устанавливаем kubectl
-    - curl -sLO "https://dl.k8s.io/release/v1.28.0/bin/linux/amd64/kubectl"
-    - install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-    - rm -f kubectl
-
-
-
-
-# Стадия 1: Планирование (запускается автоматически при создании Merge Request)
 plan:
   extends: .base
   stage: plan
   script:
     - echo "Running terraform init..."
-    - make init # Если в Makefile есть этот таргет, иначе terraform init
-    
+    - make init || terraform init
     - echo "Running terraform plan..."
-    # Генерируем бинарный план и текстовый вывод для артефактов
     - terraform plan -out=tfplan.binary
     - terraform show -no-color tfplan.binary > plan.txt
-    
     - echo "=== TERRAFORM PLAN OUTPUT ==="
     - cat plan.txt
     - echo "============================="
-    
-    # Если ваш make plan делает что-то еще важное, раскомментируйте строку ниже:
-    # - make plan 
-    
-  # КРИТИЧНО: Сохраняем план как артефакт. Это прямое требование преподавателя!
   artifacts:
     name: "tf-plan-$CI_COMMIT_REF_SLUG"
     paths:
@@ -100,16 +80,11 @@ plan:
       - plan.txt
     expire_in: 1 week
     reports:
-      # Если у вас GitLab Premium, это создаст красивую вкладку Terraform. 
-      # Для CE версии это просто не вызовет ошибки, а артефакт plan.txt останется доступен.
       terraform: plan.txt 
   rules:
-    # Запускаем план при создании или обновлении Merge Request
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-    # Или при пуше в любую ветку, кроме дефолтной
     - if: '$CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != $DEFAULT_BRANCH'
 
-# Стадия 2: Применение инфраструктуры (только вручную и только в главной ветке)
 apply:
   extends: .base
   stage: apply
@@ -117,34 +92,24 @@ apply:
     - echo "Running make apply..."
     - make apply
   rules:
-    # Разрешаем запуск ТОЛЬКО в главной ветке (main/master)
     - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
-      when: manual # Ручной запуск безопаснее для диплома
+      when: manual
 
 kubespray:
   extends: .base
   stage: kubespray
-  before_script:
-    - !reference [.base, before_script]
-
   script:
-    - echo "=== KUBERSPRY INIT ==="
+    - echo "=== KUBESPRAY INIT ==="
     - make kubespray-init
-    - echo "=== KUBERSPRY INVENTORY ==="
+    - echo "=== KUBESPRAY INVENTORY ==="
     - make kubespray-inventory
-
   rules:
-    # Запускаем только в главной ветке, вручную, после apply
     - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
-      when: on_success
-      needs:
-      - job: apply
+      when: manual
 
 app:
   extends: .base
   stage: app_deploy
-  before_script:
-    - !reference [.base, before_script]
   script:
     - echo "=== APP BUILD ==="
     - make build
@@ -159,24 +124,18 @@ deploy_k8s:
   extends: .base
   stage: deploy_k8s
   before_script:
-    - !reference [.base, before_script]
+    # Вставляем все базовые шаги через якорь
+    - *base_before_script
     
-    # --- НАСТРОЙКА SSH ДЛЯ ПОДКЛЮЧЕНИЯ К K8S ---
+    # Добавляем специфичные для deploy шаги настройки SSH
     - mkdir -p ~/.ssh
     - echo "=== DEBUG: Настройка SSH ключа ==="
-    - echo "Путь к файлу ключа в GitLab: $SSH_PRIVATE_KEY"
-    
-    # Копируем ключ (работает, если в GitLab переменная создана как Type: File)
-    - cp "$SSH_PRIVATE_KEY" ~/.ssh/id_rsa
-    
-    # Очищаем от возможных Windows-переносов и выставляем права
+    # Используем echo вместо cp, так как это работает и для Type: Variable, и для Type: File в GitLab
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
     - sed -i 's/\r$//' ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
-    
-    # Отключаем строгую проверку хостов, чтобы скрипт не зависал
     - echo -e "Host *\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile=/dev/null" > ~/.ssh/config
     - echo "✓ SSH ключ успешно настроен"
-    # -------------------------------------------
 
   script:
     - echo "=== Подключение к кластеру и деплой ==="
@@ -191,4 +150,3 @@ deploy_k8s:
     - job: app
     - job: kubespray
       optional: true
-
