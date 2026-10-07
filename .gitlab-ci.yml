@@ -129,7 +129,7 @@ deploy_k8s:
     
     # Добавляем специфичные для deploy шаги настройки SSH
     - mkdir -p ~/.ssh
-    - echo "=== DEBUG: Настройка SSH ключа ==="
+    - echo "=== DEBUG Настройка SSH ключа ==="
     # Используем echo вместо cp, так как это работает и для Type: Variable, и для Type: File в GitLab
     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
     - sed -i 's/\r$//' ~/.ssh/id_rsa
