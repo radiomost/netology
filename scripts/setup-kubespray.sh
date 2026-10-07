@@ -27,27 +27,39 @@ fi
 
 cd kubespray
 
-# Step 2: Setup Python environment with pyenv
+# Step 2: Setup Python environment
 echo -e "${YELLOW}Setting up Python environment...${NC}"
 
-if ! command -v pyenv &> /dev/null; then
-    echo -e "${RED}Error: pyenv is not installed. Please install pyenv first.${NC}"
-    exit 1
-fi
-
-if ! pyenv versions | grep -q "3.12.10"; then
-    echo -e "${RED}Error: Python 3.12.10 is not installed in pyenv. Install it with: pyenv install 3.12.10${NC}"
-    exit 1
-fi
-
-if ! pyenv versions | grep -q "netology"; then
-    echo -e "${YELLOW}Creating pyenv virtualenv 'netology' with Python 3.12.10...${NC}"
-    pyenv virtualenv 3.12.10 netology
+# ПРОВЕРКА: Запущены ли мы в GitLab CI?
+if [ -n "$CI" ]; then
+    echo -e "${GREEN}Detected GitLab CI environment. Using system Python3 and standard venv.${NC}"
+    python3 -m venv venv
+    source venv/bin/activate
+    pip3 install --upgrade pip
 else
-    echo -e "${GREEN}Virtualenv 'netology' already exists.${NC}"
-fi
+    echo -e "${YELLOW}Local environment detected. Using pyenv.${NC}"
+    if ! command -v pyenv &> /dev/null; then
+        echo -e "${RED}Error: pyenv is not installed. Please install pyenv first.${NC}"
+        exit 1
+    fi
+    
+    # Инициализируем pyenv для работы внутри bash-скрипта (обязательно для неинтерактивных оболочек)
+    eval "$(pyenv init -)"
+    
+    if ! pyenv versions --bare | grep -q "3.12.10"; then
+        echo -e "${RED}Error: Python 3.12.10 is not installed in pyenv. Install it with: pyenv install 3.12.10${NC}"
+        exit 1
+    fi
 
-pyenv local netology
+    if ! pyenv virtualenvs --bare | grep -q "netology"; then
+        echo -e "${YELLOW}Creating pyenv virtualenv 'netology' with Python 3.12.10...${NC}"
+        pyenv virtualenv 3.12.10 netology
+    else
+        echo -e "${GREEN}Virtualenv 'netology' already exists.${NC}"
+    fi
+
+    pyenv local netology
+fi
 
 echo -e "${YELLOW}Installing Python dependencies...${NC}"
 pip install -r requirements.txt
@@ -73,12 +85,12 @@ fi
 
 # Extract IPs from terraform output
 MASTER_IP=$(terraform output -raw master_external_ip 2>/dev/null || echo "")
-WORKER1_IP=$(terraform output -json workers_external_ips 2>/dev/null | jq -r '."worker-1"' || echo "")
-WORKER2_IP=$(terraform output -json workers_external_ips 2>/dev/null | jq -r '."worker-2"' || echo "")
+WORKER1_IP=$(terraform output -json workers_external_ips 2>/dev/null | jq -r '.["worker-1"]' || echo "")
+WORKER2_IP=$(terraform output -json workers_external_ips 2>/dev/null | jq -r '.["worker-2"]' || echo "")
 
 MASTER_INT_IP=$(terraform output -raw master_internal_ip 2>/dev/null || echo "")
-WORKER1_INT_IP=$(terraform output -json workers_internal_ips 2>/dev/null | jq -r '."worker-1"' || echo "")
-WORKER2_INT_IP=$(terraform output -json workers_internal_ips 2>/dev/null | jq -r '."worker-2"' || echo "")
+WORKER1_INT_IP=$(terraform output -json workers_internal_ips 2>/dev/null | jq -r '.["worker-1"]' || echo "")
+WORKER2_INT_IP=$(terraform output -json workers_internal_ips 2>/dev/null | jq -r '.["worker-2"]' || echo "")
 
 if [ -z "$MASTER_IP" ] || [ -z "$WORKER1_IP" ] || [ -z "$WORKER2_IP" ]; then
     echo -e "${RED}Error: Could not fetch external IP addresses from Terraform output.${NC}"
