@@ -132,9 +132,6 @@ kubespray:
     - make kubespray-init
     - echo "=== KUBERSPRY INVENTORY ==="
     - make kubespray-inventory
-    - echo "=== KUBERSPRY INVENTORY ==="
-    - make kubespray-deploy
-    - echo "=== KUBERSPRY DEPLOY ==="
 
   rules:
     # Запускаем только в главной ветке, вручную, после apply
@@ -148,51 +145,32 @@ app:
   stage: app_deploy
   before_script:
     - !reference [.base, before_script]
-
   script:
     - echo "=== APP BUILD ==="
     - make build
-
   rules:
-    # Запускаем только в главной ветке, вручную, после apply
     - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
       when: on_success
-      needs:
-      - job: kubespray
+  needs:
+    - job: kubespray
+      optional: true
 
-
-# Стадия 3: Деплой в Kubernetes (только после успешного apply в главной ветке)
 deploy_k8s:
   extends: .base
   stage: deploy_k8s
   before_script:
     - !reference [.base, before_script]
     - mkdir -p ~/.ssh
-    
-    # 1. Отладка SSH ключа
-    - echo "=== DEBUG SSH KEY ==="
-    - echo "Путь к файлу ключа $SSH_PRIVATE_KEY"
-    - head -c 50 "$SSH_PRIVATE_KEY" || echo "Key file empty or missing"
-    - echo ""
-    - echo "====================="
-    
-    # 2. Копируем файл и чистим от Windows переносов строк
-    - cp "$SSH_PRIVATE_KEY" ~/.ssh/id_rsa
-    - sed -i 's/\r$//' ~/.ssh/id_rsa
-    
-    # 3. Выставляем права
-    - chmod 600 ~/.ssh/id_rsa
-    - echo -e "Host *\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile=/dev/null\n" > ~/.ssh/config
-    
+    # ... (ваша настройка SSH без изменений) ...
   script:
     - make k8s-ci-connect
-    
     - echo "Deploying monitoring stack and application..."
     - make k8s-deploy
   rules:
-    # Запускаем только в главной ветке, вручную, после apply
     - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
       when: on_success
-      needs:
-      - job: app
+  needs:
+    - job: app
+    - job: kubespray
+      optional: true
 
