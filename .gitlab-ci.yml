@@ -124,18 +124,30 @@ deploy_k8s:
   extends: .base
   stage: deploy_k8s
   before_script:
-    # Вставляем все базовые шаги через якорь
     - *base_before_script
     
-    # Добавляем специфичные для deploy шаги настройки SSH
+    # --- НАСТРОЙКА SSH (СТРОГО ДЛЯ TYPE: FILE) ---
     - mkdir -p ~/.ssh
-    - echo "=== DEBUG Настройка SSH ключа ==="
-    # Используем echo вместо cp, так как это работает и для Type: Variable, и для Type: File в GitLab
-    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - echo "=== DEBUG: Проверка типа переменной SSH_PRIVATE_KEY ==="
+    # Если это File, переменная содержит путь. Покажем первые 50 символов этого пути/файла
+    - head -c 50 "$SSH_PRIVATE_KEY" || echo "Переменная пуста или не найдена!"
+    - echo ""
+    
+    # Копируем файл по пути, который предоставил GitLab
+    - cp "$SSH_PRIVATE_KEY" ~/.ssh/id_rsa
+    
+    # Очищаем от возможных скрытых символов и выставляем строгие права
     - sed -i 's/\r$//' ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
+    
+    # Отключаем строгую проверку хостов
     - echo -e "Host *\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile=/dev/null" > ~/.ssh/config
-    - echo "✓ SSH ключ успешно настроен"
+    
+    # Финальная проверка: первая строка файла ДОЛЖНА быть "-----BEGIN OPENSSH PRIVATE KEY-----"
+    - echo "=== Проверка содержимого созданного ключа ==="
+    - head -n 1 ~/.ssh/id_rsa
+    - echo "============================================="
+    # -------------------------------------------
 
   script:
     - echo "=== Подключение к кластеру и деплой ==="
@@ -150,3 +162,4 @@ deploy_k8s:
     - job: app
     - job: kubespray
       optional: true
+      
