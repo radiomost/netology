@@ -258,45 +258,46 @@ k8s-setup: k8s-kubeconfig k8s-tunnel k8s-check
 # Kubernetes Deployment (Monitoring & App) - IMPROVED VERSION
 # =============================================================================
 
+.PHONY: k8s-deploy
 k8s-deploy:
 	@echo "=== Deploying Monitoring Stack and Application ==="
 	@echo "[0/5] Checking Kubernetes cluster connection..."
 	@if ! kubectl cluster-info > /dev/null 2>&1; then \
-		echo "Error: Cannot connect to Kubernetes cluster."; \
-		echo "Please run: make k8s-setup"; \
+		echo "❌ Error: Cannot connect to Kubernetes cluster."; \
+		echo "Please run: make k8s-ci-connect (or k8s-setup locally)"; \
 		exit 1; \
 	fi
-	@echo "Cluster is reachable. Proceeding..."
-	@ls -la $(REGISTRY_DIR)
-	@cd $(REGISTRY_DIR) && terraform init -input=false > /dev/null
-	@REGISTRY_ID=$$(cd $(REGISTRY_DIR) && terraform output -raw registry_id) && \
+	@echo "✓ Cluster is reachable. Proceeding..."
+
+	@echo "[1/5] Fetching Registry ID from Terraform state..."
+	@cd $(REGISTRY_DIR) && terraform init -input=false -backend=false > /dev/null 2>&1 || true
+	@REGISTRY_ID=$$(cd $(REGISTRY_DIR) && terraform output -raw registry_id 2>/dev/null || echo "YOUR_REGISTRY_ID_HERE") && \
 	echo "Detected Registry ID: $$REGISTRY_ID" && \
-	echo "[1/5] Adding Helm repositories..." && \
+	echo "[2/5] Adding Helm repositories..." && \
 	helm repo add prometheus-community https://prometheus-community.github.io/helm-charts || true && \
 	helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx || true && \
-	helm repo update && \
-	echo "[2/5] Installing NGINX Ingress Controller..." && \
+	helm repo update > /dev/null && \
+	echo "[3/5] Installing NGINX Ingress Controller (with Cloud LoadBalancer)..." && \
 	helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
 		--namespace ingress-nginx --create-namespace \
 		--set controller.replicaCount=1 \
-		--set controller.hostNetwork=true \
-		--set controller.dnsPolicy=ClusterFirstWithHostNet \
-		--set controller.service.type=ClusterIP \
+		--set controller.service.type=LoadBalancer \
+		--set controller.service.annotations."service\.beta\.kubernetes\.io/yandex-cloud-lb-type"="external" \
 		--set controller.nodeSelector."kubernetes\.io/os"=linux \
 		--wait && \
-	echo "[3/5] Installing kube-prometheus-stack..." && \
+	echo "[4/5] Installing kube-prometheus-stack..." && \
 	helm upgrade --install monitoring prometheus-community/kube-prometheus-stack \
 		--namespace monitoring --create-namespace \
 		-f stage4-k8s-configs/monitoring-values.yaml \
 		--wait && \
-	echo "[4/5] Creating YCR pull secret..." && \
+	echo "[5/5] Creating YCR pull secret..." && \
 	ycr_token=$$(yc iam create-token | tr -d '\n\r') && \
 	kubectl create secret docker-registry ycr-secret \
 		--docker-server=cr.yandex \
 		--docker-username=iam \
 		--docker-password="$$ycr_token" \
 		-n default --dry-run=client -o yaml | kubectl apply -f - && \
-	echo "[5/5] Deploying test application..." && \
+	echo "Deploying test application..." && \
 	sed "s|__REGISTRY_ID__|$$REGISTRY_ID|g" stage4-k8s-configs/app-deployment.yaml | kubectl apply -f - && \
 	kubectl apply -f stage4-k8s-configs/app-service.yaml && \
 	kubectl apply -f stage4-k8s-configs/app-ingress.yaml && \
@@ -305,12 +306,19 @@ k8s-deploy:
 	kubectl wait --for=condition=ready pod -l app=netology-diploma-app --timeout=120s -n default || true && \
 	echo "" && \
 	echo "=== Deployment Complete! ==="
-	@echo ""
-	@echo "Access points:"
-	@echo "  Grafana: http://<worker-node-ip>:80 (admin/prom-operator)"
-	@echo "  App:     http://<worker-node-ip>:80"
-	@kubectl get svc -n ingress-nginx | grep -E 'ingress-nginx-controller' || true
 
+	@echo ""
+	@echo "🎉 Access points:"
+	@echo "Waiting for LoadBalancer to assign an external IP..."
+	@sleep 5
+	@LB_IP=$$(kubectl get svc -n ingress-nginx ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null) && \
+	if [ -n "$$LB_IP" ]; then \
+		echo "  🌐 Grafana:  http://$$LB_IP/grafana (admin/prom-operator)"; \
+		echo "  🌐 App:      http://$$LB_IP/"; \
+	else \
+		echo "  ⏳ LoadBalancer is still provisioning. Check with: kubectl get svc -n ingress-nginx"; \
+	fi
+	
 # =============================================================================
 # Cleanup
 # =============================================================================
