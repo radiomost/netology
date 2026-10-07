@@ -160,12 +160,30 @@ deploy_k8s:
   stage: deploy_k8s
   before_script:
     - !reference [.base, before_script]
+    
+    # --- НАСТРОЙКА SSH ДЛЯ ПОДКЛЮЧЕНИЯ К K8S ---
     - mkdir -p ~/.ssh
-    # ... (ваша настройка SSH без изменений) ...
+    - echo "=== DEBUG: Настройка SSH ключа ==="
+    - echo "Путь к файлу ключа в GitLab: $SSH_PRIVATE_KEY"
+    
+    # Копируем ключ (работает, если в GitLab переменная создана как Type: File)
+    - cp "$SSH_PRIVATE_KEY" ~/.ssh/id_rsa
+    
+    # Очищаем от возможных Windows-переносов и выставляем права
+    - sed -i 's/\r$//' ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    
+    # Отключаем строгую проверку хостов, чтобы скрипт не зависал
+    - echo -e "Host *\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile=/dev/null" > ~/.ssh/config
+    - echo "✓ SSH ключ успешно настроен"
+    # -------------------------------------------
+
   script:
+    - echo "=== Подключение к кластеру и деплой ==="
     - make k8s-ci-connect
     - echo "Deploying monitoring stack and application..."
     - make k8s-deploy
+    
   rules:
     - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
       when: on_success
