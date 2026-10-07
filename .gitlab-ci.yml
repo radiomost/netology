@@ -128,7 +128,7 @@ deploy_k8s:
     
     # --- НАСТРОЙКА SSH (СТРОГО ДЛЯ TYPE: FILE) ---
     - mkdir -p ~/.ssh
-    - echo "=== DEBUG: Проверка типа переменной SSH_PRIVATE_KEY ==="
+    - echo "=== DEBUG Проверка типа переменной SSH_PRIVATE_KEY ==="
     # Если это File, переменная содержит путь. Покажем первые 50 символов этого пути/файла
     - head -c 50 "$SSH_PRIVATE_KEY" || echo "Переменная пуста или не найдена!"
     - echo ""
@@ -162,4 +162,3 @@ deploy_k8s:
     - job: app
     - job: kubespray
       optional: true
-      
