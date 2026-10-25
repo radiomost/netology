@@ -9,6 +9,7 @@ variables:
   TF_BINARY_URL: "https://repository.rdmost.ru/repository/registry_terraform/terraform/terraform_1.14.0_linux_amd64.zip"
   YC_PROVIDER_URL: "https://repository.rdmost.ru/repository/registry_terraform/provider/yandex/terraform-provider-yandex_0.129.0_linux_amd64.zip"
   DEFAULT_BRANCH: "diplom-dev"
+  S3_BACKET: "netology-stg"
 
 # ==============================================================================
 # 1. YAML-ЯКОРЬ (ANCHOR) для базовых шагов установки
@@ -66,7 +67,7 @@ plan:
   stage: plan
   script:
     - echo "Running terraform init..."
-    - make init || terraform init
+    - make -f Makefile.ci init || terraform init
     - echo "Running terraform plan..."
     - terraform plan -out=tfplan.binary
     - terraform show -no-color tfplan.binary > plan.txt
@@ -90,7 +91,7 @@ apply:
   stage: apply
   script:
     - echo "Running make apply..."
-    - make apply
+    - make -f Makefile.ci apply
   rules:
     - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
       when: manual
@@ -100,9 +101,9 @@ kubespray:
   stage: kubespray
   script:
     - echo "=== KUBESPRAY INIT ==="
-    - make kubespray-init
+    - make -f Makefile.ci kubespray-init
     - echo "=== KUBESPRAY INVENTORY ==="
-    - make kubespray-inventory
+    - make -f Makefile.ci kubespray-inventory
   rules:
     - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
       when: manual
@@ -112,7 +113,7 @@ app:
   stage: app_deploy
   script:
     - echo "=== APP BUILD ==="
-    - make build
+    - make -f Makefile.ci build
   rules:
     - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
       when: on_success
@@ -151,9 +152,9 @@ deploy_k8s:
 
   script:
     - echo "=== Подключение к кластеру и деплой ==="
-    - make k8s-ci-connect
+    - make -f Makefile.ci k8s-ci-connect
     - echo "Deploying monitoring stack and application..."
-    - make k8s-deploy
+    - make -f Makefile.ci k8s-deploy
     
   rules:
     - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'

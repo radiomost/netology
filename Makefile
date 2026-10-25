@@ -1,14 +1,4 @@
-ENV_MODE ?= local
-
-ifeq ($(ENV_MODE),gitlab)
-	MODE_MESSAGE := Запущен режим сборки Gitlab CI
-else
-	MODE_MESSAGE := Запущен локальный режим сборки
-endif
-
-
 .PHONY: init plan apply destroy clean
-
 # Default target
 help:
 	@echo "Kubernetes Cluster Deployment Makefile"
@@ -349,43 +339,6 @@ k8s-destroy:
 # ==============================================================================
 
 .PHONY: k8s-ci-connect
-# ==============================================================================
-# УСЛОВИЕ ДЛЯ CI (GitLab)
-# ==============================================================================
-ifeq ($(ENV_MODE),gitlab)
-k8s-ci-connect:
-	@echo "Запущен режим сборки Gitlab CI"
-	@echo "=== CI/CD: Настройка безопасного подключения к K8s API ==="
-	
-	@# Получаем IP-адреса напрямую через terraform output
-	@cd stage2-compute && \
-	MASTER_EXT_IP=$$(terraform output -raw master_external_ip) && \
-	MASTER_INT_IP=$$(terraform output -raw master_internal_ip) && \
-	echo "Master External IP: $$MASTER_EXT_IP" && \
-	echo "Master Internal IP: $$MASTER_INT_IP" && \
-	cd .. && \
-	$(MAKE) k8s-kubeconfig MASTER_EXTERNAL_IP=$$MASTER_EXT_IP MASTER_INTERNAL_IP=$$MASTER_INT_IP
-	
-	@echo "Запуск SSH туннеля в фоновом режиме..."
-	@cd stage2-compute && \
-	MASTER_EXT_IP=$$(terraform output -raw master_external_ip) && \
-	MASTER_INT_IP=$$(terraform output -raw master_internal_ip) && \
-	cd .. && \
-	(ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -f -N -L 6443:127.0.0.1:6443 ubuntu@$$MASTER_EXT_IP || \
-	ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -f -N -L 6443:$$MASTER_INT_IP:6443 ubuntu@$$MASTER_EXT_IP)
-	
-	@echo "Ожидание 3 секунды для стабилизации туннеля..."
-	@sleep 3
-	
-	@echo "Проверка подключения к кластеру..."
-	@kubectl cluster-info
-	
-	@echo "✓ Подключение к K8s успешно установлено!"
-
-# ==============================================================================
-# УСЛОВИЕ ДЛЯ ЛОКАЛЬНОЙ РАЗРАБОТКИ
-# ==============================================================================
-else
 k8s-ci-connect:
 	@echo "Запущен локальный режим сборки"
 	@echo "=== Локальная настройка безопасного подключения к K8s API ==="
@@ -406,7 +359,7 @@ k8s-ci-connect:
 	@kubectl cluster-info
 	
 	@echo "✓ Подключение к K8s успешно установлено!"
-endif
+
 
 .PHONY: k8s-kubeconfig-deploy
 k8s-kubeconfig-deploy:

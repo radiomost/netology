@@ -6,7 +6,6 @@ terraform {
   }
   
   backend "s3" {
-    bucket                      = "netology"
     key                         = "stage1-network.tfstate"
     region                      = "us-east-1"
     endpoints = {
