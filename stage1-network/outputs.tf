@@ -5,10 +5,10 @@ output "vpc_id" {
 
 output "subnet_a_id" {
   value       = yandex_vpc_subnet.subnet_a.id
-  description = "ID of the subnet in ru-central1-a"
+  description = "ID of the subnet in ru-central1-d"
 }
 
-output "subnet_b_id" {
-  value       = yandex_vpc_subnet.subnet_b.id
-  description = "ID of the subnet in ru-central1-b"
+output "subnet_d_id" {
+  value       = yandex_vpc_subnet.subnet_d.id
+  description = "ID of the subnet in ru-central1-d"
 }

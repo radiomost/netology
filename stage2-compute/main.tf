@@ -8,7 +8,7 @@ locals {
   ssh_public_key = var.ssh_public_key != "" ? var.ssh_public_key : file("~/.ssh/id_rsa.pub")
 
   subnet_a_id = data.terraform_remote_state.network.outputs.subnet_a_id
-  subnet_b_id = data.terraform_remote_state.network.outputs.subnet_b_id
+  subnet_d_id = data.terraform_remote_state.network.outputs.subnet_d_id
 }
 
 data "yandex_vpc_address" "master_ip" {
@@ -26,18 +26,19 @@ data "yandex_vpc_address" "worker2_ip" {
 # Master Node (Non-preemptible for cluster stability)
 resource "yandex_compute_instance" "master" {
   name        = "${var.project_name}-k8s-master"
-  zone        = "ru-central1-a"
+  zone        = "ru-central1-d"
   platform_id = "standard-v3"
   
   resources {
     cores  = 2
-    memory = 4 # Kubespray requires at least 2GB for master
+    memory = 2 # Kubespray requires at least 2GB for master
+    core_fraction = 20
   }
 
   boot_disk {
     initialize_params {
       image_id = data.yandex_compute_image.ubuntu.id
-      size     = 20
+      size     = 10
     }
   }
 
@@ -61,23 +62,24 @@ resource "yandex_compute_instance" "worker" {
   name        = "${var.project_name}-k8s-${each.key}"
   
   # Distribute workers across availability zones for HA
-  zone        = each.key == "worker-1" ? "ru-central1-a" : "ru-central1-b"
+  zone        = each.key == "worker-1" ? "ru-central1-d" : "ru-central1-d"
   platform_id = "standard-v3"
   
   resources {
     cores  = 2
-    memory = 4
+    memory = 2
+    core_fraction = 20
   }
 
   boot_disk {
     initialize_params {
       image_id = data.yandex_compute_image.ubuntu.id
-      size     = 20
+      size     = 10
     }
   }
 
   network_interface {
-    subnet_id = each.key == "worker-1" ? local.subnet_a_id : local.subnet_b_id
+    subnet_id = each.key == "worker-1" ? local.subnet_a_id : local.subnet_d_id
     nat       = true # Public IP for pulling container images
   }
 

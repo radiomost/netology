@@ -16,3 +16,5 @@ netology-diploma-app/
 kubespray/
 app-source/
 .continue/
+
+.python-version
