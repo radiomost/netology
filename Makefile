@@ -349,57 +349,64 @@ k8s-destroy:
 # ==============================================================================
 
 .PHONY: k8s-ci-connect
+# ==============================================================================
+# УСЛОВИЕ ДЛЯ CI (GitLab)
+# ==============================================================================
+ifeq ($(ENV_MODE),ci)
 k8s-ci-connect:
-	ifeq ($(ENV_MODE),ci)
-    	@echo "Запущен режим сборки Gitlab CI"
-		@echo "=== CI/CD: Настройка безопасного подключения к K8s API ==="
-		
-		@# Получаем IP-адреса напрямую через terraform output
-		@cd stage2-compute && \
-		MASTER_EXT_IP=$$(terraform output -raw master_external_ip) && \
-		MASTER_INT_IP=$$(terraform output -raw master_internal_ip) && \
-		echo "Master External IP: $$MASTER_EXT_IP" && \
-		echo "Master Internal IP: $$MASTER_INT_IP" && \
-		cd .. && \
-		$(MAKE) k8s-kubeconfig MASTER_EXTERNAL_IP=$$MASTER_EXT_IP MASTER_INTERNAL_IP=$$MASTER_INT_IP
-		
-		@echo "Запуск SSH туннеля в фоновом режиме..."
-		@cd stage2-compute && \
-		MASTER_EXT_IP=$$(terraform output -raw master_external_ip) && \
-		MASTER_INT_IP=$$(terraform output -raw master_internal_ip) && \
-		cd .. && \
-		ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -f -N -L 6443:127.0.0.1:6443 root@$$MASTER_EXT_IP || \
-		(echo "Туннель на 127.0.0.1 не прошел. Пробуем внутренний IP $$MASTER_INT_IP..." && \
-		ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -f -N -L 6443:$$MASTER_INT_IP:6443 root@$$MASTER_EXT_IP)
-		
-		@echo "Ожидание 3 секунды для стабилизации туннеля..."
-		@sleep 3
-		
-		@echo "Проверка подключения к кластеру..."
-		@kubectl cluster-info
-		
-		@echo "✓ Подключение к K8s успешно установлено!"
-	else
-		@echo "Запущен локальный режим сборки"
-		@echo "=== CI/CD: Настройка безопасного подключения к K8s API ==="
-		@# 1. Получаем и модифицируем kubeconfig (он уже меняет сервер на 127.0.0.1:6443)
-		@$(MAKE) k8s-kubeconfig
-		
-		@echo "Запуск SSH туннеля в фоновом режиме..."
-		@# 2. Пытаемся пробросить порт на 127.0.0.1 (так как kubeconfig настроен именно на него).
-		@# Если API-сервер слушает localhost, это сработает.
-		@ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -f -N -L 6443:127.0.0.1:6443 root@$(MASTER_EXTERNAL_IP) || \
-		(echo "Туннель на 127.0.0.1 не прошел. Пробуем внутренний IP $(MASTER_INTERNAL_IP)..." && \
-		ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -f -N -L 6443:$(MASTER_INTERNAL_IP):6443 root@$(MASTER_EXTERNAL_IP))
-		
-		@echo "Ожидание 3 секунды для стабилизации туннеля..."
-		@sleep 3
-		
-		@echo "Проверка подключения к кластеру..."
-		@kubectl cluster-info
-		
-		@echo "✓ Подключение к K8s успешно установлено!"
-	endif
+	@echo "Запущен режим сборки Gitlab CI"
+	@echo "=== CI/CD: Настройка безопасного подключения к K8s API ==="
+	
+	@# Получаем IP-адреса напрямую через terraform output
+	@cd stage2-compute && \
+	MASTER_EXT_IP=$$(terraform output -raw master_external_ip) && \
+	MASTER_INT_IP=$$(terraform output -raw master_internal_ip) && \
+	echo "Master External IP: $$MASTER_EXT_IP" && \
+	echo "Master Internal IP: $$MASTER_INT_IP" && \
+	cd .. && \
+	$(MAKE) k8s-kubeconfig MASTER_EXTERNAL_IP=$$MASTER_EXT_IP MASTER_INTERNAL_IP=$$MASTER_INT_IP
+	
+	@echo "Запуск SSH туннеля в фоновом режиме..."
+	@cd stage2-compute && \
+	MASTER_EXT_IP=$$(terraform output -raw master_external_ip) && \
+	MASTER_INT_IP=$$(terraform output -raw master_internal_ip) && \
+	cd .. && \
+	(ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -f -N -L 6443:127.0.0.1:6443 ubuntu@$$MASTER_EXT_IP || \
+	ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -f -N -L 6443:$$MASTER_INT_IP:6443 ubuntu@$$MASTER_EXT_IP)
+	
+	@echo "Ожидание 3 секунды для стабилизации туннеля..."
+	@sleep 3
+	
+	@echo "Проверка подключения к кластеру..."
+	@kubectl cluster-info
+	
+	@echo "✓ Подключение к K8s успешно установлено!"
+
+# ==============================================================================
+# УСЛОВИЕ ДЛЯ ЛОКАЛЬНОЙ РАЗРАБОТКИ
+# ==============================================================================
+else
+k8s-ci-connect:
+	@echo "Запущен локальный режим сборки"
+	@echo "=== Локальная настройка безопасного подключения к K8s API ==="
+	
+	@# 1. Получаем и модифицируем kubeconfig
+	@$(MAKE) k8s-kubeconfig
+	
+	@echo "Запуск SSH туннеля в фоновом режиме..."
+	@# 2. Пытаемся пробросить порт. (Обратите внимание: используем ubuntu@, а не root@)
+	@ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -f -N -L 6443:127.0.0.1:6443 ubuntu@$(MASTER_EXTERNAL_IP) || \
+	(echo "Туннель на 127.0.0.1 не прошел. Пробуем внутренний IP $(MASTER_INTERNAL_IP)..." && \
+	ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -f -N -L 6443:$(MASTER_INTERNAL_IP):6443 ubuntu@$(MASTER_EXTERNAL_IP))
+	
+	@echo "Ожидание 3 секунды для стабилизации туннеля..."
+	@sleep 3
+	
+	@echo "Проверка подключения к кластеру..."
+	@kubectl cluster-info
+	
+	@echo "✓ Подключение к K8s успешно установлено!"
+endif
 
 .PHONY: k8s-kubeconfig-deploy
 k8s-kubeconfig-deploy:
