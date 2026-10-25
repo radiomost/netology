@@ -1,13 +1,9 @@
 ENV_MODE ?= local
 
 ifeq ($(ENV_MODE),ci)
-    @echo "Запущен режим сборки Gitlab CI"
-    PYTHON_SETUP := python3 -m venv venv && source venv/bin/activate
-    DEPLOY_FLAGS := --non-interactive --skip-prompts
+	MODE_MESSAGE := Запущен режим сборки Gitlab CI
 else
-	@echo "Запущен локальный режим сборки"
-    PYTHON_SETUP := eval "$$(pyenv init -)" && pyenv local netology
-    DEPLOY_FLAGS := --interactive
+	MODE_MESSAGE := Запущен локальный режим сборки
 endif
 
 
@@ -354,7 +350,6 @@ k8s-destroy:
 
 .PHONY: k8s-ci-connect
 k8s-ci-connect:
-
 	ifeq ($(ENV_MODE),ci)
     	@echo "Запущен режим сборки Gitlab CI"
 		@echo "=== CI/CD: Настройка безопасного подключения к K8s API ==="
