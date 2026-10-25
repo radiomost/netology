@@ -37,7 +37,7 @@ plan:
 	@for stage in $(STAGES_APPLY); do \
 		if [ -d "$$stage" ]; then \
 			echo "==> Planning $$stage..."; \
-			(cd "$$stage" && terraform init -reconfigure -input=false -backend-config="bucket=$(S3_BACKET)" && terraform plan || exit 1; \
+			(cd "$$stage" && terraform init -reconfigure -input=false -backend-config="bucket=$(S3_BACKET)" && terraform plan) || exit 1; \
 		else \
 			echo "==> Skipping $$stage (directory not found)"; \
 		fi; \
@@ -47,7 +47,7 @@ apply:
 	@for stage in $(STAGES_APPLY); do \
 		if [ -d "$$stage" ]; then \
 			echo "==> Applying $$stage..."; \
-			(cd "$$stage" && terraform init -reconfigure -input=false -backend-config="bucket=$(S3_BACKET)" && terraform apply -auto-approve || exit 1; \
+			(cd "$$stage" && terraform init -reconfigure -input=false -backend-config="bucket=$(S3_BACKET)" && terraform apply -auto-approve) || exit 1; \
 		else \
 			echo "==> Skipping $$stage (directory not found)"; \
 		fi; \
@@ -64,7 +64,7 @@ destroy:
 					yc container repository delete --name "$$REGISTRY_ID/netology-diploma-app" --async 2>/dev/null || true; \
 				fi; \
 			fi; \
-			(cd "$$stage" && terraform init -reconfigure -input=false -backend-config="bucket=$(S3_BACKET)" && terraform destroy -auto-approve || exit 1; \
+			(cd "$$stage" && terraform init -reconfigure -input=false -backend-config="bucket=$(S3_BACKET)" && terraform destroy -auto-approve) || exit 1; \
 		else \
 			echo "==> Skipping $$stage (directory not found)"; \
 		fi; \
