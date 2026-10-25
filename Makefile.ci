@@ -37,7 +37,7 @@ plan:
 	@for stage in $(STAGES_APPLY); do \
 		if [ -d "$$stage" ]; then \
 			echo "==> Planning $$stage..."; \
-			(cd "$$stage" && terraform init -reconfigure -input=false -backend-config="bucket=$(S3_BACKET)" && terraform plan -input=false -backend-config="bucket=$(S3_BACKET)") || exit 1; \
+			(cd "$$stage" && terraform init -reconfigure -input=false -backend-config="bucket=$(S3_BACKET)" && terraform plan || exit 1; \
 		else \
 			echo "==> Skipping $$stage (directory not found)"; \
 		fi; \
@@ -47,7 +47,7 @@ apply:
 	@for stage in $(STAGES_APPLY); do \
 		if [ -d "$$stage" ]; then \
 			echo "==> Applying $$stage..."; \
-			(cd "$$stage" && terraform init -reconfigure -input=false -backend-config="bucket=$(S3_BACKET)" && terraform apply -auto-approve -input=false -backend-config="bucket=$(S3_BACKET)") || exit 1; \
+			(cd "$$stage" && terraform init -reconfigure -input=false -backend-config="bucket=$(S3_BACKET)" && terraform apply -auto-approve || exit 1; \
 		else \
 			echo "==> Skipping $$stage (directory not found)"; \
 		fi; \
@@ -59,12 +59,12 @@ destroy:
 			echo "==> Processing $$stage..."; \
 			if [ "$$stage" = "stage3-registry" ]; then \
 				echo "==> Cleaning up container repositories first..."; \
-				REGISTRY_ID=$$(cd stage3-registry && terraform output -raw registry_id -input=false -backend-config="bucket=$(S3_BACKET)" 2>/dev/null || echo ""); \
+				REGISTRY_ID=$$(cd stage3-registry && terraform output -raw registry_id 2>/dev/null || echo ""); \
 				if [ -n "$$REGISTRY_ID" ]; then \
 					yc container repository delete --name "$$REGISTRY_ID/netology-diploma-app" --async 2>/dev/null || true; \
 				fi; \
 			fi; \
-			(cd "$$stage" && terraform init -reconfigure -input=false -backend-config="bucket=$(S3_BACKET)" && terraform destroy -auto-approve -input=false -backend-config="bucket=$(S3_BACKET)") || exit 1; \
+			(cd "$$stage" && terraform init -reconfigure -input=false -backend-config="bucket=$(S3_BACKET)" && terraform destroy -auto-approve || exit 1; \
 		else \
 			echo "==> Skipping $$stage (directory not found)"; \
 		fi; \
@@ -183,7 +183,7 @@ clean-app:
 # Variables
 # =============================================================================
 # Динамически получаем Registry ID из Terraform state
-REGISTRY_ID := $(shell cd stage3-registry && terraform output -raw registry_id -input=false -backend-config="bucket=$(S3_BACKET)" 2>/dev/null || echo "REPLACE_ME_VIA_TERRAFORM")
+REGISTRY_ID := $(shell cd stage3-registry && terraform output -raw registry_id 2>/dev/null || echo "REPLACE_ME_VIA_TERRAFORM")
 
 KUBECONFIG_DIR := $(PWD)/stage2-compute
 REGISTRY_DIR := $(PWD)/stage3-registry
@@ -198,8 +198,8 @@ k8s-kubeconfig:
 	@echo "=== Fetching kubeconfig from master node ==="
 	@ls -la $(KUBECONFIG_DIR)
 	@cd $(KUBECONFIG_DIR) && terraform init -input=false -backend-config="bucket=$(S3_BACKET)" > /dev/null
-	@MASTER_IP=$$(cd $(KUBECONFIG_DIR) && terraform output -raw master_external_ip -input=false -backend-config="bucket=$(S3_BACKET)") && \
-	MASTER_INT_IP=$$(cd $(KUBECONFIG_DIR) && terraform output -raw master_internal_ip -input=false -backend-config="bucket=$(S3_BACKET)") && \
+	@MASTER_IP=$$(cd $(KUBECONFIG_DIR) && terraform output -raw master_external_ip && \
+	MASTER_INT_IP=$$(cd $(KUBECONFIG_DIR) && terraform output -raw master_internal_ip && \
 	echo "Master External IP: $$MASTER_IP" && \
 	echo "Master Internal IP: $$MASTER_INT_IP" && \
 	mkdir -p ~/.kube && \
@@ -219,7 +219,7 @@ k8s-kubeconfig:
 k8s-tunnel:
 	@echo "=== Creating SSH tunnel to K8s master ==="
 	@cd $(KUBECONFIG_DIR) && terraform init -input=false -backend-config="bucket=$(S3_BACKET)" > /dev/null
-	@MASTER_IP=$$(cd $(KUBECONFIG_DIR) && terraform output -raw master_external_ip -input=false -backend-config="bucket=$(S3_BACKET)") && \
+	@MASTER_IP=$$(cd $(KUBECONFIG_DIR) && terraform output -raw master_external_ip && \
 	echo "Master External IP: $$MASTER_IP" && \
 	echo "Checking if port $(K8S_TUNNEL_PORT) is already in use..." && \
 	if ss -tulnp 2>/dev/null | grep -q ":$(K8S_TUNNEL_PORT) "; then \
@@ -276,7 +276,7 @@ k8s-deploy:
 
 	@echo "[1/5] Fetching Registry ID from Terraform state..."
 	@cd $(REGISTRY_DIR) && terraform init -input=false -backend-config="bucket=$(S3_BACKET)" -backend=false > /dev/null 2>&1 || true
-	@REGISTRY_ID=$$(cd $(REGISTRY_DIR) && terraform output -raw registry_id -input=false -backend-config="bucket=$(S3_BACKET)" 2>/dev/null || echo "YOUR_REGISTRY_ID_HERE") && \
+	@REGISTRY_ID=$$(cd $(REGISTRY_DIR) && terraform output -raw registry_id 2>/dev/null || echo "YOUR_REGISTRY_ID_HERE") && \
 	echo "Detected Registry ID: $$REGISTRY_ID" && \
 	echo "[2/5] Adding Helm repositories..." && \
 	helm repo add prometheus-community https://prometheus-community.github.io/helm-charts || true && \
@@ -351,8 +351,8 @@ k8s-ci-connect:
 	
 	@# Получаем IP-адреса напрямую через terraform output
 	@cd stage2-compute && \
-	MASTER_EXT_IP=$$(terraform output -input=false -backend-config="bucket=$(S3_BACKET)" -raw master_external_ip) && \
-	MASTER_INT_IP=$$(terraform output -input=false -backend-config="bucket=$(S3_BACKET)" -raw master_internal_ip) && \
+	MASTER_EXT_IP=$$(terraform output -raw master_external_ip) && \
+	MASTER_INT_IP=$$(terraform output -raw master_internal_ip) && \
 	echo "Master External IP: $$MASTER_EXT_IP" && \
 	echo "Master Internal IP: $$MASTER_INT_IP" && \
 	cd .. && \
@@ -360,8 +360,8 @@ k8s-ci-connect:
 	
 	@echo "Запуск SSH туннеля в фоновом режиме..."
 	@cd stage2-compute && \
-	MASTER_EXT_IP=$$(terraform output -input=false -backend-config="bucket=$(S3_BACKET)" -raw master_external_ip) && \
-	MASTER_INT_IP=$$(terraform output -input=false -backend-config="bucket=$(S3_BACKET)" -raw master_internal_ip) && \
+	MASTER_EXT_IP=$$(terraform output -raw master_external_ip) && \
+	MASTER_INT_IP=$$(terraform output -raw master_internal_ip) && \
 	cd .. && \
 	(ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -f -N -L 6443:127.0.0.1:6443 ubuntu@$$MASTER_EXT_IP || \
 	ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -f -N -L 6443:$$MASTER_INT_IP:6443 ubuntu@$$MASTER_EXT_IP)
