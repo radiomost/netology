@@ -1,6 +1,6 @@
 ENV_MODE ?= local
 
-ifeq ($(ENV_MODE),ci)
+ifeq ($(ENV_MODE),gitlab)
 	MODE_MESSAGE := Запущен режим сборки Gitlab CI
 else
 	MODE_MESSAGE := Запущен локальный режим сборки
@@ -352,7 +352,7 @@ k8s-destroy:
 # ==============================================================================
 # УСЛОВИЕ ДЛЯ CI (GitLab)
 # ==============================================================================
-ifeq ($(ENV_MODE),ci)
+ifeq ($(ENV_MODE),gitlab)
 k8s-ci-connect:
 	@echo "Запущен режим сборки Gitlab CI"
 	@echo "=== CI/CD: Настройка безопасного подключения к K8s API ==="
