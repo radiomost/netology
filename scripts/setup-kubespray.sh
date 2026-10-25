@@ -21,36 +21,62 @@ fi
 if [ ! -d "kubespray" ]; then
     echo -e "${YELLOW}Cloning Kubespray repository...${NC}"
     git clone https://github.com/kubernetes-sigs/kubespray.git
+    echo -e "${YELLOW}Checking out stable release v2.25.0...${NC}"
+    cd kubespray
+    git checkout v2.25.0
+    cd ..
 else
-    echo -e "${GREEN}Kubespray already cloned.${NC}"
+    echo -e "${GREEN}Kubespray directory exists. Ensuring correct version...${NC}"
+    cd kubespray
+    git checkout v2.25.0
+    cd ..
 fi
 
 cd kubespray
 
-# Step 2: Setup Python environment with pyenv
+# Step 2: Setup Python environment
 echo -e "${YELLOW}Setting up Python environment...${NC}"
 
-if ! command -v pyenv &> /dev/null; then
-    echo -e "${RED}Error: pyenv is not installed. Please install pyenv first.${NC}"
-    exit 1
-fi
-
-if ! pyenv versions | grep -q "3.12.10"; then
-    echo -e "${RED}Error: Python 3.12.10 is not installed in pyenv. Install it with: pyenv install 3.12.10${NC}"
-    exit 1
-fi
-
-if ! pyenv versions | grep -q "netology"; then
-    echo -e "${YELLOW}Creating pyenv virtualenv 'netology' with Python 3.12.10...${NC}"
-    pyenv virtualenv 3.12.10 netology
+# Check if pyenv is available
+if command -v pyenv &> /dev/null; then
+    echo -e "${GREEN}pyenv detected. Using pyenv for Python environment.${NC}"
+    
+    # Initialize pyenv
+    eval "$(pyenv init -)"
+    
+    # Check if Python 3.12.10 is installed
+    if ! pyenv versions --bare | grep -q "3.12.10"; then
+        echo -e "${RED}Error: Python 3.12.10 is not installed in pyenv.${NC}"
+        echo -e "${YELLOW}Install it with: pyenv install 3.12.10${NC}"
+        exit 1
+    fi
+    
+    # Check if virtualenv 'netology' exists
+    if ! pyenv virtualenvs --bare | grep -q "netology"; then
+        echo -e "${YELLOW}Creating pyenv virtualenv 'netology' with Python 3.12.10...${NC}"
+        pyenv virtualenv 3.12.10 netology
+    else
+        echo -e "${GREEN}Virtualenv 'netology' already exists.${NC}"
+    fi
+    
+    # Set local Python version
+    pyenv local netology
+    
+    # Install requirements
+    echo -e "${YELLOW}Installing Python dependencies...${NC}"
+    pip install -r requirements.txt
+    
 else
-    echo -e "${GREEN}Virtualenv 'netology' already exists.${NC}"
+    echo -e "${YELLOW}pyenv not found. Using standard Python venv...${NC}"
+    
+    # Call setup-venv.sh script
+    if [ -f "../scripts/setup-venv.sh" ]; then
+        bash ../scripts/setup-venv.sh
+    else
+        echo -e "${RED}Error: setup-venv.sh not found in ../scripts/${NC}"
+        exit 1
+    fi
 fi
-
-pyenv local netology
-
-echo -e "${YELLOW}Installing Python dependencies...${NC}"
-pip install -r requirements.txt
 
 # Step 3: Copy sample inventory
 echo -e "${YELLOW}Setting up inventory directory...${NC}"
@@ -73,12 +99,12 @@ fi
 
 # Extract IPs from terraform output
 MASTER_IP=$(terraform output -raw master_external_ip 2>/dev/null || echo "")
-WORKER1_IP=$(terraform output -json workers_external_ips 2>/dev/null | jq -r '."worker-1"' || echo "")
-WORKER2_IP=$(terraform output -json workers_external_ips 2>/dev/null | jq -r '."worker-2"' || echo "")
+WORKER1_IP=$(terraform output -json workers_external_ips 2>/dev/null | jq -r '.["worker-1"]' || echo "")
+WORKER2_IP=$(terraform output -json workers_external_ips 2>/dev/null | jq -r '.["worker-2"]' || echo "")
 
 MASTER_INT_IP=$(terraform output -raw master_internal_ip 2>/dev/null || echo "")
-WORKER1_INT_IP=$(terraform output -json workers_internal_ips 2>/dev/null | jq -r '."worker-1"' || echo "")
-WORKER2_INT_IP=$(terraform output -json workers_internal_ips 2>/dev/null | jq -r '."worker-2"' || echo "")
+WORKER1_INT_IP=$(terraform output -json workers_internal_ips 2>/dev/null | jq -r '.["worker-1"]' || echo "")
+WORKER2_INT_IP=$(terraform output -json workers_internal_ips 2>/dev/null | jq -r '.["worker-2"]' || echo "")
 
 if [ -z "$MASTER_IP" ] || [ -z "$WORKER1_IP" ] || [ -z "$WORKER2_IP" ]; then
     echo -e "${RED}Error: Could not fetch external IP addresses from Terraform output.${NC}"
