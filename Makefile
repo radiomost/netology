@@ -79,7 +79,7 @@ clean:
 # Initialize Kubespray
 kubespray-init:
 	@echo "=== Initializing Kubespray ==="
-	@./scripts/setup-kubespray.sh
+	@export S3_BUCKET="$(S3_BUCKET)" && ./scripts/setup-kubespray.sh
 
 # Generate inventory only (if Kubespray is already initialized)
 kubespray-inventory:
