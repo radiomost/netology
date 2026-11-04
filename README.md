@@ -572,8 +572,14 @@ kubectl create secret docker-registry ycr-secret \
 !['img_15.png'](img/img_15.png)
 
 
-# Запрос на MR в ветку dev-
+# Запрос на MR в ветку diplom-dev
 
 !['img_16.png'](img/img_16.png)
 
 !['img_17.png'](img/img_17.png)
+
+!['img_18.png'](img/img_18.png)
+
+# PR tf plan
+
+!['img_19.png'](img/img_19.png)
