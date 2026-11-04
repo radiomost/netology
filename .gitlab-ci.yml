@@ -1,10 +1,5 @@
 stages:
   - test
-  # - plan
-  # - apply
-  # - kubespray
-  # - app_deploy
-  # - deploy_k8s
 
 variables:
   TF_BINARY_URL: "https://repository.rdmost.ru/repository/registry_terraform/terraform/terraform_1.14.0_linux_amd64.zip"
@@ -67,109 +62,9 @@ test:
   stage: test
   script:
     - echo "Запуск тестового скрипта..."
-
+    - echo "Текущая ветка: $CI_COMMIT_BRANCH"
+    - echo "Источник пайплайна: $CI_PIPELINE_SOURCE"
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-    - if: '$CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != $DEFAULT_BRANCH'
+    # Запускаем всегда для тестирования, независимо от ветки или MR
+    - when: always 
 
-plan:
-  extends: .base
-  stage: plan
-  script:
-    - echo "Running terraform init..."
-    - make -f Makefile.ci init || terraform init
-    - echo "Running terraform plan..."
-    - terraform plan -out=tfplan.binary
-    - terraform show -no-color tfplan.binary > plan.txt
-    - echo "=== TERRAFORM PLAN OUTPUT ==="
-    - cat plan.txt
-    - echo "============================="
-  artifacts:
-    name: "tf-plan-$CI_COMMIT_REF_SLUG"
-    paths:
-      - tfplan.binary
-      - plan.txt
-    expire_in: 1 week
-    reports:
-      terraform: plan.txt 
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-    - if: '$CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != $DEFAULT_BRANCH'
-
-apply:
-  extends: .base
-  stage: apply
-  script:
-    - echo "Running make apply..."
-    - make -f Makefile.ci apply
-  rules:
-    - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
-      when: manual
-
-kubespray:
-  extends: .base
-  stage: kubespray
-  script:
-    - echo "=== KUBESPRAY INIT ==="
-    - make -f Makefile.ci kubespray-init
-    - echo "=== KUBESPRAY INVENTORY ==="
-    - make -f Makefile.ci kubespray-inventory
-  rules:
-    - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
-      when: manual
-
-app:
-  extends: .base
-  stage: app_deploy
-  script:
-    - echo "=== APP BUILD ==="
-    - make -f Makefile.ci build
-  rules:
-    - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
-      when: on_success
-  needs:
-    - job: kubespray
-      optional: true
-
-deploy_k8s:
-  extends: .base
-  stage: deploy_k8s
-  before_script:
-    - *base_before_script
-    
-    # --- НАСТРОЙКА SSH (СТРОГО ДЛЯ TYPE: FILE) ---
-    - mkdir -p ~/.ssh
-    - echo "=== DEBUG Проверка типа переменной SSH_PRIVATE_KEY ==="
-    # Если это File, переменная содержит путь. Покажем первые 50 символов этого пути/файла
-    - head -c 50 "$SSH_PRIVATE_KEY" || echo "Переменная пуста или не найдена!"
-    - echo ""
-    
-    # Копируем файл по пути, который предоставил GitLab
-    - cp "$SSH_PRIVATE_KEY" ~/.ssh/id_rsa
-    
-    # Очищаем от возможных скрытых символов и выставляем строгие права
-    - sed -i 's/\r$//' ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
-    
-    # Отключаем строгую проверку хостов
-    - echo -e "Host *\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile=/dev/null" > ~/.ssh/config
-    
-    # Финальная проверка: первая строка файла ДОЛЖНА быть "-----BEGIN OPENSSH PRIVATE KEY-----"
-    - echo "=== Проверка содержимого созданного ключа ==="
-    - head -n 1 ~/.ssh/id_rsa
-    - echo "============================================="
-    # -------------------------------------------
-
-  script:
-    - echo "=== Подключение к кластеру и деплой ==="
-    - make -f Makefile.ci k8s-ci-connect
-    - echo "Deploying monitoring stack and application..."
-    - make -f Makefile.ci k8s-deploy
-    
-  rules:
-    - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
-      when: on_success
-  needs:
-    - job: app
-    - job: kubespray
-      optional: true
