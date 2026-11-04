@@ -248,10 +248,10 @@ kubespray-init:
   extends: .base
   stage: kubespray
   needs:
-    - job: plan-stage0
-    - job: plan-stage1
-    - job: plan-stage2
-    - job: plan-stage3
+    - job: apply-stage0
+    - job: apply-stage1
+    - job: apply-stage2
+    - job: apply-stage3
       optional: true
   script:
     - echo "=== ИНИЦИАЛИЗАЦИЯ KUBESPRAY ==="
