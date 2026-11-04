@@ -1,15 +1,15 @@
 stages:
-  - plan
-  - apply
-  - kubespray
-  - app_deploy
-  - deploy_k8s
+  - test
+  # - plan
+  # - apply
+  # - kubespray
+  # - app_deploy
+  # - deploy_k8s
 
 variables:
   TF_BINARY_URL: "https://repository.rdmost.ru/repository/registry_terraform/terraform/terraform_1.14.0_linux_amd64.zip"
   YC_PROVIDER_URL: "https://repository.rdmost.ru/repository/registry_terraform/provider/yandex/terraform-provider-yandex_0.129.0_linux_amd64.zip"
   DEFAULT_BRANCH: "diplom-dev"
-  S3_BACKET: "netology-stg"
 
 # ==============================================================================
 # 1. YAML-ЯКОРЬ (ANCHOR) для базовых шагов установки
@@ -61,6 +61,16 @@ variables:
 # ==============================================================================
 # 2. ЗАДАЧИ (JOBS)
 # ==============================================================================
+
+test:
+  extends: .base
+  stage: test
+  script:
+    - echo "Запуск тестового скрипта..."
+
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != $DEFAULT_BRANCH'
 
 plan:
   extends: .base

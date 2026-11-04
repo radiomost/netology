@@ -1,0 +1,164 @@
+stages:
+  - plan
+  - apply
+  - kubespray
+  - app_deploy
+  - deploy_k8s
+
+variables:
+  TF_BINARY_URL: "https://repository.rdmost.ru/repository/registry_terraform/terraform/terraform_1.14.0_linux_amd64.zip"
+  YC_PROVIDER_URL: "https://repository.rdmost.ru/repository/registry_terraform/provider/yandex/terraform-provider-yandex_0.129.0_linux_amd64.zip"
+  DEFAULT_BRANCH: "diplom-dev"
+
+# ==============================================================================
+# 1. YAML-ЯКОРЬ (ANCHOR) для базовых шагов установки
+# ==============================================================================
+.base_before_script: &base_before_script
+  - echo "Configuring AWS credentials for Terraform backend..."
+  - export AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}"
+  - export AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}"
+  - export AWS_DEFAULT_REGION="us-east-1"
+  - apk add --no-cache curl unzip jq bash python3 git make openssh-client sed openssl helm
+  - echo "Installing custom Terraform 1.14.0..."
+  - curl -k -sSL "$TF_BINARY_URL" -o /tmp/terraform.zip
+  - unzip -o /tmp/terraform.zip -d /usr/local/bin/
+  - rm -f /tmp/terraform.zip
+  - terraform version
+  - echo "Installing custom Yandex Provider 0.129.0..."
+  - mkdir -p ~/.terraform.d/plugins/registry.terraform.io/yandex-cloud/yandex/0.129.0/linux_amd64
+  - curl -k -sSL "$YC_PROVIDER_URL" -o /tmp/yandex-provider.zip
+  - unzip -o /tmp/yandex-provider.zip -d ~/.terraform.d/plugins/registry.terraform.io/yandex-cloud/yandex/0.129.0/linux_amd64/
+  - rm -f /tmp/yandex-provider.zip
+  - |
+    cat <<EOF > ~/.terraformrc
+    provider_installation {
+      filesystem_mirror {
+        path    = "/root/.terraform.d/plugins"
+        include = ["registry.terraform.io/yandex-cloud/yandex"]
+      }
+      direct {
+        exclude = ["registry.terraform.io/yandex-cloud/yandex"]
+      }
+    }
+    EOF
+  - curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
+  - export PATH="$PATH:$HOME/yandex-cloud/bin"
+  - echo "$YC_SA_KEY" > ~/.authorized_key.json
+  - chmod 600 ~/.authorized_key.json
+  - yc config profile create ci-profile || true
+  - yc config set service-account-key ~/.authorized_key.json
+  - yc config set folder-id "$TF_VAR_folder_id"
+  - curl -sLO "https://dl.k8s.io/release/v1.28.0/bin/linux/amd64/kubectl"
+  - install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+  - rm -f kubectl
+
+# Базовый шаблон, использующий якорь
+.base:
+  image: alpine:3.18
+  before_script: *base_before_script
+
+# ==============================================================================
+# 2. ЗАДАЧИ (JOBS)
+# ==============================================================================
+
+plan:
+  extends: .base
+  stage: plan
+  script:
+    - echo "Running terraform init..."
+    - make -f Makefile.ci init || terraform init
+    - echo "Running terraform plan..."
+    - terraform plan -out=tfplan.binary
+    - terraform show -no-color tfplan.binary > plan.txt
+    - echo "=== TERRAFORM PLAN OUTPUT ==="
+    - cat plan.txt
+    - echo "============================="
+  artifacts:
+    name: "tf-plan-$CI_COMMIT_REF_SLUG"
+    paths:
+      - tfplan.binary
+      - plan.txt
+    expire_in: 1 week
+    reports:
+      terraform: plan.txt 
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != $DEFAULT_BRANCH'
+
+apply:
+  extends: .base
+  stage: apply
+  script:
+    - echo "Running make apply..."
+    - make -f Makefile.ci apply
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
+      when: manual
+
+kubespray:
+  extends: .base
+  stage: kubespray
+  script:
+    - echo "=== KUBESPRAY INIT ==="
+    - make -f Makefile.ci kubespray-init
+    - echo "=== KUBESPRAY INVENTORY ==="
+    - make -f Makefile.ci kubespray-inventory
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
+      when: manual
+
+app:
+  extends: .base
+  stage: app_deploy
+  script:
+    - echo "=== APP BUILD ==="
+    - make -f Makefile.ci build
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
+      when: on_success
+  needs:
+    - job: kubespray
+      optional: true
+
+deploy_k8s:
+  extends: .base
+  stage: deploy_k8s
+  before_script:
+    - *base_before_script
+    
+    # --- НАСТРОЙКА SSH (СТРОГО ДЛЯ TYPE: FILE) ---
+    - mkdir -p ~/.ssh
+    - echo "=== DEBUG Проверка типа переменной SSH_PRIVATE_KEY ==="
+    # Если это File, переменная содержит путь. Покажем первые 50 символов этого пути/файла
+    - head -c 50 "$SSH_PRIVATE_KEY" || echo "Переменная пуста или не найдена!"
+    - echo ""
+    
+    # Копируем файл по пути, который предоставил GitLab
+    - cp "$SSH_PRIVATE_KEY" ~/.ssh/id_rsa
+    
+    # Очищаем от возможных скрытых символов и выставляем строгие права
+    - sed -i 's/\r$//' ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    
+    # Отключаем строгую проверку хостов
+    - echo -e "Host *\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile=/dev/null" > ~/.ssh/config
+    
+    # Финальная проверка: первая строка файла ДОЛЖНА быть "-----BEGIN OPENSSH PRIVATE KEY-----"
+    - echo "=== Проверка содержимого созданного ключа ==="
+    - head -n 1 ~/.ssh/id_rsa
+    - echo "============================================="
+    # -------------------------------------------
+
+  script:
+    - echo "=== Подключение к кластеру и деплой ==="
+    - make -f Makefile.ci k8s-ci-connect
+    - echo "Deploying monitoring stack and application..."
+    - make -f Makefile.ci k8s-deploy
+    
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
+      when: on_success
+  needs:
+    - job: app
+    - job: kubespray
+      optional: true

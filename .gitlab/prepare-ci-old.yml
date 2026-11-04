@@ -1,0 +1,46 @@
+# .gitlab/prepare-ci.yml
+
+# Определяем базовый образ для всех джоб подготовки (Ubuntu, так как запрошен apt)
+# Если нужен Alpine, замените image на alpine:3.18, а apt-get на apk add
+.default-prepare:
+  image: ubuntu:24.04
+  stage: prepare
+  # Отключаем интерактивные запросы при установке пакетов
+  before_script:
+    - export DEBIAN_FRONTEND=noninteractive
+
+# ==============================================================================
+# 1. ПОСЛЕДОВАТЕЛЬНЫЕ ОБЯЗАТЕЛЬНЫЕ ДЖОБЫ
+# ==============================================================================
+
+job-cert:
+  extends: .default-prepare
+  script:
+    - echo "=== Установка и настройка доверенных CA сертификатов с локального репозитория ==="
+    - echo "Скачиваем архив, временно игнорируя проверку сертификата"
+    - wget --no-check-certificate https://repository.rdmost.ru/repository/raw_cert/certificate.zip -O certificate.zip
+    - echo "Создаем временную директорию"
+    - mkdir -p temp_certs
+    - echo "Распаковываем архив с помощью встроенного модуля Python 3"
+    - python3 -c "import zipfile; zipfile.ZipFile('certificate.zip').extractall('temp_certs')"
+    - echo "Копируем все найденные сертификаты (.crt и .pem) в системную папку доверенных сертификатов"
+    - mkdir -p /usr/local/share/ca-certificates/
+    - find temp_certs -type f \( -name "*.crt" -o -name "*.pem" \) | while read -r file; do
+        filename=$(basename "$file")
+        name="${filename%.*}"
+        ext="${filename##*.}"
+        
+        if [ "$ext" = "pem" ]; then
+          sudo cp "$file" "/usr/local/share/ca-certificates/${name}.crt"
+          echo "✅ Подготовлен: ${name}.crt (из ${filename})"
+        else
+          sudo cp "$file" "/usr/local/share/ca-certificates/${filename}"
+          echo "✅ Подготовлен: ${filename}"
+        fi
+      done
+    - echo "🔄 Обновление хранилища сертификатов..."
+    - update-ca-certificates
+    - echo "Очищаем временные файлы и скачанный архив"
+    - rm -rf temp_certs certificate.zip
+  rules:
+    - when: always
