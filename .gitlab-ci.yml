@@ -1,10 +1,10 @@
 stages:
+  - validate
   - stage0
   - stage1
   - stage2
   - stage3
-  # - plan
-  # - apply
+
 variables:
   TF_BINARY_URL: "https://repository.rdmost.ru/repository/registry_terraform/terraform/terraform_1.14.0_linux_amd64.zip"
   YC_PROVIDER_URL: "https://repository.rdmost.ru/repository/registry_terraform/provider/yandex/terraform-provider-yandex_0.129.0_linux_amd64.zip"
@@ -48,19 +48,34 @@ variables:
   image: alpine:3.18
   before_script: *base_before_script
 
-################ PLAN ##############
-debug:
-  extends: .base
-  stage: stage0
-  script:
-    - echo 'Запуск тестового скрипта...'
-    - echo 'Текущая ветка:' $CI_COMMIT_BRANCH
-    - echo 'Источник пайплайна:' $CI_PIPELINE_SOURCE
-    - echo "Проверка переменных (должны быть пустыми или содержать значения из GitLab):"
-    - echo TF_VAR_folder_id = ${TF_VAR_folder_id:-НЕ ЗАДАН}
-  rules:
-    - when: always
+# ==============================================================================
+# TERRAFORM CI/CD PIPELINE (требование диплома)
+# ==============================================================================
 
+# --- Валидация синтаксиса Terraform ---
+tf-validate:
+  extends: .base
+  stage: validate
+  script:
+    - echo "=== Validating all Terraform stages ==="
+    - |
+      for stage in stage0-bootstrap stage1-network stage2-compute stage3-registry; do
+        if [ -d "$stage" ]; then
+          echo "--- Validating $stage ---"
+          cd "$stage"
+          terraform init -backend=false -input=false
+          terraform validate
+          terraform fmt -check -diff || true
+          cd ..
+        fi
+      done
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH'
+
+
+
+# --- Plan: запускается на каждый MR, результат публикуется в MR ---
 plan-stage0:
   extends: .base
   stage: stage0
@@ -80,20 +95,8 @@ plan-stage0:
       - stage0-bootstrap/plan.txt
     expire_in: 1 week
   rules:
-    - when: always
-
-apply-stage0:
-  extends: .base
-  stage: stage0
-  needs: ["plan-stage0"]
-  script:
-    - echo "=== ПРИМЕНЕНИЕ ПЛАНА ДЛЯ STAGE0-BOOTSTRAP ==="
-    - export TF_DIR="stage0-bootstrap"
-    - terraform -chdir=$TF_DIR init -input=false -backend=false
-    - terraform -chdir=$TF_DIR apply -input=false -auto-approve tfplan.binary
-    - echo "=== STAGE1-NETWORK УСПЕШНО ПРИМЕНЕН ==="
-  rules:
-    - when: always
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != $DEFAULT_BRANCH'
 
 plan-stage1:
   extends: .base
@@ -115,21 +118,8 @@ plan-stage1:
       - stage1-network/plan.txt
     expire_in: 1 week
   rules:
-    - when: always
-
-apply-stage1:
-  extends: .base
-  stage: stage1
-  needs: ["plan-stage1"]
-  script:
-    - echo "=== ПРИМЕНЕНИЕ ПЛАНА ДЛЯ STAGE1-NETWORK ==="
-    - export TF_DIR="stage1-network"
-    - terraform -chdir=$TF_DIR init -input=false -backend=false
-    - terraform -chdir=$TF_DIR apply -input=false -auto-approve tfplan.binary
-    - echo "=== STAGE1-NETWORK УСПЕШНО ПРИМЕНЕН ==="
-  rules:
-    - when: always
-
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != $DEFAULT_BRANCH'
 
 plan-stage2:
   extends: .base
@@ -153,21 +143,8 @@ plan-stage2:
     reports:
       terraform: stage2-compute/plan.txt 
   rules:
-    - when: always
-
-apply-stage2:
-  extends: .base
-  stage: stage2
-  needs: ["plan-stage2"]
-  script:
-    - echo "=== ПРИМЕНЕНИЕ ПЛАНА ДЛЯ STAGE2-COMPUTE ==="
-    - export TF_DIR="stage2-compute"
-    - terraform -chdir=$TF_DIR init -input=false -backend=false
-    - terraform -chdir=$TF_DIR apply -input=false -auto-approve tfplan.binary
-    - echo "=== STAGE2-COMPUTE УСПЕШНО ПРИМЕНЕН ==="
-  rules:
-    - when: always
-
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != $DEFAULT_BRANCH'
 
 plan-stage3:
   extends: .base
@@ -189,7 +166,51 @@ plan-stage3:
       - stage3-registry/plan.txt
     expire_in: 1 week
   rules:
-    - when: always
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != $DEFAULT_BRANCH'
+
+# --- Apply: только после merge в main, ручной запуск ---
+apply-stage0:
+  extends: .base
+  stage: stage0
+  needs: ["plan-stage0"]
+  script:
+    - echo "=== ПРИМЕНЕНИЕ ПЛАНА ДЛЯ STAGE0-BOOTSTRAP ==="
+    - export TF_DIR="stage0-bootstrap"
+    - terraform -chdir=$TF_DIR init -input=false -backend=false
+    - terraform -chdir=$TF_DIR apply -input=false -auto-approve tfplan.binary
+    - echo "=== STAGE1-NETWORK УСПЕШНО ПРИМЕНЕН ==="
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
+      when: manual
+
+apply-stage1:
+  extends: .base
+  stage: stage1
+  needs: ["plan-stage1"]
+  script:
+    - echo "=== ПРИМЕНЕНИЕ ПЛАНА ДЛЯ STAGE1-NETWORK ==="
+    - export TF_DIR="stage1-network"
+    - terraform -chdir=$TF_DIR init -input=false -backend=false
+    - terraform -chdir=$TF_DIR apply -input=false -auto-approve tfplan.binary
+    - echo "=== STAGE1-NETWORK УСПЕШНО ПРИМЕНЕН ==="
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
+      when: manual
+
+apply-stage2:
+  extends: .base
+  stage: stage2
+  needs: ["plan-stage2"]
+  script:
+    - echo "=== ПРИМЕНЕНИЕ ПЛАНА ДЛЯ STAGE2-COMPUTE ==="
+    - export TF_DIR="stage2-compute"
+    - terraform -chdir=$TF_DIR init -input=false -backend=false
+    - terraform -chdir=$TF_DIR apply -input=false -auto-approve tfplan.binary
+    - echo "=== STAGE2-COMPUTE УСПЕШНО ПРИМЕНЕН ==="
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
+      when: manual
 
 apply-stage3:
   extends: .base
@@ -202,4 +223,5 @@ apply-stage3:
     - terraform -chdir=$TF_DIR apply -input=false -auto-approve tfplan.binary
     - echo "=== STAGE3-REGISTRY УСПЕШНО ПРИМЕНЕН ==="
   rules:
-    - when: always
+    - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
+      when: manual
