@@ -101,7 +101,9 @@ plan-stage0:
 plan-stage1:
   extends: .base
   stage: stage1
-  needs: ["apply-stage0"]
+  needs:
+    - job: apply-stage0
+      optional: true
   script:
     - echo "=== НАЧАЛО TERRAFORM PLAN SATGE1-NETWORK ==="
     - export TF_DIR="stage1-network"
@@ -124,7 +126,9 @@ plan-stage1:
 plan-stage2:
   extends: .base
   stage: stage2
-  needs: ["apply-stage1"]
+  needs:
+    - job: apply-stage1
+      optional: true
   script:
     - echo "=== НАЧАЛО TERRAFORM PLAN SATGE2-COMPUTE ==="
     - export TF_DIR="stage2-compute"
@@ -149,7 +153,9 @@ plan-stage2:
 plan-stage3:
   extends: .base
   stage: stage3
-  needs: ["apply-stage2"]
+  needs:
+    - job: apply-stage2
+      optional: true
   script:
     - echo "=== НАЧАЛО TERRAFORM PLAN SATGE3-REGISTRY ==="
     - export TF_DIR="stage3-registry"
