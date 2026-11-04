@@ -3,6 +3,8 @@ stages:
   - plan
   - apply
   - kubespray
+  - APP
+  - k8s
 
 variables:
   TF_BINARY_URL: "https://repository.rdmost.ru/repository/registry_terraform/terraform/terraform_1.14.0_linux_amd64.zip"
@@ -283,5 +285,40 @@ kubespray-deploy:
     - echo "=== ДЕПЛОЙ KUBESPRAY ==="
     - make kubespray-inventory
     - echo "=== ДЕПЛОЙ KUBESPRAY УСПЕШНО ПРОИЗВЕДЕН ==="
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
+
+build-docker-app:
+  extends: .base
+  stage: APP
+  needs:
+    - job: kubespray-deploy
+      optional: true
+  script:
+    - echo "=== СБОРКА DOCKER ОБРАЗА ПРИЛОЖЕНИЯ ==="
+    - make build
+    - echo "=== СБОРКА DOCKER ОБРАЗА ПРИЛОЖЕНИЯ ЗАВЕРШЕНА ==="
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
+
+k8s-setup:
+  extends: .base
+  stage: k8s
+  needs:
+    - job: kubespray-deploy
+      optional: true
+  script:
+    - make k8s-setup
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
+  
+k8s-deploy:
+  extends: .base
+  stage: k8s
+  needs:
+    - job: k8s-setup
+    - job: build-docker-app
+  script:
+    - make k8s-deploy
   rules:
     - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
