@@ -66,19 +66,20 @@ plan:
     - echo "Running terraform init..."
     - make -f Makefile.ci init || terraform init
     - echo "Running terraform plan..."
+    - make -f Makefile.ci plan || terraform plan   
     # - terraform plan -out=tfplan.binary
     # - terraform show -no-color tfplan.binary > plan.txt
-    # - echo "=== TERRAFORM PLAN OUTPUT ==="
-    # - cat plan.txt
+    - echo "=== TERRAFORM PLAN OUTPUT ==="
+    - cat plan.txt
     - echo "============================="
   artifacts:
     name: "tf-plan-$CI_COMMIT_REF_SLUG"
-    # paths:
-    #   - tfplan.binary
-    #   - plan.txt
+    paths:
+      - tfplan.binary
+      - plan.txt
     expire_in: 1 week
-    # reports:
-    #   terraform: plan.txt 
+    reports:
+      terraform: plan.txt 
   rules:
     - when: always
 

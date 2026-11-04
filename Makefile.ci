@@ -37,7 +37,7 @@ plan:
 	@for stage in $(STAGES_APPLY); do \
 		if [ -d "$$stage" ]; then \
 			echo "==> Planning $$stage..."; \
-			(cd "$$stage" && terraform init -reconfigure -input=false -backend-config="bucket=$(S3_BACKET)" && terraform plan) || exit 1; \
+			(cd "$$stage" && terraform init -reconfigure -input=false -backend-config="bucket=$(S3_BACKET)" && terraform plan -out=tfplan.binary && terraform show -no-color tfplan.binary > ../plan.txt) || exit 1; \
 		else \
 			echo "==> Skipping $$stage (directory not found)"; \
 		fi; \
