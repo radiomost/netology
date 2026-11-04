@@ -97,6 +97,7 @@ plan-stage0:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
     - if: '$CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != $DEFAULT_BRANCH'
+    - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
 
 plan-stage1:
   extends: .base
@@ -122,6 +123,7 @@ plan-stage1:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
     - if: '$CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != $DEFAULT_BRANCH'
+    - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
 
 plan-stage2:
   extends: .base
@@ -149,6 +151,7 @@ plan-stage2:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
     - if: '$CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != $DEFAULT_BRANCH'
+    - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
 
 plan-stage3:
   extends: .base
@@ -164,7 +167,7 @@ plan-stage3:
     - terraform -chdir=$TF_DIR show -no-color tfplan.binary > plan.txt
     - echo "=== TERRAFORM PLAN OUTPUT ==="
     - cat plan.txt
-    - echo "============================="
+    - echo "============================= "
   artifacts:
     name: "tfplan-stage3-$CI_COMMIT_REF_SLUG"
     paths:
@@ -174,6 +177,7 @@ plan-stage3:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
     - if: '$CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != $DEFAULT_BRANCH'
+    - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
 
 # --- Apply: только после merge в main, ручной запуск ---
 apply-stage0:

@@ -572,3 +572,8 @@ kubectl create secret docker-registry ycr-secret \
 !['img_15.png'](img/img_15.png)
 
 
+# Запрос на MR в ветку dev-
+
+!['img_16.png'](img/img_16.png)
+
+!['img_17.png'](img/img_17.png)
