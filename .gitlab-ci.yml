@@ -1,5 +1,5 @@
 stages:
-  - test
+  - validation
   - plan
 
 variables:
@@ -49,7 +49,7 @@ variables:
 # ==============================================================================
 test:
   extends: .base
-  stage: test
+  stage: validation
   script:
     - echo 'Запуск тестового скрипта...'
     - echo 'Текущая ветка:' $CI_COMMIT_BRANCH
@@ -61,7 +61,7 @@ test:
 
 plan:
   extends: .base
-  stage: plan
+  stage: validation
   script:
     - echo "Running terraform init..."
     - make -f Makefile.ci init || terraform init
