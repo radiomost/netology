@@ -7,6 +7,7 @@ terraform {
   
   backend "s3" {
     key                         = "stage2-compute.tfstate"
+    bucket                      = "netology-stg"
     region                      = "us-east-1"
     endpoints = {
       s3 = "https://s3-api.rdmost.ru"
