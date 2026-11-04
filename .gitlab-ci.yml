@@ -246,7 +246,7 @@ apply-stage3:
     - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
       when: manual
 
-kubespray-init:
+kubespray-deploy-cluster:
   extends: .base
   stage: kubespray
   needs:
@@ -256,35 +256,16 @@ kubespray-init:
     - job: apply-stage3
       optional: true
   script:
-    - echo "=== ИНИЦИАЛИЗАЦИЯ KUBESPRAY ==="
+    - echo "=== ШАГ 1 Инициализация Kubespray ==="
     - make kubespray-init
-    - echo "=== ИНИЦИАЛИЗАЦИЯ KUBESPRAY УСПЕШНО ПРОИЗВЕДЕНА ==="
-  rules:
-    - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
-
-kubespray-inventory:
-  extends: .base
-  stage: kubespray
-  needs:
-    - job: kubespray-init
-      optional: true
-  script:
-    - echo "=== ИНВЕНТАРИЗАЦИЯ KUBESPRAY ==="
+    
+    - echo "=== ШАГ 2 Генерация инвентаря Ansible ==="
     - make kubespray-inventory
-    - echo "=== ИНВЕНТАРИЗАЦИЯ KUBESPRAY УСПЕШНО ПРОИЗВЕДЕНА ==="
-  rules:
-    - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
-
-kubespray-deploy:
-  extends: .base
-  stage: kubespray
-  needs:
-    - job: kubespray-inventory
-      optional: true
-  script:
-    - echo "=== ДЕПЛОЙ KUBESPRAY ==="
-    - make kubespray-inventory
-    - echo "=== ДЕПЛОЙ KUBESPRAY УСПЕШНО ПРОИЗВЕДЕН ==="
+    
+    - echo "=== ШАГ 3 Деплой Kubernetes кластера ==="
+    - make kubespray-deploy
+    
+    - echo "=== ✅ KUBESPRAY УСПЕШНО ЗАВЕРШЕН ==="
   rules:
     - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
 
@@ -292,7 +273,7 @@ build-docker-app:
   extends: .base
   stage: APP
   needs:
-    - job: kubespray-deploy
+    - job: kubespray-deploy-cluster
       optional: true
   script:
     - echo "=== СБОРКА DOCKER ОБРАЗА ПРИЛОЖЕНИЯ ==="
@@ -301,24 +282,26 @@ build-docker-app:
   rules:
     - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
 
-k8s-setup:
+deploy-app-to-k8s:
   extends: .base
   stage: k8s
   needs:
-    - job: kubespray-deploy
-      optional: true
-  script:
-    - make k8s-setup
-  rules:
-    - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
-  
-k8s-deploy:
-  extends: .base
-  stage: k8s
-  needs:
-    - job: k8s-setup
+    - job: kubespray-deploy-cluster # Или kubespray-deploy, если выбрали Вариант 2
     - job: build-docker-app
+  before_script:
+    - !reference [.base, before_script]
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - sed -i 's/\r$//' ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - echo -e "Host *\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile=/dev/null" > ~/.ssh/config
   script:
+    - echo "=== 1. Подключение к кластеру (k8s-setup) ==="
+    - make k8s-setup # (или make k8s-ci-connect, в зависимости от того, как у вас называется таргет)
+    
+    - echo "=== 2. Деплой приложения и мониторинга ==="
     - make k8s-deploy
+    
+    - echo "=== ✅ ПРИЛОЖЕНИЕ УСПЕШНО ЗАДЕПЛОЕНО ==="
   rules:
     - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
