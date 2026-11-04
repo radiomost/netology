@@ -217,6 +217,8 @@ apply-stage1:
 apply-stage2:
   extends: .base
   stage: apply
+  variables:
+    TF_VAR_ssh_public_key: "${TF_VAR_ssh_public_key}"
   needs: 
     - job: plan-stage2
       optional: true
