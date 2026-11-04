@@ -76,8 +76,8 @@ plan-stage0:
   artifacts:
     name: "tfplan-stage0-$CI_COMMIT_REF_SLUG"
     paths:
-      - $TF_DIR/tfplan.binary
-      - $TF_DIR/plan.txt
+      - stage0-bootstrap/tfplan.binary
+      - stage0-bootstrap/plan.txt
     expire_in: 1 week
   rules:
     - when: always
@@ -111,8 +111,8 @@ plan-stage1:
   artifacts:
     name: "tfplan-stage1-$CI_COMMIT_REF_SLUG"
     paths:
-      - $TF_DIR/tfplan.binary
-      - $TF_DIR/plan.txt
+      - stage1-network/tfplan.binary
+      - stage1-network/plan.txt
     expire_in: 1 week
   rules:
     - when: always
@@ -147,11 +147,11 @@ plan-stage2:
   artifacts:
     name: "tfplan-stage2-$CI_COMMIT_REF_SLUG"
     paths:
-      - $TF_DIR/tfplan.binary
-      - $TF_DIR/plan.txt
+      - stage2-compute/tfplan.binary
+      - stage2-compute/plan.txt
     expire_in: 1 week
     reports:
-      terraform: $TF_DIR/plan.txt 
+      terraform: stage2-compute/plan.txt 
   rules:
     - when: always
 
@@ -185,8 +185,8 @@ plan-stage3:
   artifacts:
     name: "tfplan-stage3-$CI_COMMIT_REF_SLUG"
     paths:
-      - $TF_DIR/tfplan.binary
-      - $TF_DIR/plan.txt
+      - stage3-registry/tfplan.binary
+      - stage3-registry/plan.txt
     expire_in: 1 week
   rules:
     - when: always
