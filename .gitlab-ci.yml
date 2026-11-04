@@ -55,6 +55,9 @@ test:
     - echo 'Источник пайплайна:' $CI_PIPELINE_SOURCE
     - echo "Проверка переменных (должны быть пустыми или содержать значения из GitLab):"
     - echo TF_VAR_folder_id = ${TF_VAR_folder_id:-НЕ ЗАДАН}
+    - echo AWS_ACCESS_KEY_ID = ${AWS_ACCESS_KEY_ID:-НЕ ЗАДАН}
+    - echo AWS_SECRET_ACCESS_KEY = ${AWS_SECRET_ACCESS_KEY:-НЕ ЗАДАН}
+    - echo AWS_DEFAULT_REGION = ${AWS_DEFAULT_REGION:-НЕ ЗАДАН}
     - echo YC_SA_KEY длина = ${#YC_SA_KEY}
 
   rules:
