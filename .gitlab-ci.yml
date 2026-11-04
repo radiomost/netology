@@ -2,6 +2,7 @@ stages:
   - validate
   - plan
   - apply
+  - kubespray
 
 variables:
   TF_BINARY_URL: "https://repository.rdmost.ru/repository/registry_terraform/terraform/terraform_1.14.0_linux_amd64.zip"
@@ -242,3 +243,45 @@ apply-stage3:
   rules:
     - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
       when: manual
+
+kubespray-init:
+  extends: .base
+  stage: kubespray
+  needs:
+    - job: plan-stage0
+    - job: plan-stage1
+    - job: plan-stage2
+    - job: plan-stage3
+      optional: true
+  script:
+    - echo "=== ИНИЦИАЛИЗАЦИЯ KUBESPRAY ==="
+    - make kubespray-init
+    - echo "=== ИНИЦИАЛИЗАЦИЯ KUBESPRAY УСПЕШНО ПРОИЗВЕДЕНА ==="
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
+
+kubespray-inventory:
+  extends: .base
+  stage: kubespray
+  needs:
+    - job: kubespray-init
+      optional: true
+  script:
+    - echo "=== ИНВЕНТАРИЗАЦИЯ KUBESPRAY ==="
+    - make kubespray-inventory
+    - echo "=== ИНВЕНТАРИЗАЦИЯ KUBESPRAY УСПЕШНО ПРОИЗВЕДЕНА ==="
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
+
+kubespray-deploy:
+  extends: .base
+  stage: kubespray
+  needs:
+    - job: kubespray-inventory
+      optional: true
+  script:
+    - echo "=== ДЕПЛОЙ KUBESPRAY ==="
+    - make kubespray-inventory
+    - echo "=== ДЕПЛОЙ KUBESPRAY УСПЕШНО ПРОИЗВЕДЕН ==="
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
