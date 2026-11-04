@@ -158,6 +158,10 @@ all:
         kube_node: {}
     calico_rr:
       hosts: {}
+  vars:
+    ansible_user: ubuntu
+    ansible_ssh_private_key_file: ~/.ssh/id_rsa
+    ansible_become: true
 EOF
 
 echo -e "${GREEN}=== Kubespray setup complete! ===${NC}"

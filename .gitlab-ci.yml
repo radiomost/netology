@@ -255,6 +255,14 @@ kubespray-deploy-cluster:
     - job: apply-stage2
     - job: apply-stage3
       optional: true
+  before_script:
+    - mkdir -p ~/.ssh
+    - echo "=== Настройка SSH ключа для Kubespray ==="
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - sed -i 's/\r$//' ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - echo -e "Host *\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile=/dev/null" > ~/.ssh/config
+    - echo "✓ SSH ключ настроен"
   script:
     - echo "=== ШАГ 1 Инициализация Kubespray ==="
     - make kubespray-init
