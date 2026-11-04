@@ -173,7 +173,10 @@ plan-stage3:
 apply-stage0:
   extends: .base
   stage: stage0
-  needs: ["plan-stage0"]
+  needs: 
+    - job: plan-stage0
+      optional: true
+  
   script:
     - echo "=== ПРИМЕНЕНИЕ ПЛАНА ДЛЯ STAGE0-BOOTSTRAP ==="
     - export TF_DIR="stage0-bootstrap"
@@ -187,7 +190,9 @@ apply-stage0:
 apply-stage1:
   extends: .base
   stage: stage1
-  needs: ["plan-stage1"]
+  needs:
+    - job: plan-stage1
+      optional: true
   script:
     - echo "=== ПРИМЕНЕНИЕ ПЛАНА ДЛЯ STAGE1-NETWORK ==="
     - export TF_DIR="stage1-network"
@@ -201,7 +206,9 @@ apply-stage1:
 apply-stage2:
   extends: .base
   stage: stage2
-  needs: ["plan-stage2"]
+  needs: 
+    - job: plan-stage2
+      optional: true
   script:
     - echo "=== ПРИМЕНЕНИЕ ПЛАНА ДЛЯ STAGE2-COMPUTE ==="
     - export TF_DIR="stage2-compute"
@@ -215,7 +222,9 @@ apply-stage2:
 apply-stage3:
   extends: .base
   stage: stage3
-  needs: ["plan-stage3"]
+  needs:
+    - job: plan-stage3
+      optional: true
   script:
     - echo "=== ПРИМЕНЕНИЕ ПЛАНА ДЛЯ STAGE3-REGISTRY ==="
     - export TF_DIR="stage3-registry"
