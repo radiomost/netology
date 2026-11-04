@@ -167,7 +167,7 @@ plan-stage3:
     - terraform -chdir=$TF_DIR show -no-color tfplan.binary > plan.txt
     - echo "=== TERRAFORM PLAN OUTPUT ==="
     - cat plan.txt
-    - echo "============================="
+    - echo "============================= "
   artifacts:
     name: "tfplan-stage3-$CI_COMMIT_REF_SLUG"
     paths:
