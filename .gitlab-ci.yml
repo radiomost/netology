@@ -169,7 +169,7 @@ apply-stage2:
 
 plan-stage3:
   extends: .base
-  stage: plan
+  stage: stage3
   needs: ["apply-stage2"]
   script:
     - echo "=== НАЧАЛО TERRAFORM PLAN SATGE3-REGISTRY ==="
