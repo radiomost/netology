@@ -1,11 +1,11 @@
 stages:
-  - validation
-  - plan
+  - init
   - apply
 variables:
   TF_BINARY_URL: "https://repository.rdmost.ru/repository/registry_terraform/terraform/terraform_1.14.0_linux_amd64.zip"
   YC_PROVIDER_URL: "https://repository.rdmost.ru/repository/registry_terraform/provider/yandex/terraform-provider-yandex_0.129.0_linux_amd64.zip"
   DEFAULT_BRANCH: "diplom-dev"
+  S3_BACKET: netology-stg
 
 # ==============================================================================
 # 1. YAML-ЯКОРЬ (ANCHOR) для базовых шагов установки
@@ -47,9 +47,9 @@ variables:
 # ==============================================================================
 # 2. ЗАДАЧИ (JOBS)
 # ==============================================================================
-test:
+debug:
   extends: .base
-  stage: validation
+  stage: init
   script:
     - echo 'Запуск тестового скрипта...'
     - echo 'Текущая ветка:' $CI_COMMIT_BRANCH
@@ -59,27 +59,63 @@ test:
   rules:
     - when: always
 
-plan:
+init-stage0:
   extends: .base
-  stage: validation
+  stage: init
   script:
-    - echo "Running terraform init..."
-    - make -f Makefile.ci init || terraform init
-    - echo "Running terraform plan..."
-    - make -f Makefile.ci plan || terraform plan   
-    # - terraform plan -out=tfplan.binary
-    # - terraform show -no-color tfplan.binary > plan.txt
+    - echo "=== НАЧАЛО TERRAFORM INIT SATGE0-BOOTSTRAP ==="
+    - export TF_DIR="stage0-bootstrap"
+    - terraform -chdir=$TF_DIR init -input=false -reconfigure -backend-config="bucket=$(S3_BACKET)"
     - echo "=== TERRAFORM PLAN OUTPUT ==="
-    - cat plan.txt
     - echo "============================="
-  artifacts:
-    name: "tf-plan-$CI_COMMIT_REF_SLUG"
-    paths:
-      - tfplan.binary
-      - plan.txt
-    expire_in: 1 week
-    reports:
-      terraform: plan.txt 
+  rules:
+    - when: always
+
+init-stage1:
+  extends: .base
+  stage: init
+  script:
+    - echo "=== НАЧАЛО TERRAFORM INIT SATGE1-NETWORK ==="
+    - export TF_DIR="stage1-network"
+    - terraform -chdir=$TF_DIR init -input=false -reconfigure -backend-config="bucket=$(S3_BACKET)"
+    - echo "=== TERRAFORM PLAN OUTPUT ==="
+    - echo "============================="
+  rules:
+    - when: always
+
+init-stage2:
+  extends: .base
+  stage: init
+  script:
+    - echo "=== НАЧАЛО TERRAFORM INIT SATGE2-COMPUTE ==="
+    - export TF_DIR="stage2-compute"
+    - terraform -chdir=$TF_DIR init -input=false -reconfigure -backend-config="bucket=$(S3_BACKET)"
+    - echo "=== TERRAFORM PLAN OUTPUT ==="
+    - echo "============================="
+  rules:
+    - when: always
+
+init-stage3:
+  extends: .base
+  stage: init
+  script:
+    - echo "=== НАЧАЛО TERRAFORM INIT SATGE3-REGISTRY ==="
+    - export TF_DIR="stage3-registry"
+    - terraform -chdir=$TF_DIR init -input=false -reconfigure -backend-config="bucket=$(S3_BACKET)"
+    - echo "=== TERRAFORM PLAN OUTPUT ==="
+    - echo "============================="
+  rules:
+    - when: always
+
+init-stage4:
+  extends: .base
+  stage: init
+  script:
+    - echo "=== НАЧАЛО TERRAFORM INIT SATGE4-K8S-CONFIGS ==="
+    - export TF_DIR="stage4-k8s-configs"
+    - terraform -chdir=$TF_DIR init -input=false -reconfigure -backend-config="bucket=$(S3_BACKET)"
+    - echo "=== TERRAFORM PLAN OUTPUT ==="
+    - echo "============================="
   rules:
     - when: always
 
