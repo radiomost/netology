@@ -65,7 +65,7 @@ init-stage0:
   script:
     - echo "=== НАЧАЛО TERRAFORM INIT SATGE0-BOOTSTRAP ==="
     - export TF_DIR="stage0-bootstrap"
-    - terraform -chdir=$TF_DIR init -input=false -reconfigure -backend-config="bucket=$(S3_BACKET)"
+    - terraform -chdir=$TF_DIR init -input=false -reconfigure -backend-config="bucket=${S3_BACKET}"
     - echo "=== TERRAFORM PLAN OUTPUT ==="
     - echo "============================="
   rules:
@@ -77,7 +77,7 @@ init-stage1:
   script:
     - echo "=== НАЧАЛО TERRAFORM INIT SATGE1-NETWORK ==="
     - export TF_DIR="stage1-network"
-    - terraform -chdir=$TF_DIR init -input=false -reconfigure -backend-config="bucket=$(S3_BACKET)"
+    - terraform -chdir=$TF_DIR init -input=false -reconfigure -backend-config="bucket=${S3_BACKET}"
     - echo "=== TERRAFORM PLAN OUTPUT ==="
     - echo "============================="
   rules:
@@ -89,7 +89,7 @@ init-stage2:
   script:
     - echo "=== НАЧАЛО TERRAFORM INIT SATGE2-COMPUTE ==="
     - export TF_DIR="stage2-compute"
-    - terraform -chdir=$TF_DIR init -input=false -reconfigure -backend-config="bucket=$(S3_BACKET)"
+    - terraform -chdir=$TF_DIR init -input=false -reconfigure -backend-config="bucket=${S3_BACKET}"
     - echo "=== TERRAFORM PLAN OUTPUT ==="
     - echo "============================="
   rules:
@@ -101,7 +101,7 @@ init-stage3:
   script:
     - echo "=== НАЧАЛО TERRAFORM INIT SATGE3-REGISTRY ==="
     - export TF_DIR="stage3-registry"
-    - terraform -chdir=$TF_DIR init -input=false -reconfigure -backend-config="bucket=$(S3_BACKET)"
+    - terraform -chdir=$TF_DIR init -input=false -reconfigure -backend-config="bucket=${S3_BACKET}"
     - echo "=== TERRAFORM PLAN OUTPUT ==="
     - echo "============================="
   rules:
@@ -113,7 +113,7 @@ init-stage4:
   script:
     - echo "=== НАЧАЛО TERRAFORM INIT SATGE4-K8S-CONFIGS ==="
     - export TF_DIR="stage4-k8s-configs"
-    - terraform -chdir=$TF_DIR init -input=false -reconfigure -backend-config="bucket=$(S3_BACKET)"
+    - terraform -chdir=$TF_DIR init -input=false -reconfigure -backend-config="bucket=${S3_BACKET}"
     - echo "=== TERRAFORM PLAN OUTPUT ==="
     - echo "============================="
   rules:
