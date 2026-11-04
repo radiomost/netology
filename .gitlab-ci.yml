@@ -256,13 +256,13 @@ kubespray-deploy-cluster:
     - job: apply-stage3
       optional: true
   script:
-    - echo "=== ШАГ 1: Инициализация Kubespray ==="
+    - echo "=== ШАГ 1 Инициализация Kubespray ==="
     - make kubespray-init
     
-    - echo "=== ШАГ 2: Генерация инвентаря Ansible ==="
+    - echo "=== ШАГ 2 Генерация инвентаря Ansible ==="
     - make kubespray-inventory
     
-    - echo "=== ШАГ 3: Деплой Kubernetes кластера ==="
+    - echo "=== ШАГ 3 Деплой Kubernetes кластера ==="
     - make kubespray-deploy
     
     - echo "=== ✅ KUBESPRAY УСПЕШНО ЗАВЕРШЕН ==="
@@ -273,7 +273,7 @@ build-docker-app:
   extends: .base
   stage: APP
   needs:
-    - job: kubespray-deploy
+    - job: kubespray-deploy-cluster
       optional: true
   script:
     - echo "=== СБОРКА DOCKER ОБРАЗА ПРИЛОЖЕНИЯ ==="
