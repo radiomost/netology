@@ -51,7 +51,7 @@ variables:
 ################ PLAN ##############
 debug:
   extends: .base
-  stage: plan
+  stage: stage0
   script:
     - echo 'Запуск тестового скрипта...'
     - echo 'Текущая ветка:' $CI_COMMIT_BRANCH
@@ -158,11 +158,11 @@ apply-stage2:
   stage: stage2
   needs: ["plan-stage2"]
   script:
-    - echo "=== ПРИМЕНЕНИЕ ПЛАНА ДЛЯ STAGE1-NETWORK ==="
+    - echo "=== ПРИМЕНЕНИЕ ПЛАНА ДЛЯ STAGE2-COMPUTE ==="
     - export TF_DIR="stage2-compute"
     - terraform -chdir=$TF_DIR init -input=false -backend=false
     - terraform -chdir=$TF_DIR apply -input=false -auto-approve tfplan.binary
-    - echo "=== STAGE1-NETWORK УСПЕШНО ПРИМЕНЕН ==="
+    - echo "=== STAGE2-COMPUTE УСПЕШНО ПРИМЕНЕН ==="
   rules:
     - when: always
 
