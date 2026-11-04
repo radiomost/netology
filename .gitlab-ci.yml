@@ -1,5 +1,6 @@
 stages:
   - test
+  - plan
 
 variables:
   TF_BINARY_URL: "https://repository.rdmost.ru/repository/registry_terraform/terraform/terraform_1.14.0_linux_amd64.zip"
@@ -55,10 +56,28 @@ test:
     - echo 'Источник пайплайна:' $CI_PIPELINE_SOURCE
     - echo "Проверка переменных (должны быть пустыми или содержать значения из GitLab):"
     - echo TF_VAR_folder_id = ${TF_VAR_folder_id:-НЕ ЗАДАН}
-    - echo AWS_ACCESS_KEY_ID = ${AWS_ACCESS_KEY_ID:-НЕ ЗАДАН}
-    - echo AWS_SECRET_ACCESS_KEY = ${AWS_SECRET_ACCESS_KEY:-НЕ ЗАДАН}
-    - echo AWS_DEFAULT_REGION = ${AWS_DEFAULT_REGION:-НЕ ЗАДАН}
-    - echo YC_SA_KEY длина = ${#YC_SA_KEY}
+  rules:
+    - when: always
 
+plan:
+  extends: .base
+  stage: plan
+  script:
+    - echo "Running terraform init..."
+    - make -f Makefile.ci init || terraform init
+    - echo "Running terraform plan..."
+    - terraform plan -out=tfplan.binary
+    - terraform show -no-color tfplan.binary > plan.txt
+    - echo "=== TERRAFORM PLAN OUTPUT ==="
+    - cat plan.txt
+    - echo "============================="
+  artifacts:
+    name: "tf-plan-$CI_COMMIT_REF_SLUG"
+    paths:
+      - tfplan.binary
+      - plan.txt
+    expire_in: 1 week
+    reports:
+      terraform: plan.txt 
   rules:
     - when: always
