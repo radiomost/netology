@@ -1,9 +1,7 @@
 stages:
   - validate
-  - stage0
-  - stage1
-  - stage2
-  - stage3
+  - plan
+  - apply
 
 variables:
   TF_BINARY_URL: "https://repository.rdmost.ru/repository/registry_terraform/terraform/terraform_1.14.0_linux_amd64.zip"
@@ -78,7 +76,7 @@ tf-validate:
 # --- Plan: запускается на каждый MR, результат публикуется в MR ---
 plan-stage0:
   extends: .base
-  stage: stage0
+  stage: plan
   script:
     - echo "=== НАЧАЛО TERRAFORM PLAN SATGE0-BOOTSTRAP ==="
     - export TF_DIR="stage0-bootstrap"
@@ -101,10 +99,10 @@ plan-stage0:
 
 plan-stage1:
   extends: .base
-  stage: stage1
-  needs:
-    - job: apply-stage0
-      optional: true
+  stage: plan
+  # needs:
+  #   - job: apply-stage0
+  #     optional: true
   script:
     - echo "=== НАЧАЛО TERRAFORM PLAN SATGE1-NETWORK ==="
     - export TF_DIR="stage1-network"
@@ -127,10 +125,10 @@ plan-stage1:
 
 plan-stage2:
   extends: .base
-  stage: stage2
-  needs:
-    - job: apply-stage1
-      optional: true
+  stage: plan
+  # needs:
+  #   - job: apply-stage1
+  #     optional: true
   script:
     - echo "=== НАЧАЛО TERRAFORM PLAN SATGE2-COMPUTE ==="
     - export TF_DIR="stage2-compute"
@@ -155,10 +153,10 @@ plan-stage2:
 
 plan-stage3:
   extends: .base
-  stage: stage3
-  needs:
-    - job: apply-stage2
-      optional: true
+  stage: plan
+  # needs:
+  #   - job: apply-stage2
+  #     optional: true
   script:
     - echo "=== НАЧАЛО TERRAFORM PLAN SATGE3-REGISTRY ==="
     - export TF_DIR="stage3-registry"
@@ -182,7 +180,7 @@ plan-stage3:
 # --- Apply: только после merge в main, ручной запуск ---
 apply-stage0:
   extends: .base
-  stage: stage0
+  stage: apply
   needs: 
     - job: plan-stage0
       optional: true
@@ -199,7 +197,7 @@ apply-stage0:
 
 apply-stage1:
   extends: .base
-  stage: stage1
+  stage: apply
   needs:
     - job: plan-stage1
       optional: true
@@ -215,7 +213,7 @@ apply-stage1:
 
 apply-stage2:
   extends: .base
-  stage: stage2
+  stage: apply
   needs: 
     - job: plan-stage2
       optional: true
@@ -231,7 +229,7 @@ apply-stage2:
 
 apply-stage3:
   extends: .base
-  stage: stage3
+  stage: apply
   needs:
     - job: plan-stage3
       optional: true
