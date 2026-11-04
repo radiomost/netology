@@ -64,8 +64,7 @@ if command -v pyenv &> /dev/null; then
     
     # Install requirements
     echo -e "${YELLOW}Installing Python dependencies...${NC}"
-    #pip install -r requirements.txt
-    pip install --default-timeout=100 --retries=5 --index-url https://pypi.tuna.tsinghua.edu.cn/simple --trusted-host pypi.tuna.tsinghua.edu.cn -r requirements.txt
+    pip install -r requirements.txt
 
 else
     echo -e "${YELLOW}pyenv not found. Using standard Python venv...${NC}"
