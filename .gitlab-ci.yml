@@ -53,5 +53,9 @@ test:
     - echo 'Запуск тестового скрипта...'
     - echo 'Текущая ветка:' $CI_COMMIT_BRANCH
     - echo 'Источник пайплайна:' $CI_PIPELINE_SOURCE
+    - echo "Проверка переменных (должны быть пустыми или содержать значения из GitLab):"
+    - echo TF_VAR_folder_id = ${TF_VAR_folder_id:-НЕ ЗАДАН}
+    - echo YC_SA_KEY длина = ${#YC_SA_KEY}
+
   rules:
     - when: always
