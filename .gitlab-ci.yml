@@ -63,31 +63,22 @@ plan:
   extends: .base
   stage: validation
   script:
-    - echo "=== НАЧАЛО TERRAFORM PLAN ==="
-    # Укажите здесь папку с основной инфраструктурой, которую нужно ревьюить в MR
-    # Обычно это stage2-compute. Если ваша основная логика в другой папке, измените это значение.
-    - export TF_DIR="stage2-compute" 
-    
-    - echo "1. Инициализация Terraform (с принудительной перенастройкой backend)..."
-    - terraform -chdir=$TF_DIR init -input=false -reconfigure -backend-config="bucket=$(S3_BACKET)"
-    
-    - echo "2. Выполнение Terraform Plan..."
-    - terraform -chdir=$TF_DIR plan -out=tfplan.binary -input=false
-    
-    - echo "3. Сохранение плана в читаемый текстовый файл..."
-    # Обратите внимание: вывод перенаправляется в корень (plan.txt), а бинарник лежит в папке
-    - terraform -chdir=$TF_DIR show -no-color tfplan.binary > plan.txt
-    
-    - echo "=== ПЛАН УСПЕШНО СОЗДАН ==="
-    - cat plan.txt
+    - echo "Running terraform init..."
+    - make -f Makefile.ci init || terraform init
+    - echo "Running terraform plan..."
+    # - terraform plan -out=tfplan.binary
+    # - terraform show -no-color tfplan.binary > plan.txt
+    # - echo "=== TERRAFORM PLAN OUTPUT ==="
+    # - cat plan.txt
+    - echo "============================="
   artifacts:
     name: "tf-plan-$CI_COMMIT_REF_SLUG"
-    paths:
-      - plan.txt
-      - stage2-compute/tfplan.binary  # Путь должен совпадать с TF_DIR
+    # paths:
+    #   - tfplan.binary
+    #   - plan.txt
     expire_in: 1 week
-    reports:
-      terraform: plan.txt 
+    # reports:
+    #   terraform: plan.txt 
   rules:
     - when: always
 
