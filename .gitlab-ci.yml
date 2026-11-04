@@ -50,8 +50,8 @@ test:
   extends: .base
   stage: test
   script:
-    - echo "Запуск тестового скрипта..."
-    # - echo "Текущая ветка: $CI_COMMIT_BRANCH"
-    # - echo "Источник пайплайна: $CI_PIPELINE_SOURCE"
+    - echo 'Запуск тестового скрипта...'
+    - echo 'Текущая ветка:' $CI_COMMIT_BRANCH
+    - echo 'Источник пайплайна:' $CI_PIPELINE_SOURCE
   rules:
     - when: always
