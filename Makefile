@@ -91,19 +91,26 @@ kubespray-inventory:
 	@./scripts/setup-kubespray.sh
 	@echo "Inventory regenerated at kubespray/inventory/mycluster/hosts.yaml"
 # Deploy Kubernetes cluster
+.PHONY: kubespray-deploy
 kubespray-deploy:
 	@echo "=== Deploying Kubernetes Cluster ==="
 	@if [ ! -f "kubespray/inventory/mycluster/hosts.yaml" ]; then \
 		echo "Error: Inventory not found. Run 'make kubespray-init' first."; \
 		exit 1; \
 	fi
+	@echo "Activating Python virtual environment..."
 	@cd kubespray && \
-		ansible-playbook -i inventory/mycluster/hosts.yaml \
-			-u ubuntu \
-			-b --become-user=root \
+		if [ -d "venv" ]; then \
+			. venv/bin/activate && \
+			echo "✓ venv activated, ansible version: $$(ansible --version | head -n 1)"; \
+		else \
+			echo "Error: venv not found in kubespray/"; \
+			exit 1; \
+		fi && \
+		ansible-playbook -i inventory/mycluster/hosts.yaml cluster.yml -b -v \
 			--private-key=~/.ssh/id_rsa \
-			cluster.yml
-	@echo "Kubernetes cluster deployed successfully!"
+			--user=ubuntu \
+			-e ansible_ssh_private_key_file=~/.ssh/id_rsa
 
 # Reset Kubespray (remove and start fresh)
 kubespray-reset:
