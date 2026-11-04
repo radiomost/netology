@@ -122,7 +122,11 @@ init-stage4:
 apply:
   extends: .base
   stage: apply
-  needs: ["init"]   
+  needs:
+    - init-stage0
+    - init-stage2
+    - init-stage3
+    - init-stage4   
   script:
     - echo "Running make apply..."
     - make -f Makefile.ci apply
