@@ -129,10 +129,13 @@ plan-stage0:
   needs:
     - init-stage0
   script:
-    - echo "=== НАЧАЛО TERRAFORM INIT SATGE0-BOOTSTRAP ==="
+    - echo "=== НАЧАЛО TERRAFORM PLAN SATGE0-BOOTSTRAP ==="
     - export TF_DIR="stage0-bootstrap"
-    - (terraform -chdir=$TF_DIR init -input=false -reconfigure -backend-config="bucket=${S3_BACKET}" && terraform plan -out=tfplan.binary && terraform show -no-color tfplan.binary > plan.txt) || exit 1;
+    - terraform -chdir=$TF_DIR init -input=false -reconfigure -backend-config="bucket=${S3_BACKET}"
+    - terraform -chdir=$TF_DIR plan -out=tfplan.binary -input=false
+    - terraform -chdir=$TF_DIR show -no-color tfplan.binary > plan.txt
     - echo "=== TERRAFORM PLAN OUTPUT ==="
+    - cat plan.txt
     - echo "============================="
   rules:
     - when: always
@@ -143,10 +146,13 @@ plan-stage1:
   needs:
     - init-stage1
   script:
-    - echo "=== НАЧАЛО TERRAFORM INIT SATGE1-NETWORK ==="
+    - echo "=== НАЧАЛО TERRAFORM PLAN SATGE1-NETWORK ==="
     - export TF_DIR="stage1-network"
-    - (terraform -chdir=$TF_DIR init -input=false -reconfigure -backend-config="bucket=${S3_BACKET}" && terraform plan -out=tfplan.binary && terraform show -no-color tfplan.binary > plan.txt) || exit 1;
+    - terraform -chdir=$TF_DIR init -input=false -reconfigure -backend-config="bucket=${S3_BACKET}"
+    - terraform -chdir=$TF_DIR plan -out=tfplan.binary -input=false
+    - terraform -chdir=$TF_DIR show -no-color tfplan.binary > plan.txt
     - echo "=== TERRAFORM PLAN OUTPUT ==="
+    - cat plan.txt
     - echo "============================="
   rules:
     - when: always
@@ -157,10 +163,13 @@ plan-stage2:
   needs:
     - init-stage2
   script:
-    - echo "=== НАЧАЛО TERRAFORM INIT SATGE2-COMPUTE ==="
+    - echo "=== НАЧАЛО TERRAFORM PLAN SATGE2-COMPUTE ==="
     - export TF_DIR="stage2-compute"
-    - (terraform -chdir=$TF_DIR init -input=false -reconfigure -backend-config="bucket=${S3_BACKET}" && terraform plan -out=tfplan.binary && terraform show -no-color tfplan.binary > plan.txt) || exit 1;
+    - terraform -chdir=$TF_DIR init -input=false -reconfigure -backend-config="bucket=${S3_BACKET}"
+    - terraform -chdir=$TF_DIR plan -out=tfplan.binary -input=false
+    - terraform -chdir=$TF_DIR show -no-color tfplan.binary > plan.txt
     - echo "=== TERRAFORM PLAN OUTPUT ==="
+    - cat plan.txt
     - echo "============================="
   rules:
     - when: always
@@ -171,10 +180,13 @@ plan-stage3:
   needs:
     - init-stage3
   script:
-    - echo "=== НАЧАЛО TERRAFORM INIT SATGE3-REGISTRY ==="
+    - echo "=== НАЧАЛО TERRAFORM PLAN SATGE3-REGISTRY ==="
     - export TF_DIR="stage3-registry"
-    - (terraform -chdir=$TF_DIR init -input=false -reconfigure -backend-config="bucket=${S3_BACKET}" && terraform plan -out=tfplan.binary && terraform show -no-color tfplan.binary > plan.txt) || exit 1;
+    - terraform -chdir=$TF_DIR init -input=false -reconfigure -backend-config="bucket=${S3_BACKET}"
+    - terraform -chdir=$TF_DIR plan -out=tfplan.binary -input=false
+    - terraform -chdir=$TF_DIR show -no-color tfplan.binary > plan.txt
     - echo "=== TERRAFORM PLAN OUTPUT ==="
+    - cat plan.txt
     - echo "============================="
   rules:
     - when: always
@@ -185,10 +197,13 @@ plan-stage4:
   needs:
     - init-stage4
   script:
-    - echo "=== НАЧАЛО TERRAFORM INIT SATGE4-K8S-CONFIGS ==="
+    - echo "=== НАЧАЛО TERRAFORM PLAN SATGE4-K8S-CONFIGS ==="
     - export TF_DIR="stage4-k8s-configs"
-    - (terraform -chdir=$TF_DIR init -input=false -reconfigure -backend-config="bucket=${S3_BACKET}" && terraform plan -out=tfplan.binary && terraform show -no-color tfplan.binary > plan.txt) || exit 1;
+    - terraform -chdir=$TF_DIR init -input=false -reconfigure -backend-config="bucket=${S3_BACKET}"
+    - terraform -chdir=$TF_DIR plan -out=tfplan.binary -input=false
+    - terraform -chdir=$TF_DIR show -no-color tfplan.binary > plan.txt
     - echo "=== TERRAFORM PLAN OUTPUT ==="
+    - cat plan.txt
     - echo "============================="
   rules:
     - when: always
