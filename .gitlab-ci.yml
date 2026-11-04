@@ -25,18 +25,8 @@ variables:
   - curl -k -sSL "$YC_PROVIDER_URL" -o /tmp/yandex-provider.zip
   - unzip -o /tmp/yandex-provider.zip -d ~/.terraform.d/plugins/registry.terraform.io/yandex-cloud/yandex/0.129.0/linux_amd64/
   - rm -f /tmp/yandex-provider.zip
-  - |
-    cat <<EOF > ~/.terraformrc
-    provider_installation {
-      filesystem_mirror {
-        path    = "/root/.terraform.d/plugins"
-        include = ["registry.terraform.io/yandex-cloud/yandex"]
-      }
-      direct {
-        exclude = ["registry.terraform.io/yandex-cloud/yandex"]
-      }
-    }
-    EOF
+  # ИСПРАВЛЕНО: Однострочный echo вместо многострочного heredoc, чтобы избежать ошибок парсинга YAML
+  - echo 'provider_installation { filesystem_mirror { path = "/root/.terraform.d/plugins" include = ["registry.terraform.io/yandex-cloud/yandex"] } direct { exclude = ["registry.terraform.io/yandex-cloud/yandex"] } }' > ~/.terraformrc
   - curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
   - export PATH="$PATH:$HOME/yandex-cloud/bin"
   - echo "$YC_SA_KEY" > ~/.authorized_key.json
@@ -56,7 +46,6 @@ variables:
 # ==============================================================================
 # 2. ЗАДАЧИ (JOBS)
 # ==============================================================================
-
 test:
   extends: .base
   stage: test
@@ -65,6 +54,4 @@ test:
     - echo "Текущая ветка: $CI_COMMIT_BRANCH"
     - echo "Источник пайплайна: $CI_PIPELINE_SOURCE"
   rules:
-    # Запускаем всегда для тестирования, независимо от ветки или MR
-    - when: always 
-
+    - when: always
