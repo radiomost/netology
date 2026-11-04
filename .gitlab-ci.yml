@@ -1,7 +1,7 @@
 stages:
   - validation
   - plan
-
+  - apply
 variables:
   TF_BINARY_URL: "https://repository.rdmost.ru/repository/registry_terraform/terraform/terraform_1.14.0_linux_amd64.zip"
   YC_PROVIDER_URL: "https://repository.rdmost.ru/repository/registry_terraform/provider/yandex/terraform-provider-yandex_0.129.0_linux_amd64.zip"
@@ -81,3 +81,14 @@ plan:
       terraform: plan.txt 
   rules:
     - when: always
+
+apply:
+  extends: .base
+  stage: apply
+  needs: ["plan"]   
+  script:
+    - echo "Running make apply..."
+    - make -f Makefile.ci apply
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
+      when: manual
