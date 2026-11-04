@@ -1,6 +1,10 @@
 stages:
-  - plan
-  - apply
+  - stage0
+  - stage1
+  - stage2
+  - stage3
+  # - plan
+  # - apply
 variables:
   TF_BINARY_URL: "https://repository.rdmost.ru/repository/registry_terraform/terraform/terraform_1.14.0_linux_amd64.zip"
   YC_PROVIDER_URL: "https://repository.rdmost.ru/repository/registry_terraform/provider/yandex/terraform-provider-yandex_0.129.0_linux_amd64.zip"
@@ -59,7 +63,7 @@ debug:
 
 plan-stage0:
   extends: .base
-  stage: plan
+  stage: stage0
   script:
     - echo "=== НАЧАЛО TERRAFORM PLAN SATGE0-BOOTSTRAP ==="
     - export TF_DIR="stage0-bootstrap"
@@ -69,13 +73,32 @@ plan-stage0:
     - echo "=== TERRAFORM PLAN OUTPUT ==="
     - cat plan.txt
     - echo "============================="
+  artifacts:
+    name: "tfplan-stage0-$CI_COMMIT_REF_SLUG"
+    paths:
+      - stage0-bootstrap/tfplan.binary
+      - stage0-bootstrap/plan.txt
+    expire_in: 1 week
+  rules:
+    - when: always
+
+apply-stage0:
+  extends: .base
+  stage: stage0
+  needs: ["plan-stage0"]
+  script:
+    - echo "=== ПРИМЕНЕНИЕ ПЛАНА ДЛЯ STAGE0-BOOTSTRAP ==="
+    - export TF_DIR="stage0-bootstrap"
+    - terraform -chdir=$TF_DIR init -input=false -backend=false
+    - terraform -chdir=$TF_DIR apply -input=false -auto-approve tfplan.binary
+    - echo "=== STAGE1-NETWORK УСПЕШНО ПРИМЕНЕН ==="
   rules:
     - when: always
 
 plan-stage1:
   extends: .base
-  stage: plan
-  needs: ["plan-stage0"]
+  stage: stage1
+  needs: ["apply-stage0"]
   script:
     - echo "=== НАЧАЛО TERRAFORM PLAN SATGE1-NETWORK ==="
     - export TF_DIR="stage1-network"
@@ -96,7 +119,7 @@ plan-stage1:
 
 apply-stage1:
   extends: .base
-  stage: apply
+  stage: stage1
   needs: ["plan-stage1"]
   script:
     - echo "=== ПРИМЕНЕНИЕ ПЛАНА ДЛЯ STAGE1-NETWORK ==="
@@ -107,9 +130,10 @@ apply-stage1:
   rules:
     - when: always
 
+
 plan-stage2:
   extends: .base
-  stage: plan
+  stage: stage2
   needs: ["apply-stage1"]
   script:
     - echo "=== НАЧАЛО TERRAFORM PLAN SATGE2-COMPUTE ==="
@@ -120,13 +144,33 @@ plan-stage2:
     - echo "=== TERRAFORM PLAN OUTPUT ==="
     - cat plan.txt
     - echo "============================="
+  artifacts:
+    name: "tfplan-stage2-$CI_COMMIT_REF_SLUG"
+    paths:
+      - stage2-compute/tfplan.binary
+      - stage2-compute/plan.txt
+    expire_in: 1 week
   rules:
     - when: always
+
+apply-stage2:
+  extends: .base
+  stage: stage2
+  needs: ["plan-stage2"]
+  script:
+    - echo "=== ПРИМЕНЕНИЕ ПЛАНА ДЛЯ STAGE1-NETWORK ==="
+    - export TF_DIR="stage2-compute"
+    - terraform -chdir=$TF_DIR init -input=false -backend=false
+    - terraform -chdir=$TF_DIR apply -input=false -auto-approve tfplan.binary
+    - echo "=== STAGE1-NETWORK УСПЕШНО ПРИМЕНЕН ==="
+  rules:
+    - when: always
+
 
 plan-stage3:
   extends: .base
   stage: plan
-  needs: ["plan-stage2"]
+  needs: ["apply-stage2"]
   script:
     - echo "=== НАЧАЛО TERRAFORM PLAN SATGE3-REGISTRY ==="
     - export TF_DIR="stage3-registry"
@@ -136,20 +180,45 @@ plan-stage3:
     - echo "=== TERRAFORM PLAN OUTPUT ==="
     - cat plan.txt
     - echo "============================="
+  artifacts:
+    name: "tfplan-stage3-$CI_COMMIT_REF_SLUG"
+    paths:
+      - stage3-registry/tfplan.binary
+      - stage3-registry/plan.txt
+    expire_in: 1 week
   rules:
     - when: always
 
-apply-all:
+apply-stage3:
   extends: .base
-  stage: apply
-  needs:
-    - plan-stage0
-    - plan-stage1
-    - plan-stage2
-    - plan-stage3 
+  stage: stage3
+  needs: ["plan-stage3"]
   script:
-    - echo "Running make apply..."
-    - make -f Makefile.ci apply
+    - echo "=== ПРИМЕНЕНИЕ ПЛАНА ДЛЯ STAGE3-REGISTRY ==="
+    - export TF_DIR="stage3-registry"
+    - terraform -chdir=$TF_DIR init -input=false -backend=false
+    - terraform -chdir=$TF_DIR apply -input=false -auto-approve tfplan.binary
+    - echo "=== STAGE3-REGISTRY УСПЕШНО ПРИМЕНЕН ==="
   rules:
-    - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
-      when: manual
+    - when: always
+
+
+
+
+
+
+
+# apply-all:
+#   extends: .base
+#   stage: apply
+#   needs:
+#     - plan-stage0
+#     - plan-stage1
+#     - plan-stage2
+#     - plan-stage3 
+#   script:
+#     - echo "Running make apply..."
+#     - make -f Makefile.ci apply
+#   rules:
+#     - if: '$CI_COMMIT_BRANCH == $DEFAULT_BRANCH'
+#       when: manual
