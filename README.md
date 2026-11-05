@@ -575,6 +575,10 @@ kubectl create secret docker-registry ycr-secret \
 
 !['img_22.png'](img/img_22.png)
 
+!['img_23.png'](img/img_23.png)
+
+!['img_24.png'](img/img_24.png)
+
 #### Результат
 
 !['img_11.png'](img/img_11.png)
