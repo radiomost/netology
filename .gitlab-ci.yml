@@ -251,6 +251,7 @@ apply-stage3:
 kubespray-deploy-cluster:
   extends: .base
   stage: kubespray
+  timeout: 2h
   variables:
     # Отключаем цвета и прогресс-бары для чистоты логов в CI
     NO_COLOR: "1"
