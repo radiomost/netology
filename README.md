@@ -567,6 +567,13 @@ kubectl create secret docker-registry ycr-secret \
 
 Для обеспечения идентичности поведения при локальной разработке инженера и в автоматизированном конвейере CI/CD, все сложные последовательности команд инкапсулированы в цели файла Makefile (например, make plan, make kubespray-init, make k8s-deploy). Пайплайн GitLab CI выступает в роли оркестратора, который лишь подготавливает окружение и вызывает эти цели. Это позволяет разработчику выполнить всю процедуру деплоя локально одной командой, будучи уверенным, что в CI/CD будет выполнен абсолютно тот же набор действий.
 
+!['img_20.png'](img/img_20.png)
+
+!['img_13.png'](img/img_13.png)
+
+!['img_21.png'](img/img_21.png)
+
+!['img_22.png'](img/img_22.png)
 
 #### Результат
 
@@ -574,7 +581,7 @@ kubectl create secret docker-registry ycr-secret \
 
 !['img_12.png'](img/img_12.png)
 
-!['img_13.png'](img/img_13.png)
+
 
 !['img_14.png'](img/img_14.png)
 

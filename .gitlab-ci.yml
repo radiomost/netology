@@ -251,6 +251,11 @@ apply-stage3:
 kubespray-deploy-cluster:
   extends: .base
   stage: kubespray
+  variables:
+    # Отключаем цвета и прогресс-бары для чистоты логов в CI
+    NO_COLOR: "1"
+    ANSIBLE_NOCOLOR: "1"
+    CONTAINERD_NO_COLOR: "1"
   needs:
     - job: apply-stage0
     - job: apply-stage1
