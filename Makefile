@@ -107,7 +107,7 @@ kubespray-deploy:
 			echo "Error: venv not found in kubespray/"; \
 			exit 1; \
 		fi && \
-		ansible-playbook -i inventory/mycluster/hosts.yaml cluster.yml -b -v \
+		ansible-playbook -i inventory/mycluster/hosts.yaml cluster.yml -b \
 			--private-key=~/.ssh/id_rsa \
 			--user=ubuntu \
 			-e ansible_ssh_private_key_file=~/.ssh/id_rsa
